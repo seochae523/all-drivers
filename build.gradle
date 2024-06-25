@@ -1,0 +1,76 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.5'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.alldriver'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.springframework.security:spring-security-oauth2-client:5.7.5'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'com.mysql:mysql-connector-j'
+
+	//webSocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	//dynamoDB
+	implementation 'com.github.derjust:spring-data-dynamodb:5.1.0'
+	implementation 'com.amazonaws:aws-java-sdk-dynamodb:1.11.805'
+
+	//swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+
+	//jwt
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+
+	// sms
+	implementation 'net.nurigo:sdk:4.2.7'
+
+	//json parser
+	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+
+	//kafka
+	implementation 'org.springframework.kafka:spring-kafka'
+
+	//S3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+	// fcm
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
+	implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.2.2'
+
+	// 외부 api 호출
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	testImplementation 'org.springframework.security:spring-security-test'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
