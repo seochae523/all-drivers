@@ -66,11 +66,6 @@ public class UserController {
         return new ResponseEntity(userService.logout(userId), HttpStatus.OK);
     }
 
-    @DeleteMapping("/user/delete")
-    @Operation(description = "해당 유저 삭제")
-    public ResponseEntity<DeleteResponseDto> delete(@RequestParam(value = "userId", required = false) String userId){
-        return new ResponseEntity(userService.delete(userId), HttpStatus.OK);
-    }
 
     @PutMapping("/user/update")
     @Operation(description = "유저 정보 업데이트 - 내부에서 중복확인 하니까 따로 안해도 됨")
@@ -99,5 +94,11 @@ public class UserController {
     @Operation(description = "닉네임 중복 검사")
     public ResponseEntity<Boolean> checkNickname(@RequestParam(value = "nickname", required = false) String nickname){
         return new ResponseEntity(userService.checkNickname(nickname), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/user/sign-out")
+    @Operation(description = "회원 탈퇴")
+    public ResponseEntity<Boolean> signOut(@RequestParam(value = "userId", required = false) String userId){
+        return new ResponseEntity(userService.signOut(userId), HttpStatus.OK);
     }
 }
