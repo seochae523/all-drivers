@@ -63,9 +63,9 @@ public class UserServiceTest {
 
 
     @BeforeEach
-    void init(){
-        userService = new UserServiceImpl(userRepository, userCarRepository, passwordEncoder, authTokenProvider, authenticationManagerBuilder);
-    }
+//    void init(){
+//        userService = new UserServiceImpl(userRepository, userCarRepository, passwordEncoder, authTokenProvider, authenticationManagerBuilder);
+//    }
 
     @Test
     @DisplayName("회원가입")

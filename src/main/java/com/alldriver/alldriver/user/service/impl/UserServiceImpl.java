@@ -6,7 +6,6 @@ import com.alldriver.alldriver.common.emun.ErrorCode;
 import com.alldriver.alldriver.common.token.AuthTokenProvider;
 import com.alldriver.alldriver.common.token.dto.AuthToken;
 import com.alldriver.alldriver.user.domain.License;
-import com.alldriver.alldriver.user.domain.LicenseImage;
 import com.alldriver.alldriver.user.domain.UserCar;
 import com.alldriver.alldriver.user.dto.request.*;
 import com.alldriver.alldriver.user.dto.response.*;
@@ -29,7 +28,6 @@ import com.alldriver.alldriver.user.repository.UserRepository;
 import com.alldriver.alldriver.user.service.UserService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
 import java.util.*;
@@ -45,9 +43,12 @@ public class UserServiceImpl implements UserService {
     private final AuthTokenProvider authTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final LicenseRepository licenseRepository;
+
     private final AmazonS3 amazonS3;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
+    @Value("${cloud.aws.cloud-front.url}")
+    private String cloudFrontUrl;
     @Override
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
         String userId = loginRequestDto.getUserId();
@@ -91,12 +92,12 @@ public class UserServiceImpl implements UserService {
         user.hashPassword(passwordEncoder);
         user.setRole(Role.USER);
 
-        userRepository.save(user);
+        User save = userRepository.save(user);
 
         return SignUpResponseDto.builder()
-                .name(user.getName())
-                .userId(user.getUserId())
-                .nickname(user.getNickname())
+                .name(save.getName())
+                .userId(save.getUserId())
+                .nickname(save.getNickname())
                 .build();
 
     }
@@ -106,70 +107,72 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public SignUpResponseDto signUpOwner(OwnerSignUpRequestDto ownerSignUpRequestDto, List<MultipartFile> images) throws IOException {
-        Set<License> licenses = new HashSet<>();
-        List<LicenseImage> licenseImages = new ArrayList<>();
         String userId = ownerSignUpRequestDto.getUserId();
         this.checkDuplicatedAccount(userId);
 
-        for (MultipartFile image : images) {
-            String originalFilename = UUID.randomUUID()+ image.getOriginalFilename();
+        User user = ownerSignUpRequestDto.toEntity();
+        user.hashPassword(passwordEncoder);
+        user.setRole(Role.USER);
+        user.setRole(Role.OWNER);
 
+        User save = userRepository.save(user);
+
+        for (MultipartFile image : images) {
+            String originalFilename = UUID.randomUUID() + image.getOriginalFilename();
             ObjectMetadata metadata = new ObjectMetadata();
 
             metadata.setContentLength(image.getSize());
             metadata.setContentType(image.getContentType());
 
             amazonS3.putObject(bucket, originalFilename, image.getInputStream(), metadata);
-            String url = amazonS3.getUrl(bucket, originalFilename).toString();
-            LicenseImage licenseImage = LicenseImage.builder()
+            String url = cloudFrontUrl + "/" + originalFilename;
+
+            License license = License.builder()
+                    .licenseNumber(ownerSignUpRequestDto.getLicense())
                     .url(url)
+                    .user(save)
                     .build();
 
-            licenseImages.add(licenseImage);
+            licenseRepository.save(license);
         }
-        License license = License.builder()
-                .licenseNumber(ownerSignUpRequestDto.getLicense())
-                .licenseImage(licenseImages)
-                .build();
-
-        licenses.add(license);
-        User user = ownerSignUpRequestDto.toEntity(licenses);
-
-        user.hashPassword(passwordEncoder);
-        user.setRole(Role.USER);
-        user.setRole(Role.OWNER);
-
-
-        userRepository.save(user);
 
         return SignUpResponseDto.builder()
-                .userId(user.getUserId())
-                .nickname(user.getNickname())
-                .name(user.getName())
+                .userId(save.getUserId())
+                .nickname(save.getNickname())
+                .name(save.getName())
                 .build();
     }
 
     @Override
-    public SignUpResponseDto signUpCarOwner(CarOwnerSignUpRequestDto carOwnerSignUpRequestDto) {
+    public SignUpResponseDto signUpCarOwner(CarOwnerSignUpRequestDto carOwnerSignUpRequestDto, List<MultipartFile> image) {
+        Set<UserCar> cars = new HashSet<>();
         String userId = carOwnerSignUpRequestDto.getUserId();
-        CarInformationRequestDto carInformation = carOwnerSignUpRequestDto.getCarInformation();
+        List<CarInformationRequestDto> carInformations = carOwnerSignUpRequestDto.getCarInformation();
         this.checkDuplicatedAccount(userId);
 
-        UserCar userCar = UserCar.builder()
-                .carNumber(carInformation.getCarNumber())
-                .weight(carInformation.getWeight())
-                .category(carInformation.getCategory())
+        for (CarInformationRequestDto carInformation : carInformations) {
+            UserCar userCar = carInformation.toEntity();
+
+            userCarRepository.findByCarNumber(carInformation.getCarNumber())
+                    .ifPresent(x -> {
+                        throw new CustomException(ErrorCode.DUPLICATED_CAR_NUMBER);
+                    });
+            userCarRepository.save(userCar);
+            cars.add(userCar);
+        }
+        User user = carOwnerSignUpRequestDto.toEntity(cars);
+        user.hashPassword(passwordEncoder);
+        user.setRole(Role.USER);
+        user.setRole(Role.CAR_OWNER);
+
+        User save = userRepository.save(user);
+
+        return SignUpResponseDto.builder()
+                .userId(save.getUserId())
+                .nickname(save.getNickname())
+                .name(save.getName())
                 .build();
-
-        userCarRepository.findByCarNumber(carInformation.getCarNumber())
-                .ifPresent(x -> {
-                    throw new CustomException(ErrorCode.DUPLICATED_CAR_NUMBER);
-                });
-
-
-        return null;
     }
-
 
     @Override
     public LogoutResponseDto logout(String userId) {

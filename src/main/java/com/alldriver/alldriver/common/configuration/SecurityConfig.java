@@ -38,7 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/user/**").hasRole("USER")
                         .requestMatchers("/car-owner/**").hasRole("CAR_OWNER")
                         .requestMatchers("/owner/**").hasRole("OWNER")
-                        .requestMatchers( "/find-nickname", "/login", "/signup", "/swagger-ui/**", "/v3/api-docs/**", "/check-nickname",
+                        .requestMatchers( "/find-nickname", "/login", "/sign-up/**", "/swagger-ui/**", "/v3/api-docs/**", "/check-nickname",
                                         "/check-student-id", "/change-forget-password", "/refresh","/ws/chat", "/sms/**","/check-license").permitAll()
                  )
 

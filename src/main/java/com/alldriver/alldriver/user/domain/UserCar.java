@@ -24,5 +24,7 @@ public class UserCar {
     @Column(name="weight", columnDefinition = "varchar", length = 5)
     private String weight;
 
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

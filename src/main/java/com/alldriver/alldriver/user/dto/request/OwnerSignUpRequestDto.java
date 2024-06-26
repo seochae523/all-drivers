@@ -41,15 +41,15 @@ public class OwnerSignUpRequestDto {
     @NotBlank(message = "License Not Found.")
     private String license;
 
-    public User toEntity(Set<License> license){
+    public User toEntity(){
         return User.builder()
                 .userId(userId)
                 .name(name)
                 .password(password)
                 .nickname(nickname)
                 .phoneNumber(phoneNumber)
-                .license(license)
                 .createdAt(LocalDateTime.now())
+                .deleted(false)
                 .build();
     }
 }

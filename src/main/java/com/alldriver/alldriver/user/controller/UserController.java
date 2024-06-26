@@ -1,8 +1,7 @@
 package com.alldriver.alldriver.user.controller;
 
 import com.alldriver.alldriver.common.token.dto.AuthToken;
-import com.alldriver.alldriver.user.dto.request.LoginRequestDto;
-import com.alldriver.alldriver.user.dto.request.UserSignUpRequestDto;
+import com.alldriver.alldriver.user.dto.request.*;
 import com.alldriver.alldriver.user.dto.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,9 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import com.alldriver.alldriver.user.dto.request.ChangePasswordRequestDto;
-import com.alldriver.alldriver.user.dto.request.UserUpdateRequestDto;
 import com.alldriver.alldriver.user.service.UserService;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,11 +33,17 @@ public class UserController {
     }
 
     @PostMapping("/sign-up/user")
-    @Operation(description = "회원가입")
-    public ResponseEntity<SignUpResponseDto> signUp(@RequestBody @Valid UserSignUpRequestDto userSignUpRequestDto){
+    @Operation(description = "일반 유저 회원가입")
+    public ResponseEntity<SignUpResponseDto> signUpUser(@RequestBody @Valid UserSignUpRequestDto userSignUpRequestDto){
         return new ResponseEntity(userService.signUpUser(userSignUpRequestDto), HttpStatus.CREATED);
     }
+    @PostMapping("/sign-up/owner")
+    @Operation(description = "화주 회원가입")
+    public ResponseEntity<SignUpResponseDto> signUpOwner(@RequestPart(value = "request") @Valid OwnerSignUpRequestDto ownerSignUpRequestDto,
+                                                         @RequestPart(value = "images") List<MultipartFile> image) throws IOException {
 
+        return new ResponseEntity(userService.signUpOwner(ownerSignUpRequestDto, image), HttpStatus.CREATED);
+    }
     @GetMapping("/check-nickname")
     @Operation(summary = "닉네임 중복 체크",
             description = "닉네임 중복 체크")
