@@ -73,6 +73,7 @@ jobs:
         --build-arg WEB_HOOK_URL="${{env.WEB_HOOK_URL}}" \
         --build-arg LICENSE_BASE_URL="${{env.LICENSE_BASE_URL}}" \
         --build-arg LICENSE_API_KEY="${{env.LICENSE_API_KEY}}" \
+        --build-arg CLOUD_FRONT_URL="${{env.CLOUD_FRONT_URL}}" \
         -t ${{ secrets.DOCKERHUB_USERNAME }}/all-driver .
     # 4. DockerHub 로그인
     - name: docker login
