@@ -16,7 +16,7 @@ public interface UserService {
     SignUpResponseDto signUpOwner(OwnerSignUpRequestDto ownerSignUpRequestDto, MultipartFile image) throws IOException;
     SignUpResponseDto signUpCarOwner(CarOwnerSignUpRequestDto carOwnerSignUpRequestDto, List<MultipartFile> image) throws IOException;
     Boolean checkNickname(String nickname);
-    DeleteResponseDto delete(String userId);
+
     UserUpdateResponseDto update(UserUpdateRequestDto userUpdateRequestDto);
     ChangePasswordResponseDto changePassword(ChangePasswordRequestDto changePasswordRequestDto);
     Boolean checkLicense(String licenseNumber);
