@@ -5,10 +5,12 @@ import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.emun.ErrorCode;
 import com.alldriver.alldriver.common.token.AuthTokenProvider;
 import com.alldriver.alldriver.common.token.dto.AuthToken;
+import com.alldriver.alldriver.user.domain.CarImage;
 import com.alldriver.alldriver.user.domain.License;
 import com.alldriver.alldriver.user.domain.UserCar;
 import com.alldriver.alldriver.user.dto.request.*;
 import com.alldriver.alldriver.user.dto.response.*;
+import com.alldriver.alldriver.user.repository.CarImageRepository;
 import com.alldriver.alldriver.user.repository.LicenseRepository;
 import com.alldriver.alldriver.user.repository.UserCarRepository;
 import com.amazonaws.services.s3.AmazonS3;
@@ -43,12 +45,15 @@ public class UserServiceImpl implements UserService {
     private final AuthTokenProvider authTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final LicenseRepository licenseRepository;
-
+    private final CarImageRepository carImageRepository;
     private final AmazonS3 amazonS3;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
     @Value("${cloud.aws.cloud-front.url}")
     private String cloudFrontUrl;
+
+
+
     @Override
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
         String userId = loginRequestDto.getUserId();
@@ -106,7 +111,7 @@ public class UserServiceImpl implements UserService {
      * and 화주는 사업자 등록증 입력하기
      */
     @Override
-    public SignUpResponseDto signUpOwner(OwnerSignUpRequestDto ownerSignUpRequestDto, List<MultipartFile> images) throws IOException {
+    public SignUpResponseDto signUpOwner(OwnerSignUpRequestDto ownerSignUpRequestDto, MultipartFile image) throws IOException {
         String userId = ownerSignUpRequestDto.getUserId();
         this.checkDuplicatedAccount(userId);
 
@@ -114,6 +119,56 @@ public class UserServiceImpl implements UserService {
         user.hashPassword(passwordEncoder);
         user.setRole(Role.USER);
         user.setRole(Role.OWNER);
+
+        User save = userRepository.save(user);
+
+
+        String originalFilename = UUID.randomUUID() + image.getOriginalFilename();
+        ObjectMetadata metadata = new ObjectMetadata();
+
+        metadata.setContentLength(image.getSize());
+        metadata.setContentType(image.getContentType());
+
+        amazonS3.putObject(bucket, originalFilename, image.getInputStream(), metadata);
+        String url = cloudFrontUrl + "/" + originalFilename;
+
+        License license = License.builder()
+                .licenseNumber(ownerSignUpRequestDto.getLicense())
+                .url(url)
+                .user(save)
+                .build();
+
+        licenseRepository.save(license);
+
+
+        return SignUpResponseDto.builder()
+                .userId(save.getUserId())
+                .nickname(save.getNickname())
+                .name(save.getName())
+                .build();
+    }
+
+    @Override
+    public SignUpResponseDto signUpCarOwner(CarOwnerSignUpRequestDto carOwnerSignUpRequestDto, List<MultipartFile> images) throws IOException {
+        Set<UserCar> cars = new HashSet<>();
+        String userId = carOwnerSignUpRequestDto.getUserId();
+        CarInformationRequestDto carInformation = carOwnerSignUpRequestDto.getCarInformation();
+        this.checkDuplicatedAccount(userId);
+
+
+        UserCar userCar = carInformation.toEntity();
+
+        userCarRepository.findByCarNumber(carInformation.getCarNumber())
+                .ifPresent(x -> {
+                    throw new CustomException(ErrorCode.DUPLICATED_CAR_NUMBER);
+                });
+        userCarRepository.save(userCar);
+        cars.add(userCar);
+
+        User user = carOwnerSignUpRequestDto.toEntity(cars);
+        user.hashPassword(passwordEncoder);
+        user.setRole(Role.USER);
+        user.setRole(Role.CAR_OWNER);
 
         User save = userRepository.save(user);
 
@@ -127,45 +182,13 @@ public class UserServiceImpl implements UserService {
             amazonS3.putObject(bucket, originalFilename, image.getInputStream(), metadata);
             String url = cloudFrontUrl + "/" + originalFilename;
 
-            License license = License.builder()
-                    .licenseNumber(ownerSignUpRequestDto.getLicense())
+            CarImage carImage = CarImage.builder()
+                    .userCar(userCar)
                     .url(url)
-                    .user(save)
                     .build();
 
-            licenseRepository.save(license);
+            carImageRepository.save(carImage);
         }
-
-        return SignUpResponseDto.builder()
-                .userId(save.getUserId())
-                .nickname(save.getNickname())
-                .name(save.getName())
-                .build();
-    }
-
-    @Override
-    public SignUpResponseDto signUpCarOwner(CarOwnerSignUpRequestDto carOwnerSignUpRequestDto, List<MultipartFile> image) {
-        Set<UserCar> cars = new HashSet<>();
-        String userId = carOwnerSignUpRequestDto.getUserId();
-        List<CarInformationRequestDto> carInformations = carOwnerSignUpRequestDto.getCarInformation();
-        this.checkDuplicatedAccount(userId);
-
-        for (CarInformationRequestDto carInformation : carInformations) {
-            UserCar userCar = carInformation.toEntity();
-
-            userCarRepository.findByCarNumber(carInformation.getCarNumber())
-                    .ifPresent(x -> {
-                        throw new CustomException(ErrorCode.DUPLICATED_CAR_NUMBER);
-                    });
-            userCarRepository.save(userCar);
-            cars.add(userCar);
-        }
-        User user = carOwnerSignUpRequestDto.toEntity(cars);
-        user.hashPassword(passwordEncoder);
-        user.setRole(Role.USER);
-        user.setRole(Role.CAR_OWNER);
-
-        User save = userRepository.save(user);
 
         return SignUpResponseDto.builder()
                 .userId(save.getUserId())
@@ -274,11 +297,13 @@ public class UserServiceImpl implements UserService {
         return "회원 탈퇴 완료.";
     }
 
-    private void checkDuplicatedAccount(String userId){
+    @Override
+    public Boolean checkDuplicatedAccount(String userId){
         userRepository.findByUserId(userId)
                 .ifPresent(x ->{
                     throw new CustomException(ErrorCode.DUPLICATED_ACCOUNT);
                 });
+        return true;
     }
 
 }

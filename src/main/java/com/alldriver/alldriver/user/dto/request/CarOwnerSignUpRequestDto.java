@@ -40,7 +40,7 @@ public class CarOwnerSignUpRequestDto {
     private String phoneNumber;
 
     @Schema(description = "차 정보")
-    private List<CarInformationRequestDto> carInformation;
+    private CarInformationRequestDto carInformation;
 
     public User toEntity(Set<UserCar> userCarSet){
         return User.builder()

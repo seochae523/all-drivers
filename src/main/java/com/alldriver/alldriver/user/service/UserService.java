@@ -9,11 +9,12 @@ import java.io.IOException;
 import java.util.List;
 
 public interface UserService {
+    Boolean checkDuplicatedAccount(String userId);
     LoginResponseDto login(LoginRequestDto loginRequestDto);
     LogoutResponseDto logout(String userId);
     SignUpResponseDto signUpUser(UserSignUpRequestDto userSignUpRequestDto);
-    SignUpResponseDto signUpOwner(OwnerSignUpRequestDto ownerSignUpRequestDto, List<MultipartFile> image) throws IOException;
-    SignUpResponseDto signUpCarOwner(CarOwnerSignUpRequestDto carOwnerSignUpRequestDto, List<MultipartFile> image);
+    SignUpResponseDto signUpOwner(OwnerSignUpRequestDto ownerSignUpRequestDto, MultipartFile image) throws IOException;
+    SignUpResponseDto signUpCarOwner(CarOwnerSignUpRequestDto carOwnerSignUpRequestDto, List<MultipartFile> image) throws IOException;
     Boolean checkNickname(String nickname);
     DeleteResponseDto delete(String userId);
     UserUpdateResponseDto update(UserUpdateRequestDto userUpdateRequestDto);
