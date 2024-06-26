@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -39,7 +40,7 @@ public class CarOwnerSignUpRequestDto {
     private String phoneNumber;
 
     @Schema(description = "차 정보")
-    private CarInformationRequestDto carInformation;
+    private List<CarInformationRequestDto> carInformation;
 
     public User toEntity(Set<UserCar> userCarSet){
         return User.builder()
@@ -49,6 +50,7 @@ public class CarOwnerSignUpRequestDto {
                 .nickname(nickname)
                 .phoneNumber(phoneNumber)
                 .userCar(userCarSet)
+                .deleted(false)
                 .createdAt(LocalDateTime.now())
                 .build();
     }

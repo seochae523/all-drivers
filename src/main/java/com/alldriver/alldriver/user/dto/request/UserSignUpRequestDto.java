@@ -42,6 +42,7 @@ public class UserSignUpRequestDto {
                 .name(name)
                 .createdAt(LocalDateTime.now())
                 .phoneNumber(phoneNumber)
+                .deleted(false)
                 .build();
     }
 }

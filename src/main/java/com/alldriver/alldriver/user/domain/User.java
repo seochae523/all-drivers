@@ -53,8 +53,6 @@ public class User implements UserDetails {
     @Column(name="nickname", columnDefinition = "varchar", length = 20, nullable = false)
     private String nickname;
 
-    @Column(name="login_type", columnDefinition = "integer", nullable = false)
-    private Integer loginType;
 
     @Column(name="created_at", columnDefinition = "timestamp", nullable = false)
     @CreationTimestamp
@@ -67,12 +65,10 @@ public class User implements UserDetails {
     @Column(name = "refresh_token", columnDefinition = "text" )
     private String refreshToken;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
+    @OneToMany(mappedBy = "user")
     private Set<License> license;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
+    @OneToMany(mappedBy = "user")
     private Set<UserCar> userCar;
 
 

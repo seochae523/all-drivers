@@ -23,8 +23,11 @@ public class License {
     @Column(name="license_number", columnDefinition = "varchar", length = 50)
     private String licenseNumber;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "license_id")
-    private List<LicenseImage> licenseImage;
+    @Column(name="url", columnDefinition = "TEXT")
+    private String url;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
+    private User user;
 
 }
