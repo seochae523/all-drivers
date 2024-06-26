@@ -35,27 +35,6 @@ spring:
     # 30 * 24 * 60 * 60 * 1000 = 30일
     refresh-token-expiration-time: 2592000000
 
-mail:
-  host: ${MAIL_HOST}
-  port: ${MAIL_PORT}
-  username: ${MAIL_USER_NAME}
-  password: ${MAIL_PASSWORD}
-  properties:
-    mail:
-      smtp:
-        auth: true
-        ssl:
-          enable: true
-        starttls:
-          enable: true
-          required: true
-        connectiontimeout: 5000
-        timeout: 5000
-        writetimeout: 5000
-        # auth-code-expiration-millis : 유효시간 5 * 60 * 1000 = 5분
-  auth-code-expiration-millis: 300000
-
-
 cloud:
   aws:
     cloud-front:
