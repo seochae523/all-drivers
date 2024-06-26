@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.Set;
+
 @Entity
 @Getter
 @AllArgsConstructor
@@ -19,12 +22,17 @@ public class UserCar {
 
     @Column(name="car_number", columnDefinition = "varchar", length = 10)
     private String carNumber;
+
     @Column(name="category", columnDefinition = "varchar", length = 10)
     private String category;
+
     @Column(name="weight", columnDefinition = "varchar", length = 5)
     private String weight;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "userCar")
+    private List<CarImage> carImage;
 }

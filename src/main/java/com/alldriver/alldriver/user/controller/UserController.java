@@ -40,20 +40,21 @@ public class UserController {
     @PostMapping("/sign-up/owner")
     @Operation(description = "화주 회원가입")
     public ResponseEntity<SignUpResponseDto> signUpOwner(@RequestPart(value = "request") @Valid OwnerSignUpRequestDto ownerSignUpRequestDto,
-                                                         @RequestPart(value = "images") List<MultipartFile> image) throws IOException {
+                                                         @RequestPart(value = "image") MultipartFile image) throws IOException {
 
         return new ResponseEntity(userService.signUpOwner(ownerSignUpRequestDto, image), HttpStatus.CREATED);
     }
-    @GetMapping("/check-nickname")
-    @Operation(summary = "닉네임 중복 체크",
-            description = "닉네임 중복 체크")
-    public ResponseEntity<Boolean> checkNickname(@RequestParam(value = "nickname", required = false) String nickname){
-        return new ResponseEntity(userService.checkNickname(nickname), HttpStatus.OK);
+    @PostMapping("/sign-up/car-owner")
+    @Operation(description = "차주 회원가입")
+    public ResponseEntity<SignUpResponseDto> signUpOwner(@RequestPart(value = "request") @Valid CarOwnerSignUpRequestDto carOwnerSignUpRequestDto,
+                                                         @RequestPart(value = "images") List<MultipartFile> image) throws IOException {
+
+        return new ResponseEntity(userService.signUpCarOwner(carOwnerSignUpRequestDto, image), HttpStatus.CREATED);
     }
 
+
     @PutMapping("/change-forget-password")
-    @Operation(summary = "비번 변경",
-            description = "잊어버린 비번 변경")
+    @Operation(description = "잊어버린 비번 변경")
     public ResponseEntity<ChangePasswordResponseDto> updateForgetPassword(@RequestBody @Valid ChangePasswordRequestDto changePasswordRequestDto){
         return new ResponseEntity(userService.changePassword(changePasswordRequestDto), HttpStatus.OK);
     }
@@ -66,26 +67,37 @@ public class UserController {
     }
 
     @DeleteMapping("/user/delete")
-    @Operation(summary = "유저 삭제",
-            description = "해당 유저 삭제")
+    @Operation(description = "해당 유저 삭제")
     public ResponseEntity<DeleteResponseDto> delete(@RequestParam(value = "userId", required = false) String userId){
         return new ResponseEntity(userService.delete(userId), HttpStatus.OK);
     }
 
     @PutMapping("/user/update")
-    @Operation(summary = "유저 정보 업데이트",
-            description = "유저 정보 업데이트 - 내부에서 중복확인 하니까 따로 안해도 됨")
+    @Operation(description = "유저 정보 업데이트 - 내부에서 중복확인 하니까 따로 안해도 됨")
     public ResponseEntity<UserUpdateResponseDto> update(@RequestBody @Valid UserUpdateRequestDto userUpdateRequestDto){
         return new ResponseEntity(userService.update(userUpdateRequestDto), HttpStatus.OK);
     }
 
     @PutMapping("/user/change-password")
-    @Operation(summary = "비번 변경",
-        description = "입력된 정보로 비번 변경")
+    @Operation(description = "입력된 정보로 비번 변경")
     public ResponseEntity<ChangePasswordResponseDto> updatePassword(@RequestBody @Valid ChangePasswordRequestDto changePasswordRequestDto){
         return new ResponseEntity(userService.changePassword(changePasswordRequestDto), HttpStatus.OK);
     }
 
+    @GetMapping("/check/user-id")
+    @Operation(description = "id 중복 검사")
+    public ResponseEntity<Boolean> checkUserId(@RequestParam(name = "userId") String userId){
+        return new ResponseEntity(userService.checkDuplicatedAccount(userId), HttpStatus.OK);
+    }
 
-
+    @GetMapping("/check/license")
+    @Operation(description = "사업자 등록 번호 중복 검사")
+    public ResponseEntity<Boolean> checkLicense(@RequestParam(name = "license") String license){
+        return new ResponseEntity(userService.checkLicense(license), HttpStatus.OK);
+    }
+    @GetMapping("/check/nickname")
+    @Operation(description = "닉네임 중복 검사")
+    public ResponseEntity<Boolean> checkNickname(@RequestParam(value = "nickname", required = false) String nickname){
+        return new ResponseEntity(userService.checkNickname(nickname), HttpStatus.OK);
+    }
 }

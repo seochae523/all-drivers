@@ -38,8 +38,8 @@ public class SecurityConfig {
                         .requestMatchers("/user/**").hasRole("USER")
                         .requestMatchers("/car-owner/**").hasRole("CAR_OWNER")
                         .requestMatchers("/owner/**").hasRole("OWNER")
-                        .requestMatchers( "/find-nickname", "/login", "/sign-up/**", "/swagger-ui/**", "/v3/api-docs/**", "/check-nickname",
-                                        "/check-student-id", "/change-forget-password", "/refresh","/ws/chat", "/sms/**","/check-license").permitAll()
+                        .requestMatchers( "/find-nickname", "/login", "/sign-up/**", "/swagger-ui/**", "/v3/api-docs/**", "/check/**",
+                                         "/change-forget-password", "/refresh","/ws/chat", "/sms/**").permitAll()
                  )
 
                 .addFilterBefore(new JwtFilter(authTokenProvider), UsernamePasswordAuthenticationFilter.class);

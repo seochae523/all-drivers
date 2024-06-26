@@ -25,7 +25,7 @@ public class JwtUtil {
     private static final long REFRESH_TOKEN_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 365; // 365일
     public static final long ACCESS_TOKEN_EXPIRE_TIME = 365;
 
-    @Value("${jwt.secret}")
+    @Value("${spring.jwt.secret}")
     public void setKey(String key) {
         JWT_SECRET_KEY = key;
     }
