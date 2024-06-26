@@ -1,0 +1,104 @@
+spring:
+  data:
+    rest:
+      default-page-size: 10
+  main:
+    allow-bean-definition-overriding: true
+  # 데이터 소스 설정
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 작성 필요
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_SCHEMA}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  # JPA 설정
+  jpa:
+    show-sql: true
+    database: mysql
+    hibernate:
+      ddl-auto: none
+    naming:
+      physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        hbm2ddl.import_files_sql_extractor: org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor
+        current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
+        default_batch_fetch_size: 100
+        jdbc.batch_size: 1000
+        format_sql: true
+  jwt:
+    header: Authorization
+    secret: ${JWT_SECRET}
+    # 30 * 60 * 1000 = 30분
+    access-token-expiration-time: 1800000
+    # 30 * 24 * 60 * 60 * 1000 = 30일
+    refresh-token-expiration-time: 2592000000
+
+mail:
+  host: ${MAIL_HOST}
+  port: ${MAIL_PORT}
+  username: ${MAIL_USER_NAME}
+  password: ${MAIL_PASSWORD}
+  properties:
+    mail:
+      smtp:
+        auth: true
+        ssl:
+          enable: true
+        starttls:
+          enable: true
+          required: true
+        connectiontimeout: 5000
+        timeout: 5000
+        writetimeout: 5000
+        # auth-code-expiration-millis : 유효시간 5 * 60 * 1000 = 5분
+  auth-code-expiration-millis: 300000
+
+
+cloud:
+  aws:
+    cloud-front:
+      url: ${CLOUD_FRONT_URL}
+    s3:
+      url: ${S3_URL}
+      bucket: ${S3_BUCKET_NAME}
+    stack:
+      auto: false
+    region:
+      static: ap-northeast-2
+    credentials:
+      accessKey: ${S3_ACCESS_KEY}
+      secretKey: ${S3_SECRET_KEY}
+
+    dynamodb:
+      endpoint: ${DYNAMODB_ENDPOINT:http://localhost:8000}
+      region: ${DYNAMODB_REGION}
+      accessKey: ${DYNAMODB_ACCESS_KEY}
+      secretKey: ${DYNAMODB_SECRET_KEY}
+
+
+kafka:
+  bootstrap-servers: kafka:9092
+  producer:
+    key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    value-serializer: org.apache.kafka.common.serialization.StringSerializer
+  consumer:
+    group-id: chat-group
+    auto-offset-reset: earliest
+  template:
+    default-topic: chat-messages
+
+#logging:
+#  discord:
+#    webhook-url: ${WEB_HOOK_URL}
+#  config: classpath:logback-discord.xml
+
+firebase:
+  url: ${FCM_APP_URL}
+
+
+open-api:
+  license:
+    base-url: ${LICENSE_BASE_URL}
+    api-key: ${LICENSE_API_KEY}
