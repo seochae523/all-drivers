@@ -64,16 +64,13 @@ public class Board {
     @JoinColumn(name="BOARD_ID")
     private Set<Image> image;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name="BOARD_ID")
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
     private Set<CarBoard> carBoards;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name="BOARD_ID")
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
     private Set<JobBoard> jobBoards;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name="BOARD_ID")
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
     private Set<PlaceBoard> placeBoards;
 
 

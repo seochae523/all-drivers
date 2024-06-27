@@ -209,7 +209,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean checkNickname(String nickname) {
-        if(nickname == null) throw new CustomException(ErrorCode.DUPLICATED_NICKNAME);
+        if(nickname == null) throw new CustomException(ErrorCode.NICKNAME_NOT_FOUND);
 
         userRepository.findByNickname(nickname)
                 .ifPresent(x ->{
@@ -222,20 +222,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Override
-    public DeleteResponseDto delete(String userId) {
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
-        // soft delete
-        user.setDeleted(true);
-        userRepository.save(user);
-
-        return DeleteResponseDto.builder()
-                .name(user.getName())
-                .userId(userId)
-                .build();
-    }
 
     @Override
     public UserUpdateResponseDto update(UserUpdateRequestDto userUpdateRequestDto) {

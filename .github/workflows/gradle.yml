@@ -34,6 +34,8 @@ jobs:
       WEB_HOOK_URL: ${{secrets.WEB_HOOK_URL}}
       LICENSE_BASE_URL: ${{secrets.LICENSE_BASE_URL}}
       LICENSE_API_KEY: ${{secrets.LICENSE_API_KEY}}
+      WEB_HOOK_URL: ${{secrets.WEB_HOOK_URL}}
+      
     steps:
     - uses: actions/checkout@v3
     # 1. Java 17 세팅
@@ -74,6 +76,7 @@ jobs:
         --build-arg LICENSE_BASE_URL="${{env.LICENSE_BASE_URL}}" \
         --build-arg LICENSE_API_KEY="${{env.LICENSE_API_KEY}}" \
         --build-arg CLOUD_FRONT_URL="${{env.CLOUD_FRONT_URL}}" \
+        --build-arg WEB_HOOK_URL="${{env.WEB_HOOK_URL}}" \
         -t ${{ secrets.DOCKERHUB_USERNAME }}/all-driver .
     # 4. DockerHub 로그인
     - name: docker login
@@ -104,7 +107,6 @@ jobs:
       # 3. 최신 이미지를 컨테이너화하여 실행시킵니다
       - name: docker run new container
         run: sudo docker run -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/all-driver 
-              
 
       # 4. 미사용 이미지를 정리합니다
       - name: delete old docker image

@@ -62,23 +62,16 @@ public class UserServiceTest {
     private UserCarRepository userCarRepository;
 
 
-    @BeforeEach
-//    void init(){
-//        userService = new UserServiceImpl(userRepository, userCarRepository, passwordEncoder, authTokenProvider, authenticationManagerBuilder);
-//    }
-
     @Test
     @DisplayName("회원가입")
     void 회원가입(){
         //given
-
         UserSignUpRequestDto request = setUpSignUpRequestDto();
         when(userRepository.save(any())).thenReturn(request.toEntity());
         //when
         SignUpResponseDto response = userService.signUpUser(request);
 
         //then
-
         assertThat(request.getName()).isEqualTo(response.getName());
         assertThat(request.getNickname()).isEqualTo(response.getNickname());
         assertThat(request.getUserId()).isEqualTo(response.getUserId());
@@ -86,7 +79,7 @@ public class UserServiceTest {
 
 
     @Test
-    @DisplayName("로그인_성공")
+    @DisplayName("로그인 성공")
     void 로그인_성공(){
         // given
 
@@ -116,8 +109,8 @@ public class UserServiceTest {
 
 
     @Test
-    @DisplayName("닉네임 중복 검사")
-    void 닉네임_중복_검사(){
+    @DisplayName("닉네임 중복 검사 - 중복 있을 때")
+    void 닉네임_중복_검사_실패(){
         // given
         when(userRepository.findByNickname("test")).thenThrow(new CustomException(ErrorCode.DUPLICATED_NICKNAME));
 
@@ -128,25 +121,49 @@ public class UserServiceTest {
         assertThat(customException.getMessage()).isEqualTo(ErrorCode.DUPLICATED_NICKNAME.getMessage());
 
     }
+
     @Test
-    @DisplayName("유저 삭제")
-    void 삭제(){
+    @DisplayName("닉네임 중복 검사 - 중복 없을 때")
+    void 닉네임_중복_검사_성공(){
+        // given
+        when(userRepository.findByNickname("newNickname")).thenReturn(Optional.empty());
+        // when
+        Boolean b = userService.checkNickname("newNickname");
+
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("유저 삭제 성공")
+    void 삭제_성공(){
         // given
         Optional<User> user = Optional.ofNullable(setUpUser());
         when(userRepository.findByUserId("testUser")).thenReturn(user);
 
         // when
-        DeleteResponseDto test = userService.delete("testUser");
+        String test = userService.signOut("testUser");
 
         // then
-        assertThat(test.getUserId()).isEqualTo(user.get().getUserId());
-        assertThat(test.getName()).isEqualTo(user.get().getName());
-        assertThat(user.get().getDeleted()).isEqualTo(true);
+        assertThat(test).isEqualTo("회원 탈퇴 완료.");
+
     }
 
     @Test
-    @DisplayName("업데이트")
-    void 업데이트(){
+    @DisplayName("유저 삭제 실패")
+    void 삭제_실패(){
+        // given
+        when(userRepository.findByUserId("wrongUser")).thenThrow(new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        // when
+        CustomException customException = assertThrows(CustomException.class, () -> userService.signOut("wrongUser"));
+
+        // then
+        assertThat(customException.getMessage()).isEqualTo(ErrorCode.ACCOUNT_NOT_FOUND.getMessage());
+
+    }
+    @Test
+    @DisplayName("업데이트 성공")
+    void 업데이트_성공(){
         // given
         Optional<User> user = Optional.ofNullable(setUpUser());
         UserUpdateRequestDto userUpdateRequestDto = setUpUserUpdateResponseDto();
@@ -159,10 +176,27 @@ public class UserServiceTest {
         assertThat(user.get().getNickname()).isEqualTo(userUpdateRequestDto.getNickname());
     }
 
+    @Test
+    @DisplayName("업데이트 실패")
+    void 업데이트_실패(){
+        // given
+        UserUpdateRequestDto userUpdateRequestDto = UserUpdateRequestDto.builder()
+                .userId("wrongUser")
+                .nickname("nickname")
+                .build();
+        when(userRepository.findByUserId("wrongUser")).thenThrow(new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        // when
+        CustomException customException = assertThrows(CustomException.class, () -> userService.update(userUpdateRequestDto));
+
+
+        // then
+        assertThat(customException.getMessage()).isEqualTo(ErrorCode.ACCOUNT_NOT_FOUND.getMessage());
+    }
 
     @Test
-    @DisplayName("비밀번호 변경")
-    void 비밀번호_변경(){
+    @DisplayName("비밀번호 변경 성공")
+    void 비밀번호_변경_성공(){
         // given
         Optional<User> user = Optional.ofNullable(setUpUser());
         ChangePasswordRequestDto changePasswordRequestDto = setUpChangePasswordRequestDto();
@@ -175,7 +209,19 @@ public class UserServiceTest {
         // then
         assertThat(user.get().getPassword()).isEqualTo("encodedChangedPassword");
     }
+    @Test
+    @DisplayName("비밀번호 변경 실패")
+    void 비밀번호_변경_실패(){
+        // given
+        ChangePasswordRequestDto build = ChangePasswordRequestDto.builder().userId("wrongUser").password("password").build();
+        when(userRepository.findByUserId("wrongUser")).thenThrow(new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
+        // when
+        CustomException customException = assertThrows(CustomException.class, () -> userService.changePassword(build));
+
+        // then
+        assertThat(customException.getMessage()).isEqualTo(ErrorCode.ACCOUNT_NOT_FOUND.getMessage());
+    }
 
     private UserUpdateRequestDto setUpUserUpdateResponseDto(){
         return UserUpdateRequestDto.builder()
