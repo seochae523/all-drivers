@@ -16,4 +16,13 @@ public class PlaceBoard {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id")
+    private Board board;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "place_id")
+    private Place place;
+
 }
