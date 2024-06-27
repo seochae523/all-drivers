@@ -62,7 +62,7 @@ public class UserControllerTest {
                                                                     .userId("testUserId")
                                                                     .name("testUserName")
                                                                     .build();
-        when(userService.delete("testUserId")).thenReturn(deleteResponseDto);
+        when(userService.signOut("testUserId")).thenReturn("회원 탈퇴 완료.");
 
         // when, then
         mockMvc.perform(delete("/user/delete?userId=testUserId").with(csrf()))

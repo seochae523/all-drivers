@@ -25,8 +25,7 @@ public class Car{
     @NotNull
     private String category;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name="car_id")
-    private Set<CarBoard> carBoards;
+    @OneToMany(mappedBy = "car", fetch = FetchType.LAZY)
+    private Set <CarBoard> carBoards;
 
 }
