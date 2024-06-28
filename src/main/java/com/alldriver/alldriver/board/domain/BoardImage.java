@@ -21,4 +21,7 @@ public class BoardImage {
     @Column(name="url", columnDefinition = "TEXT", nullable = false)
     private String url;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="board_id")
+    private Board board;
 }
