@@ -77,3 +77,9 @@ open-api:
   license:
     base-url: ${LICENSE_BASE_URL}
     api-key: ${LICENSE_API_KEY}
+
+sms:
+  api-key : ${SMS_API_KEY}
+  secret-key : ${SMS_SECRET_KEY}
+  domain: ${SMS_DOMAIN}
+  phone-number: ${SMS_PHONE_NUMBER}

@@ -1,30 +1,28 @@
 package com.alldriver.alldriver.board.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-import java.util.Set;
-
-@Entity(name = "car")
+@Entity(name = "location_board")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Car{
+public class LocationBoard {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="category", columnDefinition = "varchar", length = 10, nullable = false)
-    private String category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id")
+    private Board board;
 
-    @OneToMany(mappedBy = "car", fetch = FetchType.LAZY)
-    private Set <CarBoard> carBoards;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "location_id")
+    private SubLocation subLocation;
 
 }

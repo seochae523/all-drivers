@@ -17,7 +17,7 @@ public class CarImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="url", columnDefinition = "TEXT")
+    @Column(name="url", columnDefinition = "TEXT", nullable = false)
     private String url;
 
     @ManyToOne(fetch = FetchType.LAZY)

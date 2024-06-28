@@ -2,19 +2,15 @@ package com.alldriver.alldriver.board.domain;
 
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
-import com.alldriver.alldriver.board.dto.request.BoardUpdateRequestDto;
 import com.alldriver.alldriver.user.domain.User;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 @Entity(name = "board")
@@ -28,41 +24,41 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "TEXT")
-    @NotNull
+    @Column(name="content", columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column(columnDefinition = "varchar(50)")
-    @NotNull
+    @Column(name="title", columnDefinition = "varchar", length = 50, nullable = false)
     private String title;
 
-    @Column(columnDefinition = "varchar(5)")
-    @NotNull
+    @Column(name="pay_type", columnDefinition = "varchar", length = 5, nullable = false)
     private String payType;
 
-    @NotNull
+    @Column(name="payment", columnDefinition = "integer", nullable = false)
     private Integer payment;
 
-    @NotNull
-    private LocalDateTime duration;
+    @Column(name="end_at", columnDefinition = "timestamp", nullable = false)
+    private LocalDateTime endAt;
 
-    @NotNull
+    @Column(name="recruit_type", columnDefinition = "varchar", length = 10, nullable = false)
     private String recruitType;
 
+    @Column(name="company_location", columnDefinition = "varchar", length = 100, nullable = false)
+    private String companyLocation;
+
     @CreationTimestamp
-    @Column(name="created_at")
+    @Column(name="created_at", columnDefinition = "timestamp", nullable = false)
     private LocalDateTime createdAt;
 
     @ColumnDefault("false")
+    @Column(name="deleted", nullable = false)
     private Boolean deleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="USER_ID")
+    @JoinColumn(name="USER_ID", nullable = false)
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name="BOARD_ID")
-    private Set<Image> image;
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
+    private Set<BoardImage> boardImages;
 
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
     private Set<CarBoard> carBoards;
@@ -71,9 +67,7 @@ public class Board {
     private Set<JobBoard> jobBoards;
 
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
-    private Set<PlaceBoard> placeBoards;
-
-
+    private Set<LocationBoard> locationBoards;
 
     public void setDeleted(Boolean deleted){
         this.deleted = deleted;
