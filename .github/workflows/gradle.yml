@@ -81,7 +81,7 @@ jobs:
         --build-arg CLOUD_FRONT_URL="${{env.CLOUD_FRONT_URL}}" \
         --build-arg WEB_HOOK_URL="${{env.WEB_HOOK_URL}}" \
         --build-arg SMS_API_KEY="${{env.SMS_API_KEY}}" \
-        --bulid-arg SMS_SECRET_KEY="${{env.SMS_SECRET_KEY}}" \
+        --build-arg SMS_SECRET_KEY="${{env.SMS_SECRET_KEY}}" \
         --build-arg SMS_PHONE_NUMBER="${{env.SMS_PHONE_NUMBER}}" \
         --build-arg SMS_DOMAIN="${{env.SMS_DOMAIN}}" \
         -t ${{ secrets.DOCKERHUB_USERNAME }}/all-driver .
