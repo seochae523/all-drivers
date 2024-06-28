@@ -44,11 +44,11 @@ public class UserControllerTest {
         when(userService.checkNickname("duplicatedUser")).thenThrow(new CustomException(ErrorCode.DUPLICATED_NICKNAME));
 
         // when, then
-        mockMvc.perform(get("/check-nickname?nickname=test"))
+        mockMvc.perform(get("/check/nickname?nickname=test"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(Boolean.valueOf(true).toString()));
 
-        mockMvc.perform(get("/check-nickname?nickname=duplicatedUser"))
+        mockMvc.perform(get("/check/nickname?nickname=duplicatedUser"))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.code").value("AEU-005"));
     }
@@ -58,17 +58,12 @@ public class UserControllerTest {
     @DisplayName("삭제 확인")
     void 삭제_확인() throws Exception {
         // given
-        DeleteResponseDto deleteResponseDto = DeleteResponseDto.builder()
-                                                                    .userId("testUserId")
-                                                                    .name("testUserName")
-                                                                    .build();
         when(userService.signOut("testUserId")).thenReturn("회원 탈퇴 완료.");
 
         // when, then
-        mockMvc.perform(delete("/user/delete?userId=testUserId").with(csrf()))
+        mockMvc.perform(delete("/user/sign-out?userId=testUserId").with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userId").value("testUserId"))
-                .andExpect(jsonPath("$.name").value("testUserName"));
+                .andExpect(content().string("회원 탈퇴 완료."));
 
     }
     @Test
@@ -110,7 +105,6 @@ public class UserControllerTest {
         // when
 
         // then
-
         mockMvc.perform(put("/user/change-password").with(csrf())
                 .content(objectMapper.writeValueAsString(content))
                 .contentType(MediaType.APPLICATION_JSON))

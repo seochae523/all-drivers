@@ -1,11 +1,9 @@
 package com.alldriver.alldriver.user.domain;
 
 
-import com.alldriver.alldriver.board.domain.Image;
 import com.alldriver.alldriver.common.emun.Role;
 import com.alldriver.alldriver.user.dto.request.UserUpdateRequestDto;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -62,7 +59,7 @@ public class User implements UserDetails {
     private String role;
 
 
-    @Column(name = "refresh_token", columnDefinition = "text" )
+    @Column(name = "refresh_token", columnDefinition = "text")
     private String refreshToken;
 
     @OneToMany(mappedBy = "user")

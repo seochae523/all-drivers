@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 @Configuration
-@EnableDynamoDBRepositories(basePackages = {"sejongZoo.sejongZoo.faq.domain"}) // DynamoDB Repository 패키지 위치 등록
+@EnableDynamoDBRepositories // DynamoDB Repository 패키지 위치 등록
 public class DynamoDBConfig {
     @Value("${cloud.aws.dynamodb.accessKey}")
     private String accessKey;

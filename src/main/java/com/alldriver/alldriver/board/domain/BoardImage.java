@@ -6,23 +6,19 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "place_board")
+
+@Entity(name="board_image")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PlaceBoard {
+public class BoardImage {
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
-    private Board board;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "place_id")
-    private Place place;
+    @Column(name="url", columnDefinition = "TEXT", nullable = false)
+    private String url;
 
 }

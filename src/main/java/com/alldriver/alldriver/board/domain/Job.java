@@ -21,12 +21,10 @@ public class Job {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "varchar(10)")
-    @NotNull
+    @Column(name = "category", columnDefinition = "varchar", length = 10, nullable = false)
     private String category;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name="job_id")
+    @OneToMany(mappedBy = "job", fetch = FetchType.LAZY)
     private Set<JobBoard> jobBoards;
 
 }

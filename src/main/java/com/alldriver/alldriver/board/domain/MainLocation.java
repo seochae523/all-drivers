@@ -6,19 +6,18 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
-@Entity(name="image")
+@Entity(name = "main_location")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Image {
+public class MainLocation {
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
     private Long id;
 
-    @Column(name="url", columnDefinition = "TEXT")
-    private String url;
+    @Column(name = "category", columnDefinition = "varchar", length = 10, nullable = false)
+    private String category;
 
 }
