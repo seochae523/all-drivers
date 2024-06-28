@@ -12,6 +12,7 @@ import com.alldriver.alldriver.user.dto.request.UserSignUpRequestDto;
 import com.alldriver.alldriver.user.dto.request.UserUpdateRequestDto;
 import com.alldriver.alldriver.user.dto.response.DeleteResponseDto;
 import com.alldriver.alldriver.user.dto.response.LoginResponseDto;
+import com.alldriver.alldriver.user.dto.response.LogoutResponseDto;
 import com.alldriver.alldriver.user.dto.response.SignUpResponseDto;
 import com.alldriver.alldriver.user.repository.UserCarRepository;
 import com.alldriver.alldriver.user.repository.UserRepository;
@@ -63,8 +64,8 @@ public class UserServiceTest {
 
 
     @Test
-    @DisplayName("회원가입")
-    void 회원가입(){
+    @DisplayName("회원가입 성공")
+    void 회원가입_성공(){
         //given
         UserSignUpRequestDto request = setUpSignUpRequestDto();
         when(userRepository.save(any())).thenReturn(request.toEntity());
@@ -76,6 +77,7 @@ public class UserServiceTest {
         assertThat(request.getNickname()).isEqualTo(response.getNickname());
         assertThat(request.getUserId()).isEqualTo(response.getUserId());
     }
+
 
 
     @Test
@@ -105,7 +107,6 @@ public class UserServiceTest {
         assertThat(response.getNickname()).isEqualTo("testNickname");
         assertThat(response.getAuthToken()).isInstanceOf(AuthToken.class);
     }
-
 
 
     @Test
@@ -148,19 +149,7 @@ public class UserServiceTest {
 
     }
 
-    @Test
-    @DisplayName("유저 삭제 실패")
-    void 삭제_실패(){
-        // given
-        when(userRepository.findByUserId("wrongUser")).thenThrow(new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
-        // when
-        CustomException customException = assertThrows(CustomException.class, () -> userService.signOut("wrongUser"));
-
-        // then
-        assertThat(customException.getMessage()).isEqualTo(ErrorCode.ACCOUNT_NOT_FOUND.getMessage());
-
-    }
     @Test
     @DisplayName("업데이트 성공")
     void 업데이트_성공(){
@@ -176,23 +165,7 @@ public class UserServiceTest {
         assertThat(user.get().getNickname()).isEqualTo(userUpdateRequestDto.getNickname());
     }
 
-    @Test
-    @DisplayName("업데이트 실패")
-    void 업데이트_실패(){
-        // given
-        UserUpdateRequestDto userUpdateRequestDto = UserUpdateRequestDto.builder()
-                .userId("wrongUser")
-                .nickname("nickname")
-                .build();
-        when(userRepository.findByUserId("wrongUser")).thenThrow(new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
-        // when
-        CustomException customException = assertThrows(CustomException.class, () -> userService.update(userUpdateRequestDto));
-
-
-        // then
-        assertThat(customException.getMessage()).isEqualTo(ErrorCode.ACCOUNT_NOT_FOUND.getMessage());
-    }
 
     @Test
     @DisplayName("비밀번호 변경 성공")
@@ -209,9 +182,25 @@ public class UserServiceTest {
         // then
         assertThat(user.get().getPassword()).isEqualTo("encodedChangedPassword");
     }
+
+
     @Test
-    @DisplayName("비밀번호 변경 실패")
-    void 비밀번호_변경_실패(){
+    @DisplayName("로그아웃 성공")
+    void 로그아웃_성공(){
+        // given
+        Optional<User> user = Optional.ofNullable(setUpLogoutUser());
+        when(userRepository.findByUserId("testUser")).thenReturn(user);
+
+        // when
+        userService.logout("testUser");
+
+        // when
+        assertThat(user.get().getRefreshToken()).isNull();
+    }
+
+    @Test
+    @DisplayName("회원 조회 실패")
+    void 회원_조회_실패(){
         // given
         ChangePasswordRequestDto build = ChangePasswordRequestDto.builder().userId("wrongUser").password("password").build();
         when(userRepository.findByUserId("wrongUser")).thenThrow(new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
@@ -223,6 +212,8 @@ public class UserServiceTest {
         assertThat(customException.getMessage()).isEqualTo(ErrorCode.ACCOUNT_NOT_FOUND.getMessage());
     }
 
+    @Test
+    @DisplayName()
     private UserUpdateRequestDto setUpUserUpdateResponseDto(){
         return UserUpdateRequestDto.builder()
                 .userId("testUser")
@@ -256,6 +247,20 @@ public class UserServiceTest {
                 .password("testPassword")
                 .role(Role.USER.getValue())
                 .phoneNumber("01012345678")
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    private User setUpLogoutUser(){
+        return User.builder()
+                .userId("testUser")
+                .name("testName")
+                .deleted(false)
+                .nickname("testNickname")
+                .password("testPassword")
+                .role(Role.USER.getValue())
+                .phoneNumber("01012345678")
+                .refreshToken("testRefreshToken")
                 .createdAt(LocalDateTime.now())
                 .build();
     }

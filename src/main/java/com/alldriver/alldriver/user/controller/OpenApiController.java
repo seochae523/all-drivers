@@ -16,7 +16,7 @@ import java.net.URISyntaxException;
 public class OpenApiController {
     private final OpenApiService openApiService;
 
-    @GetMapping("/check-license")
+    @GetMapping("/verify/license")
     private ResponseEntity<Boolean> checkLicense(@RequestParam(name="license") String license) throws JsonProcessingException, URISyntaxException {
         return ResponseEntity.ok(openApiService.validateLicense(license));
     }
