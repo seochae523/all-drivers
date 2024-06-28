@@ -20,7 +20,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query("SELECT b from board b left join fetch b.user u left join fetch b.boardImages i " +
             "left join fetch b.carBoards cb left join fetch cb.car c " +
-            "left join fetch b.placeBoards pb left join fetch pb.place p " +
+            "left join fetch b.locationBoards lb left join fetch lb.subLocation l " +
             "left join fetch b.jobBoards jb left join fetch jb.job j " +
             "order by b.createdAt DESC")
     Page<Board> findAll(Pageable pageable);
