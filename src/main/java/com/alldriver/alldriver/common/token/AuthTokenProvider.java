@@ -43,13 +43,25 @@ public class AuthTokenProvider {
 
 
     public AuthToken generateToken(String userId, List<String> roles) {
-        String accessToken = Jwts.builder()
-                .setSubject(userId)
-                .claim("roles", roles)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + authTokenExpirationTime))
-                .signWith(SignatureAlgorithm.HS512, key)
-                .compact();
+        String accessToken;
+        if (roles.contains("ROLE_ADMIN")){
+            accessToken = Jwts.builder()
+                    .setSubject(userId)
+                    .claim("roles", roles)
+                    .setIssuedAt(new Date(System.currentTimeMillis()))
+                    .setExpiration(new Date(System.currentTimeMillis() + 99999999999L))
+                    .signWith(SignatureAlgorithm.HS512, key)
+                    .compact();
+        }
+        else {
+            accessToken = Jwts.builder()
+                    .setSubject(userId)
+                    .claim("roles", roles)
+                    .setIssuedAt(new Date(System.currentTimeMillis()))
+                    .setExpiration(new Date(System.currentTimeMillis() + authTokenExpirationTime))
+                    .signWith(SignatureAlgorithm.HS512, key)
+                    .compact();
+        }
 
         String refreshToken = Jwts.builder()
                 .setSubject(userId)

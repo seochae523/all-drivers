@@ -42,11 +42,11 @@ public class BoardFindResponseDto {
         this.createdAt = board.getCreatedAt();
         this.payment = board.getPayment();
         this.payType = board.getPayType();
-        if(board.getImage().isEmpty()){
+        if(board.getBoardImages().isEmpty()){
             this.images = new HashSet<>();
         }
         else {
-            this.images = board.getImage().stream()
+            this.images = board.getBoardImages().stream()
                     .map(ImageFindResponseDto::new)
                     .collect(Collectors.toSet());
         }

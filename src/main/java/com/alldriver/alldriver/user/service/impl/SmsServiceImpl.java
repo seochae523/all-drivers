@@ -10,11 +10,13 @@ import com.alldriver.alldriver.user.repository.SmsRepository;
 import com.alldriver.alldriver.user.repository.UserRepository;
 import com.alldriver.alldriver.user.service.SmsService;
 import lombok.RequiredArgsConstructor;
+
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.exception.NurigoMessageNotReceivedException;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.service.DefaultMessageService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,15 +33,35 @@ import java.util.Random;
 public class SmsServiceImpl implements SmsService {
     private final SmsRepository smsRepository;
     private final UserRepository userRepository;
+
+    @Value("${sms.api-key}")
+    private String apiKey;
+    @Value("${sms.secret-key}")
+    private String secretKey;
+    @Value("${sms.domain}")
+    private String domain;
+
+    @Value("${sms.phone-number}")
+    private String senderPhoneNumber;
+    private void checkPhoneNumber(String phoneNumber) {
+        userRepository.findByPhoneNumber(phoneNumber)
+                .ifPresent(x -> {
+                    throw new CustomException(ErrorCode.DUPLICATED_PHONE_NUMBER);
+                });
+
+    }
+
     @Override
     public void sendAuthCode(SmsSendRequestDto smsSendRequestDto) {
         String phoneNumber = smsSendRequestDto.getPhoneNumber();
 
+        this.checkPhoneNumber(phoneNumber);
+
         String code = createCode();
-        DefaultMessageService messageService =  NurigoApp.INSTANCE.initialize("API 키 입력", "API 시크릿 키 입력", "https://api.coolsms.co.kr");
+        DefaultMessageService messageService =  NurigoApp.INSTANCE.initialize(apiKey, secretKey, domain);
         // Message 패키지가 중복될 경우 net.nurigo.sdk.message.model.Message로 치환하여 주세요
         Message message = new Message();
-        message.setFrom("계정에서 등록한 발신번호 입력");
+        message.setFrom(senderPhoneNumber);
         message.setTo(phoneNumber);
         message.setText("All Driver 인증번호 ["+code+"]를 화면에 입력해주세요.");
 
@@ -72,16 +94,12 @@ public class SmsServiceImpl implements SmsService {
             log.error("{}",exception.getMessage());
         }
     }
-    private void checkDuplicatedPhoneNumber(String phoneNumber){
-        userRepository.findByPhoneNumber(phoneNumber)
-                .orElseThrow(() -> new CustomException(ErrorCode.DUPLICATED_PHONE_NUMBER));
-    }
+
     @Override
     public SmsVerifyResponseDto verifiedCode(SmsVerifyRequestDto smsVerifyRequestDto){
         String authCode = smsVerifyRequestDto.getAuthCode();
         String phoneNumber = smsVerifyRequestDto.getPhoneNumber();
 
-        this.checkDuplicatedPhoneNumber(phoneNumber);
 
         SmsSession authInfo = smsRepository.findByPhoneNumber(phoneNumber)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));

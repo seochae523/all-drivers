@@ -39,7 +39,7 @@ public class SecurityConfig {
                         .requestMatchers("/car-owner/**").hasRole("CAR_OWNER")
                         .requestMatchers("/owner/**").hasRole("OWNER")
                         .requestMatchers( "/find-nickname", "/login", "/sign-up/**", "/swagger-ui/**", "/v3/api-docs/**", "/check/**",
-                                         "/change-forget-password", "/refresh","/ws/chat", "/sms/**").permitAll()
+                                         "/change-forget-password", "/refresh","/ws/chat", "/sms/**" , "/verify/**").permitAll()
                  )
 
                 .addFilterBefore(new JwtFilter(authTokenProvider), UsernamePasswordAuthenticationFilter.class);

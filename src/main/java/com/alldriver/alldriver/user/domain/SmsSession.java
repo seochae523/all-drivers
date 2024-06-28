@@ -20,13 +20,14 @@ public class SmsSession {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="auth_code", columnDefinition = "varchar", length = 6)
+    @Column(name="auth_code", columnDefinition = "varchar", length = 6, nullable = false)
     private String authCode;
 
-    @Column(name="phone_number", columnDefinition = "varchar", length = 11)
+    @Column(name="phone_number", columnDefinition = "varchar", length = 11,nullable = false)
     private String phoneNumber;
 
     @CreationTimestamp
+    @Column(name="created_at",nullable = false)
     private LocalDateTime createdAt;
     public void resetAuthCode(String authCode, LocalDateTime createdAt) {
         this.authCode = authCode;
