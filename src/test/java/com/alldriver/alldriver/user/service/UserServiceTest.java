@@ -56,18 +56,15 @@ public class UserServiceTest {
     private AuthTokenProvider authTokenProvider;
     @Mock
     private AuthenticationManagerBuilder authenticationManagerBuilder;
-
     @Mock
     private AuthenticationManager authenticationManager;
-    @Mock
-    private UserCarRepository userCarRepository;
-
 
     @Test
     @DisplayName("회원가입 성공")
     void 회원가입_성공(){
         //given
         UserSignUpRequestDto request = setUpSignUpRequestDto();
+
         when(userRepository.save(any())).thenReturn(request.toEntity());
         //when
         SignUpResponseDto response = userService.signUpUser(request);
@@ -212,8 +209,7 @@ public class UserServiceTest {
         assertThat(customException.getMessage()).isEqualTo(ErrorCode.ACCOUNT_NOT_FOUND.getMessage());
     }
 
-    @Test
-    @DisplayName()
+
     private UserUpdateRequestDto setUpUserUpdateResponseDto(){
         return UserUpdateRequestDto.builder()
                 .userId("testUser")

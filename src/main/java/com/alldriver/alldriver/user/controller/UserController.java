@@ -68,7 +68,7 @@ public class UserController {
 
 
     @PutMapping("/user/update")
-    @Operation(description = "유저 정보 업데이트 - 내부에서 중복확인 하니까 따로 안해도 됨")
+    @Operation(description = "유저 정보 업데이트 - 닉네임 변경 전에 중복 확인 하세요")
     public ResponseEntity<UserUpdateResponseDto> update(@RequestBody @Valid UserUpdateRequestDto userUpdateRequestDto){
         return new ResponseEntity(userService.update(userUpdateRequestDto), HttpStatus.OK);
     }
