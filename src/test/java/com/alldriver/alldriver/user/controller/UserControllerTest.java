@@ -111,6 +111,7 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userId").value("testUser"));
     }
+
     @Test
     @WithMockUser("testUser")
     @DisplayName("잊어버린 비밀번호 변경")

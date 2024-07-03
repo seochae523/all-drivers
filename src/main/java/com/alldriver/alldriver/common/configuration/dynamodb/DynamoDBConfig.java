@@ -13,9 +13,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
 @EnableDynamoDBRepositories // DynamoDB Repository 패키지 위치 등록
+@Profile("!test")
 public class DynamoDBConfig {
     @Value("${cloud.aws.dynamodb.accessKey}")
     private String accessKey;

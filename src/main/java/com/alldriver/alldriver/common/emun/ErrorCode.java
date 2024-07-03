@@ -34,7 +34,8 @@ public enum ErrorCode {
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "AEB-002", "Board Not Found,"),
     CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "AEB-003", "Content Not Found"),
     IMAGE_ID_NOT_FOUND(HttpStatus.NOT_FOUND, "AEB-004", "Image Id Not Found"),
-    IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "AEB_005", "Image Not Found.");
+    IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "AEB_005", "Image Not Found."),
+    MAIN_LOCATION_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB_006", "Main Location Not Found.");
 
 
     private final HttpStatus status;

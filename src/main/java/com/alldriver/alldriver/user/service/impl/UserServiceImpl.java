@@ -5,6 +5,7 @@ import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.emun.ErrorCode;
 import com.alldriver.alldriver.common.token.AuthTokenProvider;
 import com.alldriver.alldriver.common.token.dto.AuthToken;
+import com.alldriver.alldriver.common.util.S3Utils;
 import com.alldriver.alldriver.user.domain.CarImage;
 import com.alldriver.alldriver.user.domain.License;
 import com.alldriver.alldriver.user.domain.UserCar;
@@ -13,12 +14,9 @@ import com.alldriver.alldriver.user.dto.response.*;
 import com.alldriver.alldriver.user.repository.CarImageRepository;
 import com.alldriver.alldriver.user.repository.LicenseRepository;
 import com.alldriver.alldriver.user.repository.UserCarRepository;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -46,15 +44,13 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final LicenseRepository licenseRepository;
     private final CarImageRepository carImageRepository;
-    private final AmazonS3 amazonS3;
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-    @Value("${cloud.aws.cloud-front.url}")
-    private String cloudFrontUrl;
+    private final S3Utils s3Utils;
+
 
 
 
     @Override
+    @Transactional(readOnly = true)
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
         String userId = loginRequestDto.getUserId();
         String password = loginRequestDto.getPassword();
@@ -122,15 +118,7 @@ public class UserServiceImpl implements UserService {
 
         User save = userRepository.save(user);
 
-
-        String originalFilename = UUID.randomUUID() + image.getOriginalFilename();
-        ObjectMetadata metadata = new ObjectMetadata();
-
-        metadata.setContentLength(image.getSize());
-        metadata.setContentType(image.getContentType());
-
-        amazonS3.putObject(bucket, originalFilename, image.getInputStream(), metadata);
-        String url = cloudFrontUrl + "/" + originalFilename;
+        String url = s3Utils.uploadFile(image);
 
         License license = License.builder()
                 .licenseNumber(ownerSignUpRequestDto.getLicense())
@@ -173,14 +161,7 @@ public class UserServiceImpl implements UserService {
         User save = userRepository.save(user);
 
         for (MultipartFile image : images) {
-            String originalFilename = UUID.randomUUID() + image.getOriginalFilename();
-            ObjectMetadata metadata = new ObjectMetadata();
-
-            metadata.setContentLength(image.getSize());
-            metadata.setContentType(image.getContentType());
-
-            amazonS3.putObject(bucket, originalFilename, image.getInputStream(), metadata);
-            String url = cloudFrontUrl + "/" + originalFilename;
+            String url = s3Utils.uploadFile(image);
 
             CarImage carImage = CarImage.builder()
                     .userCar(userCar)
@@ -208,6 +189,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Boolean checkNickname(String nickname) {
         if(nickname == null) throw new CustomException(ErrorCode.NICKNAME_NOT_FOUND);
 
@@ -264,6 +246,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Boolean checkLicense(String licenseNumber) {
         licenseRepository.findByLicenseNumber(licenseNumber)
                 .ifPresent(x ->{
@@ -285,6 +268,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Boolean checkDuplicatedAccount(String userId){
         userRepository.findByUserId(userId)
                 .ifPresent(x ->{
