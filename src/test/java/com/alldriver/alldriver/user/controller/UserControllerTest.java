@@ -3,7 +3,6 @@ package com.alldriver.alldriver.user.controller;
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.emun.ErrorCode;
 import com.alldriver.alldriver.user.dto.response.ChangePasswordResponseDto;
-import com.alldriver.alldriver.user.dto.response.DeleteResponseDto;
 import com.alldriver.alldriver.user.dto.response.UserUpdateResponseDto;
 import com.alldriver.alldriver.user.service.impl.UserServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
