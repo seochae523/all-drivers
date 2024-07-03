@@ -1,10 +1,7 @@
 package com.alldriver.alldriver.board.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity(name = "location_board")
 @Getter
@@ -19,10 +16,12 @@ public class LocationBoard {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
+    @Setter
     private Board board;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id")
+    @Setter
     private SubLocation subLocation;
 
 }

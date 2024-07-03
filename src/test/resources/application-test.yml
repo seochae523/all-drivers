@@ -1,0 +1,50 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:h2:~/test;DB_CLOSE_DELAY=-1;NON_KEYWORDS=USER;DATABASE_TO_UPPER=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+        globally_quoted_identifiers: true
+    show-sql: true
+    generate-ddl: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  jwt:
+    header: Authorization
+    secret: test
+    # 30 * 60 * 1000 = 30분
+    access-token-expiration-time: 1800000
+    # 30 * 24 * 60 * 60 * 1000 = 30일
+    refresh-token-expiration-time: 2592000000
+open-api:
+  license:
+    base-url: ${LICENSE_BASE_URL}
+    api-key: ${LICENSE_API_KEY}
+
+
+cloud:
+  aws:
+    cloud-front:
+      url: test
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+    s3:
+      url: test
+      bucket: test
+    dynamodb:
+      endpoint: ${DYNAMODB_ENDPOINT:http://localhost:8000}
+      region: ${DYNAMODB_REGION}
+      accessKey: ${DYNAMODB_ACCESS_KEY}
+      secretKey: ${DYNAMODB_SECRET_KEY}

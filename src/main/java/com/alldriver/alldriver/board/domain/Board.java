@@ -11,6 +11,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import com.alldriver.alldriver.user.domain.User;
 
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity(name = "board")
@@ -36,9 +39,6 @@ public class Board {
     @Column(name="payment", columnDefinition = "integer", nullable = false)
     private Integer payment;
 
-    @Column(name="end_at", columnDefinition = "timestamp", nullable = false)
-    private LocalDateTime endAt;
-
     @Column(name="recruit_type", columnDefinition = "varchar", length = 10, nullable = false)
     private String recruitType;
 
@@ -49,27 +49,51 @@ public class Board {
     @Column(name="created_at", columnDefinition = "timestamp", nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(name="start_at", columnDefinition = "date", nullable = false)
+    private Date startAt;
+
+    @Column(name="end_at", columnDefinition = "date", nullable = false)
+    private Date endAt;
+
     @ColumnDefault("false")
     @Column(name="deleted", nullable = false)
     private Boolean deleted;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name="USER_ID", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
-    private Set<BoardImage> boardImages;
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY ,cascade = CascadeType.PERSIST)
+    @Builder.Default
+    private Set<BoardImage> boardImages = new HashSet<>();
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
-    private Set<CarBoard> carBoards;
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @Builder.Default
+    private Set<CarBoard> carBoards = new HashSet<>();
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
-    private Set<JobBoard> jobBoards;
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @Builder.Default
+    private Set<JobBoard> jobBoards = new HashSet<>();
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
-    private Set<LocationBoard> locationBoards;
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @Builder.Default
+    private Set<LocationBoard> locationBoards = new HashSet<>();
 
     public void setDeleted(Boolean deleted){
         this.deleted = deleted;
+    }
+
+    public void addLocationBoard(LocationBoard locationBoard) {
+        this.locationBoards.add(locationBoard);
+        locationBoard.setBoard(this);
+    }
+    public void addCarBoard(CarBoard carBoard){
+        this.carBoards.add(carBoard);
+        carBoard.setBoard(this);
+    }
+
+    public void addJobBoard(JobBoard jobBoard){
+        this.jobBoards.add(jobBoard);
+        jobBoard.setBoard(this);
     }
 }
