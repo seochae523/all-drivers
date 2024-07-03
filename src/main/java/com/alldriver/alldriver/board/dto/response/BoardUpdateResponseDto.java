@@ -11,5 +11,7 @@ public class BoardUpdateResponseDto {
 
     private String content;
     private String title;
-    private Integer price;
+    private Integer payType;
+
+
 }
