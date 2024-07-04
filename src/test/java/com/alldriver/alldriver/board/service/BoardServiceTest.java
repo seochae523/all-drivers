@@ -73,9 +73,7 @@ class BoardServiceTest {
     void delete() {
     }
 
-    @Test
-    void search() {
-    }
+
     private BoardSaveRequestDto setUpBoardSaveRequestDto(){
         return BoardSaveRequestDto.builder()
                 .content("testC")
