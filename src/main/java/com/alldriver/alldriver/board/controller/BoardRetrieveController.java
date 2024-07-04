@@ -52,5 +52,12 @@ public class BoardRetrieveController {
                                                                  @RequestParam(value = "mainLocationId") Long mainLocationId){
         return ResponseEntity.ok(boardRetrieveService.findByMainLocation(page, mainLocationId));
     }
+    @Operation(description = "게시글을 키워드로 10개씩 조회 (페이지 시작 0부터)")
+    @GetMapping("/board/search")
+    @Parameter(name = "page", description = "페이지 번호 기본 값 0")
+    public ResponseEntity<List<BoardFindResponseDto>> search(@RequestParam(value = "page", defaultValue = "0") Integer page,
+                                                                         @RequestParam(value = "keyword") String keyword){
+        return ResponseEntity.ok(boardRetrieveService.search(page, keyword));
+    }
 
 }

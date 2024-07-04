@@ -1,5 +1,6 @@
 package com.alldriver.alldriver.board.controller;
 
+import com.alldriver.alldriver.board.dto.request.BoardUpdateRequestDto;
 import com.alldriver.alldriver.board.dto.response.*;
 import com.alldriver.alldriver.board.service.BoardCategoryRetrieveService;
 import com.alldriver.alldriver.board.service.BoardRetrieveService;
@@ -35,6 +36,17 @@ public class BoardController {
     public ResponseEntity<BoardSaveResponseDto> save(@RequestPart(value = "images", required = false) List<MultipartFile> multipartFile,
                                                      @RequestPart(value = "request", required = false) BoardSaveRequestDto boardSaveRequestDto) throws IOException {
         return ResponseEntity.ok(boardService.save(multipartFile, boardSaveRequestDto));
+    }
+
+    @Operation(description = "게시글 업데이트")
+    @PutMapping("/board/update")
+    @Parameters({
+            @Parameter(name="images", description = "추가 할 이미지"),
+            @Parameter(name="request", description = "게시글에 필요한 리퀘스트", required = true)
+    })
+    public ResponseEntity<String> update(@RequestPart(value = "images", required = false) List<MultipartFile> multipartFile,
+                                                     @RequestPart(value = "request", required = false) BoardUpdateRequestDto boardUpdateRequestDto) throws IOException {
+        return ResponseEntity.ok(boardService.update(multipartFile, boardUpdateRequestDto));
     }
 
 }

@@ -79,9 +79,9 @@ public class AuthTokenProvider {
 
     public Authentication getAuthentication(String accessToken) {
         Claims claims = parseClaims(accessToken);
-        String studentId = claims.getSubject();
+        String userId = claims.getSubject();
 
-        UserDetails userDetails = customUserDetailService.loadUserByUsername(studentId);
+        UserDetails userDetails = customUserDetailService.loadUserByUsername(userId);
 
         UserDetails principal = new User(claims.getSubject() , "", userDetails.getAuthorities());
         return new UsernamePasswordAuthenticationToken(principal, "", userDetails.getAuthorities());

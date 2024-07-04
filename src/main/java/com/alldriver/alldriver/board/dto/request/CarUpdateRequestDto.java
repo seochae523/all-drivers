@@ -1,4 +1,4 @@
 package com.alldriver.alldriver.board.dto.request;
 
-public record CarUpdateRequestDto(Long from, Long to) {
+public record CarUpdateRequestDto(Integer type, Long id) {
 }
