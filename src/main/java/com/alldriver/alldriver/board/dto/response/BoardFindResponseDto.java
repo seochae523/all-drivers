@@ -15,6 +15,8 @@ import java.util.*;
 public class BoardFindResponseDto {
     @Schema(description = "조회 결과 id 나중에 update, delete 할때 필요함", example = "3")
     private Long id;
+    @Schema(description = "내용", example = "example")
+    private String content;
     @Schema(description = "제목", example = "example")
     private String title;
     @Schema(description = "아이디", example = "example")

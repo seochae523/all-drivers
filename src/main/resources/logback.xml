@@ -4,7 +4,7 @@
     <appender name="SLACK" class="com.github.maricn.logback.SlackAppender">
         <webhookUri>${WEB_HOOK_URL}</webhookUri>
         <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %msg %n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS, Asia/Seoul} %msg %n</pattern>
         </layout>
         <username>All-Driver-Log</username>
         <colorCoding>true</colorCoding>
