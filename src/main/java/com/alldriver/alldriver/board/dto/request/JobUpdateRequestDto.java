@@ -1,4 +1,4 @@
 package com.alldriver.alldriver.board.dto.request;
 
-public record JobUpdateRequestDto(Long from, Long to) {
+public record JobUpdateRequestDto(Integer type, Long id) {
 }

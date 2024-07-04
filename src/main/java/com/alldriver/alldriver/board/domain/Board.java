@@ -1,6 +1,7 @@
 package com.alldriver.alldriver.board.domain;
 
 
+import com.alldriver.alldriver.board.dto.request.BoardUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,10 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import com.alldriver.alldriver.user.domain.User;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity(name = "board")
 @Getter
@@ -59,23 +57,23 @@ public class Board {
     @Column(name="deleted", nullable = false)
     private Boolean deleted;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name="USER_ID", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY ,cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY ,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Builder.Default
     private Set<BoardImage> boardImages = new HashSet<>();
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade ={CascadeType.PERSIST, CascadeType.MERGE})
     @Builder.Default
     private Set<CarBoard> carBoards = new HashSet<>();
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Builder.Default
     private Set<JobBoard> jobBoards = new HashSet<>();
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Builder.Default
     private Set<LocationBoard> locationBoards = new HashSet<>();
 
@@ -95,5 +93,16 @@ public class Board {
     public void addJobBoard(JobBoard jobBoard){
         this.jobBoards.add(jobBoard);
         jobBoard.setBoard(this);
+    }
+
+    public void updateBoard(BoardUpdateRequestDto boardUpdateRequestDto){
+        this.content = boardUpdateRequestDto.getContent();
+        this.title = boardUpdateRequestDto.getTitle();
+        this.payType = boardUpdateRequestDto.getPayType();
+        this.payment = boardUpdateRequestDto.getPayment();
+        this.recruitType = boardUpdateRequestDto.getRecruitType();
+        this.companyLocation = boardUpdateRequestDto.getCompanyLocation();
+        this.startAt = boardUpdateRequestDto.getStartAt();
+        this.endAt = boardUpdateRequestDto.getEndAt();
     }
 }

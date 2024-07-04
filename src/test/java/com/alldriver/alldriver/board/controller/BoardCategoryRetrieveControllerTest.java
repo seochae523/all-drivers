@@ -5,6 +5,7 @@ import com.alldriver.alldriver.board.dto.response.*;
 import com.alldriver.alldriver.board.service.BoardCategoryRetrieveService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ class BoardCategoryRetrieveControllerTest {
     BoardCategoryRetrieveService boardCategoryRetrieveService;
 
     @Test
+    @DisplayName("직업 조회")
     void findAllJobs() throws Exception {
         // given
         List<JobFindResponseDto> jobs = setUpJobs();
@@ -46,6 +48,7 @@ class BoardCategoryRetrieveControllerTest {
     }
 
     @Test
+    @DisplayName("차량 조회")
     void findAllCars() throws Exception {
         // given
         List<CarFindResponseDto> cars = setUpCars();
@@ -59,6 +62,7 @@ class BoardCategoryRetrieveControllerTest {
     }
 
     @Test
+    @DisplayName("지역 - 시 조회")
     void findAllMainLocations() throws Exception {
         // given
         List<MainLocationFindResponseDto> mainLocations = setUpMainLocations();
@@ -72,6 +76,7 @@ class BoardCategoryRetrieveControllerTest {
     }
 
     @Test
+    @DisplayName("지역 - 구 조회")
     void findAllSubLocations() throws Exception {
         // given
         List<SubLocationFindResponseDto> subLocations = setUpSubLocations();
@@ -84,7 +89,8 @@ class BoardCategoryRetrieveControllerTest {
     }
 
     @Test
-    void findSubLocationsByMainLocationId() throws Exception {
+    @DisplayName("시 id에 따른 구 조회 성공")
+    void findSubLocationsByMainLocationIdSuccess() throws Exception {
         // given
         Long mainLocationId = 1L;
         List<SubLocationFindResponseDto> subLocations = setUpSubLocations();
@@ -94,6 +100,18 @@ class BoardCategoryRetrieveControllerTest {
         mockMvc.perform(get("/user/subLocations/" + mainLocationId))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(subLocations)));
+    }
+    @Test
+    @DisplayName("시 id에 따른 구 조회 실패")
+    void findSubLocationsByMainLocationIdFail() throws Exception {
+        // given
+        Long mainLocationId = 0L;
+        when(boardCategoryRetrieveService.findSubLocationsByMainLocation(mainLocationId)).thenReturn(new ArrayList<>());
+
+        // when, then
+        mockMvc.perform(get("/user/subLocations/" + mainLocationId))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(new ArrayList<>())));
     }
 
     private List<JobFindResponseDto> setUpJobs(){

@@ -64,11 +64,12 @@ public class UserServiceImpl implements UserService {
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
         AuthToken authToken = authTokenProvider.generateToken(userId, roles);
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         user.setRefreshToken(authToken.getRefreshToken());
-
         userRepository.save(user);
 
         return LoginResponseDto.builder()
