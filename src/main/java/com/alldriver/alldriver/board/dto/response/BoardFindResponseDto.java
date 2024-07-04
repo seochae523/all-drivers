@@ -49,6 +49,7 @@ public class BoardFindResponseDto {
 
     public BoardFindResponseDto(Board board){
         this.id = board.getId();
+        this.content = board.getContent();
         this.title = board.getTitle();
         this.userId = board.getUser().getUserId();
         this.createdAt = board.getCreatedAt();

@@ -88,4 +88,16 @@ public class BoardRetrieveServiceImpl implements BoardRetrieveService {
                 .map(BoardFindResponseDto::new)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<BoardFindResponseDto> search(Integer page, String keyword) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        // TODO : 차후에 elastic search로 변경
+        Page<Board> result = boardRepository.search(pageable, keyword);
+
+        return result.stream()
+                .filter(x->!x.getDeleted())
+                .map(BoardFindResponseDto::new)
+                .collect(Collectors.toList());
+    }
 }

@@ -15,10 +15,7 @@ import com.alldriver.alldriver.board.domain.BoardImage;
 import com.alldriver.alldriver.user.domain.User;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Getter
@@ -53,9 +50,6 @@ public class BoardSaveRequestDto {
     private List<Long> car;
     @Schema(description = "업종", example = "[1, 2]")
     private List<Long> job;
-
-
-
 
 
     public Board toEntity(User user){

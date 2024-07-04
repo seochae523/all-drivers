@@ -1,8 +1,7 @@
 package com.alldriver.alldriver.board.service.impl;
 
 import com.alldriver.alldriver.board.domain.*;
-import com.alldriver.alldriver.board.dto.request.BoardSaveRequestDto;
-import com.alldriver.alldriver.board.dto.request.BoardUpdateRequestDto;
+import com.alldriver.alldriver.board.dto.request.*;
 import com.alldriver.alldriver.board.dto.response.*;
 import com.alldriver.alldriver.board.repository.*;
 import com.alldriver.alldriver.board.service.BoardService;
@@ -25,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -41,6 +41,9 @@ public class BoardServiceImpl implements BoardService {
     private final CarRepository carRepository;
     private final BoardImageRepository boardImageRepository;
     private final MainLocationRepository mainLocationRepository;
+    private final CarBoardRepository carBoardRepository;
+    private final JobBoardRepository jobBoardRepository;
+    private final LocationBoardRepository locationBoardRepository;
     private final S3Utils s3Utils;
 
 
@@ -83,18 +86,18 @@ public class BoardServiceImpl implements BoardService {
             board.addLocationBoard(locationBoard);
         }
         Board save = boardRepository.save(board);
+        if(images != null) {
+            for (MultipartFile image : images) {
+                String url = s3Utils.uploadFile(image);
 
-        for (MultipartFile image : images) {
-            String url = s3Utils.uploadFile(image);
+                BoardImage boardImage = BoardImage.builder()
+                        .board(save)
+                        .url(url)
+                        .build();
 
-            BoardImage boardImage = BoardImage.builder()
-                    .board(save)
-                    .url(url)
-                    .build();
-
-            boardImageRepository.save(boardImage);
+                boardImageRepository.save(boardImage);
+            }
         }
-
 
         return BoardSaveResponseDto.builder()
                 .title(save.getTitle())
@@ -104,24 +107,117 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public BoardUpdateResponseDto update(BoardUpdateRequestDto boardUpdateRequestDto) {
+    public String update(List<MultipartFile> images, BoardUpdateRequestDto boardUpdateRequestDto) throws IOException {
         Long id = boardUpdateRequestDto.getId();
+        List<JobUpdateRequestDto> jobInfos = boardUpdateRequestDto.getJobInfos();
+        List<CarUpdateRequestDto> carInfos = boardUpdateRequestDto.getCarInfos();
+        List<LocationUpdateRequestDto> locationInfos = boardUpdateRequestDto.getLocationInfos();
+        List<Long> imageIds = boardUpdateRequestDto.getImageIds();
+        String userId = boardUpdateRequestDto.getUserId();
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
+        if(!board.getUser().getUserId().equals(userId)) throw new CustomException(ErrorCode.INVALID_USER);
 
-        return null;
+        board.updateBoard(boardUpdateRequestDto);
+        for (CarUpdateRequestDto carInfo : carInfos) {
+            if (carInfo.type() == 0) {
+                Car car = carRepository.findById(carInfo.id())
+                        .orElseThrow(() -> new CustomException(ErrorCode.CAR_NOT_FOUND));
+
+                // 추가
+                CarBoard carBoard = CarBoard.builder()
+                        .car(car)
+                        .board(board)
+                        .build();
+                board.addCarBoard(carBoard);
+
+            }
+            else if (carInfo.type() == -1) {
+                CarBoard carBoard = carBoardRepository.findById(carInfo.id())
+                        .orElseThrow(() -> new CustomException(ErrorCode.CAR_NOT_FOUND));
+
+                carBoardRepository.delete(carBoard);
+                board.getCarBoards().remove(carBoard);
+            }
+        }
+        for (JobUpdateRequestDto jobInfo : jobInfos) {
+            if(jobInfo.type() == 0){
+                Job job = jobRepository.findById(jobInfo.id())
+                        .orElseThrow(() -> new CustomException(ErrorCode.JOB_NOT_FOUND));
+
+                JobBoard jobBoard = JobBoard.builder()
+                        .job(job)
+                        .board(board)
+                        .build();
+                board.addJobBoard(jobBoard);
+            }
+            else if (jobInfo.type() == -1) {
+                JobBoard jobBoard = jobBoardRepository.findById(jobInfo.id())
+                        .orElseThrow(() -> new CustomException(ErrorCode.CAR_NOT_FOUND));
+
+                jobBoardRepository.delete(jobBoard);
+                board.getJobBoards().remove(jobBoard);
+            }
+        }
+        for (LocationUpdateRequestDto locationInfo : locationInfos) {
+            if(locationInfo.type() == 0){
+                SubLocation subLocation = subLocationRepository.findById(locationInfo.id())
+                        .orElseThrow(() -> new CustomException(ErrorCode.SUB_LOCATION_NOT_FOUND));
+
+                LocationBoard locationBoard = LocationBoard.builder()
+                        .subLocation(subLocation)
+                        .board(board)
+                        .build();
+
+                board.addLocationBoard(locationBoard);
+            }
+            else if (locationInfo.type() == -1) {
+                LocationBoard locationBoard = locationBoardRepository.findById(locationInfo.id())
+                        .orElseThrow(() -> new CustomException(ErrorCode.SUB_LOCATION_NOT_FOUND));
+
+                locationBoardRepository.delete(locationBoard);
+                board.getLocationBoards().remove(locationBoard);
+            }
+        }
+        boardRepository.save(board);
+
+        for (Long imageId : imageIds) {
+            BoardImage boardImage = boardImageRepository.findById(imageId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.IMAGE_NOT_FOUND));
+
+            boardImageRepository.delete(boardImage);
+            s3Utils.deleteFile(boardImage.getUrl());
+
+        }
+        if(images != null) {
+            for (MultipartFile image : images) {
+                String url = s3Utils.uploadFile(image);
+
+                BoardImage boardImage = BoardImage.builder()
+                        .board(board)
+                        .url(url)
+                        .build();
+
+                boardImageRepository.save(boardImage);
+            }
+        }
+
+
+        return "게시글 업데이트 완료.";
     }
 
     @Override
-    public BoardDeleteResponseDto delete(Long id, String email) {
-        return null;
-    }
+    public String delete(Long id, String userId) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<BoardFindResponseDto> search(String keyword, Integer page) {
-        return null;
+        if(!board.getUser().getUserId().equals(userId)) throw new CustomException(ErrorCode.INVALID_USER);
+
+        board.setDeleted(true);
+        boardRepository.save(board);
+
+        return "게시글 삭제 완료.";
     }
 
 
