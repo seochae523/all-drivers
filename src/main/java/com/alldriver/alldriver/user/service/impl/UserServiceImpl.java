@@ -76,6 +76,7 @@ public class UserServiceImpl implements UserService {
                 .authToken(authToken)
                 .nickname(user.getNickname())
                 .userId(user.getUserId())
+                .roles(roles)
                 .build();
 
     }

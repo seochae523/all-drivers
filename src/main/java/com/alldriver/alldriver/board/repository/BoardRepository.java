@@ -53,6 +53,13 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "left join fetch b.carBoards cb left join fetch cb.car c " +
             "left join fetch b.locationBoards lb left join fetch lb.subLocation l " +
             "left join fetch b.jobBoards jb left join fetch jb.job j " +
+            "where u.userId = :userId " +
+            "order by b.createdAt DESC")
+    Page<Board> findByUserId(Pageable pageable, @Param("userId") String userId);
+    @Query("SELECT b from board b left join fetch b.user u left join fetch b.boardImages i " +
+            "left join fetch b.carBoards cb left join fetch cb.car c " +
+            "left join fetch b.locationBoards lb left join fetch lb.subLocation l " +
+            "left join fetch b.jobBoards jb left join fetch jb.job j " +
             "where b.content like concat(:keyword, '%') or " +
             "b.title like concat(:keyword, '%') or " +
             "c.category like concat(:keyword, '%') or " +
