@@ -12,5 +12,6 @@ public interface BoardRetrieveService {
     List<BoardFindResponseDto> findBySubLocations(Integer page, List<Long> subLocationIds);
 
     List<BoardFindResponseDto> findByMainLocation(Integer page, Long mainLocationId);
+    List<BoardFindResponseDto> findByUserId(Integer page, String userId);
     List<BoardFindResponseDto> search(Integer page,String keyword);
 }
