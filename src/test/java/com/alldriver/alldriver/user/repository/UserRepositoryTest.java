@@ -40,11 +40,9 @@ public class UserRepositoryTest {
                     .password("testPassword")
                     .build();
 
+
             userRepository.save(user);
-
     }
-
-
 
 
     @Test
