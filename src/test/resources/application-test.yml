@@ -1,4 +1,7 @@
 spring:
+  data:
+    rest:
+      default-page-size: 10
   config:
     activate:
       on-profile: test

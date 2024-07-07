@@ -25,8 +25,9 @@ public class OpenApiServiceImpl implements OpenApiService {
 
     @Override
     public Boolean validateLicense(String license) throws URISyntaxException {
-        RestTemplate restTemplate = new RestTemplate();
         final String requestUrl = licenseValidateOpenApiBaseUrl + "/status?serviceKey=" + licenseApiKey ;
+        RestTemplate restTemplate = new RestTemplate();
+
         URI uri = new URI(requestUrl);
 
         List<String> licenseNo = new ArrayList<>();
