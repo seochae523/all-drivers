@@ -20,11 +20,8 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
   jwt:
     header: Authorization
-    secret: test
-    # 30 * 60 * 1000 = 30분
-    access-token-expiration-time: 1800000
-    # 30 * 24 * 60 * 60 * 1000 = 30일
-    refresh-token-expiration-time: 2592000000
+    secret: dGVzdEpXVFNFQ1JFQVR3aHlJdGRpZG50YXBwbHllZD8=
+
 open-api:
   license:
     base-url: ${LICENSE_BASE_URL}

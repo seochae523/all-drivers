@@ -11,7 +11,7 @@ import java.util.List;
 public interface UserService {
     Boolean checkDuplicatedAccount(String userId);
     LoginResponseDto login(LoginRequestDto loginRequestDto);
-    LogoutResponseDto logout(String userId);
+    LogoutResponseDto logout();
     SignUpResponseDto signUpUser(UserSignUpRequestDto userSignUpRequestDto);
     SignUpResponseDto signUpOwner(OwnerSignUpRequestDto ownerSignUpRequestDto, MultipartFile image) throws IOException;
     SignUpResponseDto signUpCarOwner(CarOwnerSignUpRequestDto carOwnerSignUpRequestDto, List<MultipartFile> image) throws IOException;
@@ -19,6 +19,6 @@ public interface UserService {
     UserUpdateResponseDto update(UserUpdateRequestDto userUpdateRequestDto);
     ChangePasswordResponseDto changePassword(ChangePasswordRequestDto changePasswordRequestDto);
     Boolean checkLicense(String licenseNumber);
-    String signOut(String userId);
+    String signOut();
 
 }

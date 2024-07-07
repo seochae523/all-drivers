@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(ex.getErrorCode().getStatus())
-                .body(new ApiErrorResponse(ex.getErrorCode()));
+                .body(new ApiErrorResponse(ex.getErrorCode(), ex.getCustomMessage()));
 
     }
 

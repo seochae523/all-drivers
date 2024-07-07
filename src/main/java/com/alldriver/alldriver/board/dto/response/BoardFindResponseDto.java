@@ -21,6 +21,8 @@ public class BoardFindResponseDto {
     private String title;
     @Schema(description = "아이디", example = "example")
     private String userId;
+    @Schema(description = "닉네임", example = "example")
+    private String userNickname;
     @Schema(description = "작성일", example = "2024-04-14T17:21:33.975Z")
     private LocalDateTime createdAt;
     @Schema(description = "급여", example = "1500000")
@@ -33,66 +35,19 @@ public class BoardFindResponseDto {
     private String recruitType;
     @Schema(description = "메인 지역")
     private String mainLocation;
-    @Schema(description = "이미지")
-    private Set<ImageFindResponseDto> images = new HashSet<>();
     @Schema(description = "지역")
-    private List<BoardLocationFindResponseDto> locations = new ArrayList<>();
+    private List<String> locations = new ArrayList<>();
     @Schema(description = "직종")
-    private List<BoardJobFindResponseDto> jobs = new ArrayList<>();
+    private List<String> jobs = new ArrayList<>();
     @Schema(description = "차종")
-    private List<BoardCarFindResponseDto> cars = new ArrayList<>();
+    private List<String> cars = new ArrayList<>();
     @Schema(description = "시작일")
     private Date startAt;
     @Schema(description = "종료일")
     private Date endAt;
+    @Schema(description = "좋아요 수")
+    private Long bookmarkCount;
+    @Schema(description = "좋아요 여부")
+    private Integer bookmarked;
 
-
-    public BoardFindResponseDto(Board board){
-        this.id = board.getId();
-        this.content = board.getContent();
-        this.title = board.getTitle();
-        this.userId = board.getUser().getUserId();
-        this.createdAt = board.getCreatedAt();
-        this.payment = board.getPayment();
-        this.payType = board.getPayType();
-        this.startAt = board.getStartAt();
-        this.endAt = board.getEndAt();
-        this.companyLocation = board.getCompanyLocation();
-        this.recruitType = board.getRecruitType();
-
-
-        for (BoardImage boardImage : board.getBoardImages()) {
-            ImageFindResponseDto imageFindResponseDto = new ImageFindResponseDto(boardImage.getId(), boardImage.getUrl());
-            images.add(imageFindResponseDto);
-        }
-
-        Set<CarBoard> carBoards = board.getCarBoards();
-        Set<LocationBoard> locationBoards = board.getLocationBoards();
-        Set<JobBoard> jobBoards = board.getJobBoards();
-
-        for (JobBoard jobBoard : jobBoards) {
-            Long id = jobBoard.getId();
-            String category = jobBoard.getJob().getCategory();
-
-            BoardJobFindResponseDto jobFindResponseDto = new BoardJobFindResponseDto(id, category);
-            jobs.add(jobFindResponseDto);
-        }
-        for (LocationBoard locationBoard : locationBoards) {
-            Long id = locationBoard.getId();
-            String category = locationBoard.getSubLocation().getCategory();
-
-            BoardLocationFindResponseDto locationFindResponseDto = new BoardLocationFindResponseDto(id, category);
-            locations.add(locationFindResponseDto);
-
-            this.mainLocation = locationBoard.getSubLocation().getMainLocation().getCategory();
-        }
-        for (CarBoard carBoard : carBoards) {
-            Long id = carBoard.getId();
-            String category = carBoard.getCar().getCategory();
-
-            BoardCarFindResponseDto boardCarFindResponseDto = new BoardCarFindResponseDto(id, category);
-            cars.add(boardCarFindResponseDto);
-        }
-
-    }
 }
