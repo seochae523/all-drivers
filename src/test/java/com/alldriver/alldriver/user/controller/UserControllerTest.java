@@ -57,7 +57,7 @@ public class UserControllerTest {
     @DisplayName("삭제 확인")
     void 삭제_확인() throws Exception {
         // given
-        when(userService.signOut("testUserId")).thenReturn("회원 탈퇴 완료.");
+        when(userService.signOut()).thenReturn("회원 탈퇴 완료.");
 
         // when, then
         mockMvc.perform(delete("/user/sign-out?userId=testUserId").with(csrf()))

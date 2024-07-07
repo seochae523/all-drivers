@@ -3,36 +3,43 @@ package com.alldriver.alldriver.user.service;
 import com.alldriver.alldriver.common.emun.Role;
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.emun.ErrorCode;
-import com.alldriver.alldriver.common.token.AuthTokenProvider;
+import com.alldriver.alldriver.common.util.JwtUtils;
 import com.alldriver.alldriver.common.token.dto.AuthToken;
 import com.alldriver.alldriver.user.domain.User;
 import com.alldriver.alldriver.user.dto.request.ChangePasswordRequestDto;
 import com.alldriver.alldriver.user.dto.request.LoginRequestDto;
 import com.alldriver.alldriver.user.dto.request.UserSignUpRequestDto;
 import com.alldriver.alldriver.user.dto.request.UserUpdateRequestDto;
-import com.alldriver.alldriver.user.dto.response.DeleteResponseDto;
 import com.alldriver.alldriver.user.dto.response.LoginResponseDto;
-import com.alldriver.alldriver.user.dto.response.LogoutResponseDto;
 import com.alldriver.alldriver.user.dto.response.SignUpResponseDto;
-import com.alldriver.alldriver.user.repository.UserCarRepository;
 import com.alldriver.alldriver.user.repository.UserRepository;
 import com.alldriver.alldriver.user.service.impl.UserServiceImpl;
 
+import io.jsonwebtoken.Jwt;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -52,8 +59,6 @@ public class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
-    @Mock
-    private AuthTokenProvider authTokenProvider;
     @Mock
     private AuthenticationManagerBuilder authenticationManagerBuilder;
     @Mock
@@ -79,6 +84,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("로그인 성공")
+    @WithMockUser(username = "testUser", password = "12345678")
     void 로그인_성공(){
         // given
 
@@ -88,21 +94,31 @@ public class UserServiceTest {
                 .password("testPassword")
                 .build();
 
-        when(userRepository.findByUserId("testUser")).thenReturn(user);
-
+        String userId = loginRequestDto.getUserId();
+        String password = loginRequestDto.getPassword();
+        List<String> roles = new ArrayList<>();
+        Collections.addAll(roles, user.get().getRole());
         Authentication authentication = mock(Authentication.class);
         AuthToken authToken = mock(AuthToken.class);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, password);
+
+        when(authentication.getPrincipal()).thenReturn(user.get());
         when(authenticationManagerBuilder.getObject()).thenReturn(authenticationManager);
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
-        when(authTokenProvider.generateToken(any(), any())).thenReturn(authToken);
+        when(authenticationManager.authenticate(authenticationToken)).thenReturn(authentication);
 
-        // when
-        LoginResponseDto response = userService.login(loginRequestDto);
+        try (MockedStatic<JwtUtils> jwtUtils = mockStatic(JwtUtils.class)){
+            when(JwtUtils.generateToken(anyString(), anyList())).thenReturn(authToken);
+            // when
+            LoginResponseDto response = userService.login(loginRequestDto);
 
-        // then
-        assertThat(response.getUserId()).isEqualTo("testUser");
-        assertThat(response.getNickname()).isEqualTo("testNickname");
-        assertThat(response.getAuthToken()).isInstanceOf(AuthToken.class);
+            // then
+            assertThat(response.getUserId()).isEqualTo("testUser");
+            assertThat(response.getNickname()).isEqualTo("testNickname");
+            assertThat(response.getAuthToken()).isInstanceOf(AuthToken.class);
+
+        }
+
+
     }
 
 
@@ -133,16 +149,21 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("유저 삭제 성공")
+    @WithMockUser(username = "testUser", password = "12345678")
     void 삭제_성공(){
         // given
         Optional<User> user = Optional.ofNullable(setUpUser());
         when(userRepository.findByUserId("testUser")).thenReturn(user);
+        AuthToken authToken = mock(AuthToken.class);
+        try (MockedStatic<JwtUtils> jwtUtils = mockStatic(JwtUtils.class)) {
+            when(JwtUtils.getUserId()).thenReturn("testUser");
+            // when
+            String test = userService.signOut();
 
-        // when
-        String test = userService.signOut("testUser");
+            // then
+            assertThat(test).isEqualTo("회원 탈퇴 완료.");
+        }
 
-        // then
-        assertThat(test).isEqualTo("회원 탈퇴 완료.");
 
     }
 
@@ -183,16 +204,19 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("로그아웃 성공")
+    @WithMockUser(username = "testUser", password = "12345678")
     void 로그아웃_성공(){
         // given
         Optional<User> user = Optional.ofNullable(setUpLogoutUser());
         when(userRepository.findByUserId("testUser")).thenReturn(user);
+        try (MockedStatic<JwtUtils> jwtUtils = mockStatic(JwtUtils.class)) {
+            when(JwtUtils.getUserId()).thenReturn("testUser");
+            // when
+            userService.logout();
 
-        // when
-        userService.logout("testUser");
-
-        // when
-        assertThat(user.get().getRefreshToken()).isNull();
+            // when
+            assertThat(user.get().getRefreshToken()).isNull();
+        }
     }
 
     @Test

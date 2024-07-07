@@ -3,34 +3,31 @@ package com.alldriver.alldriver.user.service.impl;
 import com.alldriver.alldriver.common.emun.Role;
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.emun.ErrorCode;
-import com.alldriver.alldriver.common.token.AuthTokenProvider;
+import com.alldriver.alldriver.common.util.JwtUtils;
 import com.alldriver.alldriver.common.token.dto.AuthToken;
 import com.alldriver.alldriver.common.util.S3Utils;
-import com.alldriver.alldriver.user.domain.CarImage;
-import com.alldriver.alldriver.user.domain.License;
-import com.alldriver.alldriver.user.domain.UserCar;
+import com.alldriver.alldriver.user.domain.*;
 import com.alldriver.alldriver.user.dto.request.*;
 import com.alldriver.alldriver.user.dto.response.*;
-import com.alldriver.alldriver.user.repository.CarImageRepository;
-import com.alldriver.alldriver.user.repository.LicenseRepository;
-import com.alldriver.alldriver.user.repository.UserCarRepository;
+import com.alldriver.alldriver.user.repository.*;
+import com.amazonaws.services.ec2.model.LocalGateway;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.alldriver.alldriver.user.domain.User;
-import com.alldriver.alldriver.user.repository.UserRepository;
 import com.alldriver.alldriver.user.service.UserService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -40,34 +37,30 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserCarRepository userCarRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthTokenProvider authTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final LicenseRepository licenseRepository;
     private final CarImageRepository carImageRepository;
     private final S3Utils s3Utils;
 
 
-
-
     @Override
-    @Transactional(readOnly = true)
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
         String userId = loginRequestDto.getUserId();
         String password = loginRequestDto.getPassword();
 
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
-
-        String role = user.getRole();
-        List<String> roles = new ArrayList<>();
-        Collections.addAll(roles, role.split(","));
-
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, password);
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        // 여긴 자격 증명 확인하는 곳
+        Authentication authenticate = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        AuthToken authToken = authTokenProvider.generateToken(userId, roles);
+        // roles
+        Collection<? extends GrantedAuthority> authorities = authenticate.getAuthorities();
+        List<String> roles = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // user
+        User user = (User) authenticate.getPrincipal();
+        AuthToken authToken = JwtUtils.generateToken(userId, roles);
 
         user.setRefreshToken(authToken.getRefreshToken());
         userRepository.save(user);
@@ -150,8 +143,9 @@ public class UserServiceImpl implements UserService {
 
         userCarRepository.findByCarNumber(carInformation.getCarNumber())
                 .ifPresent(x -> {
-                    throw new CustomException(ErrorCode.DUPLICATED_CAR_NUMBER);
+                    throw new CustomException(ErrorCode.DUPLICATED_CAR_NUMBER, " Car Number = "+carInformation.getCarNumber());
                 });
+
         userCarRepository.save(userCar);
         cars.add(userCar);
 
@@ -181,9 +175,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public LogoutResponseDto logout(String userId) {
+    public LogoutResponseDto logout() {
+        String userId = JwtUtils.getUserId();
         User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND, " User Id = " + userId));
 
         user.setRefreshToken(null);
 
@@ -198,7 +193,7 @@ public class UserServiceImpl implements UserService {
         userRepository.findByNickname(nickname)
                 .ifPresent(x ->{
                     if(!x.getDeleted()) {
-                        throw new CustomException(ErrorCode.DUPLICATED_NICKNAME);
+                        throw new CustomException(ErrorCode.DUPLICATED_NICKNAME, "Nickname = "+ nickname);
                     }
         });
 
@@ -259,7 +254,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String signOut(String userId) {
+    public String signOut() {
+        String userId = JwtUtils.getUserId();
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 

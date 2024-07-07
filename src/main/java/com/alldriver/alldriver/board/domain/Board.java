@@ -77,6 +77,8 @@ public class Board {
     @Builder.Default
     private Set<LocationBoard> locationBoards = new HashSet<>();
 
+
+
     public void setDeleted(Boolean deleted){
         this.deleted = deleted;
     }

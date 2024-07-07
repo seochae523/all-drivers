@@ -1,9 +1,10 @@
-package com.alldriver.alldriver.common.token.controller;
+package com.alldriver.alldriver.user.controller;
 
 
 import com.alldriver.alldriver.common.token.dto.AuthToken;
 import com.alldriver.alldriver.common.token.dto.RefreshRequestDto;
-import com.alldriver.alldriver.common.token.service.RefreshService;
+import com.alldriver.alldriver.user.service.RefreshService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
