@@ -3,6 +3,7 @@ package com.alldriver.alldriver.user.service.impl;
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.emun.ErrorCode;
 import com.alldriver.alldriver.user.domain.SmsSession;
+import com.alldriver.alldriver.user.dto.request.PhoneNumberCheckRequestDto;
 import com.alldriver.alldriver.user.dto.request.SmsSendRequestDto;
 import com.alldriver.alldriver.user.dto.request.SmsVerifyRequestDto;
 import com.alldriver.alldriver.user.dto.response.SmsVerifyResponseDto;
@@ -32,7 +33,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class SmsServiceImpl implements SmsService {
     private final SmsRepository smsRepository;
-    private final UserRepository userRepository;
+
 
     @Value("${sms.api-key}")
     private String apiKey;
@@ -40,22 +41,14 @@ public class SmsServiceImpl implements SmsService {
     private String secretKey;
     @Value("${sms.domain}")
     private String domain;
-
     @Value("${sms.phone-number}")
     private String senderPhoneNumber;
-    private void checkPhoneNumber(String phoneNumber) {
-        userRepository.findByPhoneNumber(phoneNumber)
-                .ifPresent(x -> {
-                    throw new CustomException(ErrorCode.DUPLICATED_PHONE_NUMBER);
-                });
 
-    }
 
     @Override
     public void sendAuthCode(SmsSendRequestDto smsSendRequestDto) {
         String phoneNumber = smsSendRequestDto.getPhoneNumber();
 
-        this.checkPhoneNumber(phoneNumber);
 
         String code = createCode();
         DefaultMessageService messageService =  NurigoApp.INSTANCE.initialize(apiKey, secretKey, domain);
@@ -110,7 +103,7 @@ public class SmsServiceImpl implements SmsService {
         LocalDateTime now = LocalDateTime.now();
         Duration duration = Duration.between(createdTime, now);
 
-        long authCodeExpirationMillis = 60*1000*3;
+        long authCodeExpirationMillis = 1000 * 60 * 3;
 
         if(duration.toMillis() > authCodeExpirationMillis) throw new CustomException(ErrorCode.SMS_AUTH_CODE_EXPIRED);
         if(!AuthCode.equals(authCode)) throw new CustomException(ErrorCode.INVALID_SMS_AUTH_CODE);
