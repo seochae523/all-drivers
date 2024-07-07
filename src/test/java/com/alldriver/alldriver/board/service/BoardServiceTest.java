@@ -66,7 +66,9 @@ class BoardServiceTest {
     }
 
     @Test
+    @DisplayName("게시판 업데이트")
     void update() {
+
     }
 
     @Test

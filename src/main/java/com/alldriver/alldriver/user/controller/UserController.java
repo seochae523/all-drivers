@@ -3,10 +3,11 @@ package com.alldriver.alldriver.user.controller;
 import com.alldriver.alldriver.common.token.dto.AuthToken;
 import com.alldriver.alldriver.user.dto.request.*;
 import com.alldriver.alldriver.user.dto.response.*;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -78,27 +79,7 @@ public class UserController {
         return new ResponseEntity(userService.changePassword(changePasswordRequestDto), HttpStatus.OK);
     }
 
-    @GetMapping("/check/user-id")
-    @Operation(description = "id 중복 검사")
-    public ResponseEntity<Boolean> checkUserId(@RequestParam(name = "userId") String userId){
-        return new ResponseEntity(userService.checkDuplicatedAccount(userId), HttpStatus.OK);
-    }
 
-    @GetMapping("/check/license")
-    @Operation(description = "사업자 등록 번호 중복 검사")
-    public ResponseEntity<Boolean> checkLicense(@RequestParam(name = "license") String license){
-        return new ResponseEntity(userService.checkLicense(license), HttpStatus.OK);
-    }
-    @GetMapping("/check/nickname")
-    @Operation(description = "닉네임 중복 검사")
-    public ResponseEntity<Boolean> checkNickname(@RequestParam(value = "nickname", required = false) String nickname){
-        return new ResponseEntity(userService.checkNickname(nickname), HttpStatus.OK);
-    }
-    @PostMapping("/check/phoneNumber")
-    @Operation(description = "전화번호에 따른 회원 유무 판별. type = 검증 종류별 타입. 0 = 회원 가입 시 중복 계정 확인 1 = 비밀번호 변경 시 회원 존재 유무 확인")
-    public ResponseEntity<Boolean> checkPhoneNumber(@RequestBody @Valid PhoneNumberCheckRequestDto phoneNumberCheckRequestDto){
-        return new ResponseEntity(userService.checkPhoneNumber(phoneNumberCheckRequestDto), HttpStatus.OK);
-    }
     @DeleteMapping("/user/sign-out")
     @Operation(description = "회원 탈퇴")
     public ResponseEntity<Boolean> signOut(){
