@@ -81,9 +81,6 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public SignUpResponseDto signUpUser(UserSignUpRequestDto userSignUpRequestDto) {
-        String userId = userSignUpRequestDto.getUserId();
-        this.checkDuplicatedAccount(userId);
-
         User user = userSignUpRequestDto.toEntity();
         user.hashPassword(passwordEncoder);
         user.setRole(Role.USER);
@@ -103,9 +100,6 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public SignUpResponseDto signUpOwner(OwnerSignUpRequestDto ownerSignUpRequestDto, MultipartFile image) throws IOException {
-        String userId = ownerSignUpRequestDto.getUserId();
-        this.checkDuplicatedAccount(userId);
-
         User user = ownerSignUpRequestDto.toEntity();
         user.hashPassword(passwordEncoder);
         user.setRole(Role.USER);
@@ -134,11 +128,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public SignUpResponseDto signUpCarOwner(CarOwnerSignUpRequestDto carOwnerSignUpRequestDto, List<MultipartFile> images) throws IOException {
         Set<UserCar> cars = new HashSet<>();
-        String userId = carOwnerSignUpRequestDto.getUserId();
         CarInformationRequestDto carInformation = carOwnerSignUpRequestDto.getCarInformation();
-        this.checkDuplicatedAccount(userId);
-
-
         UserCar userCar = carInformation.toEntity();
 
         userCarRepository.findByCarNumber(carInformation.getCarNumber())
@@ -175,14 +165,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public LogoutResponseDto logout() {
+    public String logout() {
         String userId = JwtUtils.getUserId();
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND, " User Id = " + userId));
 
         user.setRefreshToken(null);
 
-        return new LogoutResponseDto(user);
+        return "로그아웃 성공. user Id = " + user.getUserId();
     }
 
     @Override
@@ -241,7 +231,23 @@ public class UserServiceImpl implements UserService {
                 .userId(userId)
                 .build();
     }
-
+    @Override
+    @Transactional(readOnly = true)
+    public Boolean checkPhoneNumber(PhoneNumberCheckRequestDto phoneNumberCheckRequestDto) {
+        String phoneNumber = phoneNumberCheckRequestDto.getPhoneNumber();
+        Integer type = phoneNumberCheckRequestDto.getType();
+        if(type==0) {
+            userRepository.findByPhoneNumber(phoneNumber)
+                    .ifPresent(x -> {
+                        throw new CustomException(ErrorCode.DUPLICATED_PHONE_NUMBER);
+                    });
+        }
+        else if(type==1){
+            userRepository.findByPhoneNumber(phoneNumber)
+                    .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+        }
+        return true;
+    }
     @Override
     @Transactional(readOnly = true)
     public Boolean checkLicense(String licenseNumber) {
