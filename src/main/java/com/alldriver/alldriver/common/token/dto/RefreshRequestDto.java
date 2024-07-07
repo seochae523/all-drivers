@@ -11,14 +11,6 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class RefreshRequestDto {
-    @Schema(description = "아이디", example = "example")
-    @NotBlank(message = "User Id Not Found.")
-    private String userId;
-
-    @Schema(description = "access token")
-    @NotBlank(message = "User Id Not Found.")
-    private String accessToken;
-
     @Schema(description = "refresh token")
     @NotBlank(message = "User Id Not Found.")
     private String refreshToken;

@@ -1,7 +1,9 @@
 package com.alldriver.alldriver.board.repository;
 
 import com.alldriver.alldriver.board.domain.*;
+import com.alldriver.alldriver.board.vo.BoardFindVo;
 import com.alldriver.alldriver.common.emun.Role;
+import com.alldriver.alldriver.common.util.JwtUtils;
 import com.alldriver.alldriver.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,7 +44,9 @@ class BoardRepositoryTest {
 
     @Autowired
     private SubLocationRepository subLocationRepository;
-
+    String userId = "testUser";
+    Integer offset = 0;
+    Integer limit = 10;
     @BeforeEach
     void init(){
         User user = setUpUser();
@@ -56,13 +60,11 @@ class BoardRepositoryTest {
     @DisplayName("전체 조회")
     void 전체_조회() {
         // given
-        Pageable pageable = PageRequest.of(0, 10);
-
         // when
-        Page<Board> boardPage = boardRepository.findAll(pageable);
+        List<BoardFindVo> boardPage = boardRepository.findAll(limit, offset, userId);
 
         // then
-        assertThat(boardPage.getContent()).hasSize(10);
+        assertThat(boardPage).hasSize(10);
     }
     @Test
     @DisplayName("차량으로 조회 성공")
@@ -70,11 +72,11 @@ class BoardRepositoryTest {
         // given
         List<Long> carIds = new ArrayList<>();
         carIds.add(1L);
-        Pageable pageable = PageRequest.of(0, 10);
+
         // when
-        Page<Board> byCars = boardRepository.findByCars(pageable, carIds);
+        List<BoardFindVo> byCars = boardRepository.findByCars(limit, offset, carIds, userId);
         // then
-        assertThat(byCars.getContent()).hasSize(10);
+        assertThat(byCars).hasSize(10);
     }
     @Test
     @DisplayName("차량으로 조회 실패")
@@ -82,11 +84,11 @@ class BoardRepositoryTest {
         // given
         List<Long> carIds = new ArrayList<>();
         carIds.add(3L);
-        Pageable pageable = PageRequest.of(0, 10);
+
         // when
-        Page<Board> byCars = boardRepository.findByCars(pageable, carIds);
+        List<BoardFindVo> byCars = boardRepository.findByCars(limit, offset, carIds, userId);
         // then
-        assertThat(byCars.getContent()).hasSize(0);
+        assertThat(byCars).hasSize(0);
     }
 
     @Test
@@ -95,11 +97,11 @@ class BoardRepositoryTest {
         // given
         List<Long> jobIds = new ArrayList<>();
         jobIds.add(1L);
-        Pageable pageable = PageRequest.of(0, 10);
+
         // when
-        Page<Board> byCars = boardRepository.findByJobs(pageable, jobIds);
+        List<BoardFindVo> byCars = boardRepository.findByJobs(limit, offset, jobIds, userId);
         // then
-        assertThat(byCars.getContent()).hasSize(10);
+        assertThat(byCars).hasSize(10);
     }
 
     @Test
@@ -110,9 +112,9 @@ class BoardRepositoryTest {
         jobIds.add(0L);
         Pageable pageable = PageRequest.of(0, 10);
         // when
-        Page<Board> byCars = boardRepository.findByJobs(pageable, jobIds);
+        List<BoardFindVo> byCars = boardRepository.findByJobs(limit, offset, jobIds, userId);
         // then
-        assertThat(byCars.getContent()).hasSize(0);
+        assertThat(byCars).hasSize(0);
     }
     @Test
     @DisplayName("지역으로 조회 성공")
@@ -120,11 +122,11 @@ class BoardRepositoryTest {
         // given
         List<Long> subLocationIds = new ArrayList<>();
         subLocationIds.add(100L);
-        Pageable pageable = PageRequest.of(0, 10);
+
         // when
-        Page<Board> byCars = boardRepository.findBySubLocations(pageable, subLocationIds);
+        List<BoardFindVo> bySubLocations= boardRepository.findBySubLocations(limit, offset, subLocationIds, userId);
         // then
-        assertThat(byCars.getContent()).hasSize(10);
+        assertThat(bySubLocations).hasSize(10);
     }
 
     @Test
@@ -133,11 +135,11 @@ class BoardRepositoryTest {
         // given
         List<Long> subLocationIds = new ArrayList<>();
         subLocationIds.add(0L);
-        Pageable pageable = PageRequest.of(0, 10);
+
         // when
-        Page<Board> byCars = boardRepository.findBySubLocations(pageable, subLocationIds);
+        List<BoardFindVo> bySubLocations= boardRepository.findBySubLocations(limit, offset, subLocationIds, userId);
         // then
-        assertThat(byCars.getContent()).hasSize(0);
+        assertThat(bySubLocations).hasSize(0);
     }
 
     @Test
@@ -145,11 +147,11 @@ class BoardRepositoryTest {
     void 시로_조회_성공(){
         // given
         Long mainLocationId = 6L;
-        Pageable pageable = PageRequest.of(0, 10);
+
         // when
-        Page<Board> byCars = boardRepository.findByMainLocation(pageable, mainLocationId);
+        List<BoardFindVo> byMainLocation = boardRepository.findByMainLocation(limit, offset, mainLocationId, userId);
         // then
-        assertThat(byCars.getContent()).hasSize(10);
+        assertThat(byMainLocation).hasSize(10);
     }
 
     @Test
@@ -157,11 +159,11 @@ class BoardRepositoryTest {
     void 시로_조회_실패(){
         // given
         Long mainLocationId = 10L;
-        Pageable pageable = PageRequest.of(0, 10);
+
         // when
-        Page<Board> byCars = boardRepository.findByMainLocation(pageable, mainLocationId);
+        List<BoardFindVo> byMainLocation = boardRepository.findByMainLocation(limit, offset, mainLocationId, userId);
         // then
-        assertThat(byCars.getContent()).hasSize(0);
+        assertThat(byMainLocation).hasSize(0);
     }
 
     private User setUpUser(){

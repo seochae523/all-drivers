@@ -61,9 +61,8 @@ public class UserController {
 
     @GetMapping("/user/logout")
     @Operation(description = "로그아웃 하면 refresh token 파기")
-    public ResponseEntity<LogoutResponseDto> logout(@RequestParam(value = "userId", required = false)
-                                                    @NotNull(message = "User Id Not Found.") String userId){
-        return new ResponseEntity(userService.logout(userId), HttpStatus.OK);
+    public ResponseEntity<LogoutResponseDto> logout(){
+        return new ResponseEntity(userService.logout(), HttpStatus.OK);
     }
 
 
@@ -98,7 +97,7 @@ public class UserController {
 
     @DeleteMapping("/user/sign-out")
     @Operation(description = "회원 탈퇴")
-    public ResponseEntity<Boolean> signOut(@RequestParam(value = "userId", required = false) String userId){
-        return new ResponseEntity(userService.signOut(userId), HttpStatus.OK);
+    public ResponseEntity<Boolean> signOut(){
+        return new ResponseEntity(userService.signOut(), HttpStatus.OK);
     }
 }

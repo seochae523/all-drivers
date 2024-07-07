@@ -30,10 +30,6 @@ spring:
   jwt:
     header: Authorization
     secret: ${JWT_SECRET}
-    # 30 * 60 * 1000 = 30분
-    access-token-expiration-time: 1800000
-    # 30 * 24 * 60 * 60 * 1000 = 30일
-    refresh-token-expiration-time: 2592000000
 
 cloud:
   aws:

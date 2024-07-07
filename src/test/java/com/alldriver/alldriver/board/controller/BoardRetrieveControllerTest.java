@@ -1,19 +1,19 @@
 package com.alldriver.alldriver.board.controller;
 
-import com.alldriver.alldriver.board.dto.response.BoardCarFindResponseDto;
+
 import com.alldriver.alldriver.board.dto.response.BoardFindResponseDto;
-import com.alldriver.alldriver.board.dto.response.BoardJobFindResponseDto;
-import com.alldriver.alldriver.board.dto.response.BoardLocationFindResponseDto;
+
 import com.alldriver.alldriver.board.service.BoardRetrieveService;
-import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
+
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -35,6 +35,7 @@ class BoardRetrieveControllerTest {
     @MockBean
     BoardRetrieveService boardRetrieveService;
     private final Integer page = 0;
+    private final String requestPrefix ="/owner/board";
     @Test
     @DisplayName("게시판 전체 조회")
     void findAllBoards() throws Exception {
@@ -43,7 +44,7 @@ class BoardRetrieveControllerTest {
         when(boardRetrieveService.findAll(page)).thenReturn(boardFindResponseDtos);
 
         // when, then
-        mockMvc.perform(get("/user/board/all"))
+        mockMvc.perform(get(requestPrefix+ "/all"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(boardFindResponseDtos)));
     }
@@ -58,7 +59,7 @@ class BoardRetrieveControllerTest {
         when(boardRetrieveService.findByCars(page, carIds)).thenReturn(boardFindResponseDtos);
 
         // when, then
-        mockMvc.perform(get("/user/board/cars")
+        mockMvc.perform(get(requestPrefix+"/cars")
                         .param("carIds", carIds.stream().map(String::valueOf).toArray(String[]::new)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(boardFindResponseDtos)));
@@ -75,7 +76,7 @@ class BoardRetrieveControllerTest {
         when(boardRetrieveService.findByJobs(page, jobIds)).thenReturn(boardFindResponseDtos);
 
         // when, then
-        mockMvc.perform(get("/user/board/jobs")
+        mockMvc.perform(get(requestPrefix+"/jobs")
                         .param("jobIds", jobIds.stream().map(String::valueOf).toArray(String[]::new)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(boardFindResponseDtos)));
@@ -91,7 +92,7 @@ class BoardRetrieveControllerTest {
         when(boardRetrieveService.findBySubLocations(page, subLocationIds)).thenReturn(boardFindResponseDtos);
 
         // when, then
-        mockMvc.perform(get("/user/board/subLocations")
+        mockMvc.perform(get(requestPrefix+"/subLocations")
                         .param("subLocationIds", subLocationIds.stream().map(String::valueOf).toArray(String[]::new)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(boardFindResponseDtos)));
@@ -107,7 +108,7 @@ class BoardRetrieveControllerTest {
         when(boardRetrieveService.findByMainLocation(page, mainLocationId)).thenReturn(boardFindResponseDtos);
 
         // when, then
-        mockMvc.perform(get("/user/board/mainLocation")
+        mockMvc.perform(get(requestPrefix+"/mainLocation")
                         .param("mainLocationId", mainLocationId.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(boardFindResponseDtos)));
@@ -124,36 +125,22 @@ class BoardRetrieveControllerTest {
                     .startAt(new Date())
                     .recruitType("testR")
                     .companyLocation("testCL")
-                    .cars(setUpCars())
-                    .jobs(setUpJobs())
-                    .locations(setUpLocations())
+                    .cars(setUpJoinColumns("test car"))
+                    .jobs(setUpJoinColumns("test job"))
+                    .locations(setUpJoinColumns("test location"))
                     .build();
             boardFindResponseDto.add(build);
         }
         return boardFindResponseDto;
     }
-    private List<BoardJobFindResponseDto> setUpJobs(){
-        List<BoardJobFindResponseDto> result = new ArrayList<>();
-        for (int i =0; i<10; i++) {
-            result.add(new BoardJobFindResponseDto((long)i, "test job"));
-        }
-        return result;
-    }
-    private List<BoardCarFindResponseDto> setUpCars(){
-        List<BoardCarFindResponseDto> result = new ArrayList<>();
-        for (int i =0; i<10; i++) {
-            result.add(new BoardCarFindResponseDto((long)i, "test car"));
-        }
-        return result;
-    }
-    private List<BoardLocationFindResponseDto> setUpLocations(){
-        List<BoardLocationFindResponseDto> result = new ArrayList<>();
-        for (int i =0; i<10; i++) {
-            result.add(new BoardLocationFindResponseDto((long)i, "test location"));
-        }
-        return result;
-    }
 
+    private List<String> setUpJoinColumns(String value){
+        List<String> result = new ArrayList<>();
+        for (int i =0; i<10; i++) {
+            result.add(value + i);
+        }
+        return result;
+    }
     private List<Long> setUpIds(){
         List<Long> ids = new ArrayList<>();
         for(int i =0; i<10; i++){
