@@ -46,7 +46,7 @@ public class UserController {
     }
     @PostMapping("/sign-up/car-owner")
     @Operation(description = "차주 회원가입")
-    public ResponseEntity<SignUpResponseDto> signUpOwner(@RequestPart(value = "request") @Valid CarOwnerSignUpRequestDto carOwnerSignUpRequestDto,
+    public ResponseEntity<SignUpResponseDto> signUpCarOwner(@RequestPart(value = "request") @Valid CarOwnerSignUpRequestDto carOwnerSignUpRequestDto,
                                                          @RequestPart(value = "images") List<MultipartFile> image) throws IOException {
 
         return new ResponseEntity(userService.signUpCarOwner(carOwnerSignUpRequestDto, image), HttpStatus.CREATED);
@@ -61,7 +61,7 @@ public class UserController {
 
     @GetMapping("/user/logout")
     @Operation(description = "로그아웃 하면 refresh token 파기")
-    public ResponseEntity<LogoutResponseDto> logout(){
+    public ResponseEntity<String> logout(){
         return new ResponseEntity(userService.logout(), HttpStatus.OK);
     }
 
@@ -94,10 +94,15 @@ public class UserController {
     public ResponseEntity<Boolean> checkNickname(@RequestParam(value = "nickname", required = false) String nickname){
         return new ResponseEntity(userService.checkNickname(nickname), HttpStatus.OK);
     }
-
+    @PostMapping("/check/phoneNumber")
+    @Operation(description = "전화번호에 따른 회원 유무 판별. type = 검증 종류별 타입. 0 = 회원 가입 시 중복 계정 확인 1 = 비밀번호 변경 시 회원 존재 유무 확인")
+    public ResponseEntity<Boolean> checkPhoneNumber(@RequestBody @Valid PhoneNumberCheckRequestDto phoneNumberCheckRequestDto){
+        return new ResponseEntity(userService.checkPhoneNumber(phoneNumberCheckRequestDto), HttpStatus.OK);
+    }
     @DeleteMapping("/user/sign-out")
     @Operation(description = "회원 탈퇴")
     public ResponseEntity<Boolean> signOut(){
         return new ResponseEntity(userService.signOut(), HttpStatus.OK);
     }
+
 }

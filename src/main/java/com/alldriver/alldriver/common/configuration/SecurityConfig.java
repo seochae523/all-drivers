@@ -42,7 +42,7 @@ public class SecurityConfig {
                         .requestMatchers( "/find-nickname", "/login", "/sign-up/**", "/swagger-ui/**", "/v3/api-docs/**", "/check/**",
                                          "/change-forget-password", "/refresh","/ws/chat", "/sms/**" , "/verify/**").permitAll()
                  )
-
+                .formLogin(AbstractHttpConfigurer::disable)
                 .addFilterBefore(new JwtFilter(customUserDetailService), UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }

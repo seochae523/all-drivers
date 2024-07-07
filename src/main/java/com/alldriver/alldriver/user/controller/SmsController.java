@@ -1,5 +1,6 @@
 package com.alldriver.alldriver.user.controller;
 
+import com.alldriver.alldriver.user.dto.request.PhoneNumberCheckRequestDto;
 import com.alldriver.alldriver.user.dto.request.SmsSendRequestDto;
 import com.alldriver.alldriver.user.dto.request.SmsVerifyRequestDto;
 import com.alldriver.alldriver.user.dto.response.SmsVerifyResponseDto;
@@ -34,4 +35,6 @@ public class SmsController {
     public ResponseEntity<SmsVerifyResponseDto> sendSmsAuthCode(@RequestBody @Valid SmsVerifyRequestDto smsVerifyRequestDto){
         return new ResponseEntity(smsService.verifiedCode(smsVerifyRequestDto), HttpStatus.OK);
     }
+
+
 }

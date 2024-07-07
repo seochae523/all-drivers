@@ -9,16 +9,20 @@ import java.io.IOException;
 import java.util.List;
 
 public interface UserService {
-    Boolean checkDuplicatedAccount(String userId);
+
     LoginResponseDto login(LoginRequestDto loginRequestDto);
-    LogoutResponseDto logout();
+    String logout();
     SignUpResponseDto signUpUser(UserSignUpRequestDto userSignUpRequestDto);
     SignUpResponseDto signUpOwner(OwnerSignUpRequestDto ownerSignUpRequestDto, MultipartFile image) throws IOException;
     SignUpResponseDto signUpCarOwner(CarOwnerSignUpRequestDto carOwnerSignUpRequestDto, List<MultipartFile> image) throws IOException;
     Boolean checkNickname(String nickname);
+    Boolean checkPhoneNumber(PhoneNumberCheckRequestDto phoneNumberCheckRequestDto);
+    Boolean checkLicense(String licenseNumber);
+    Boolean checkDuplicatedAccount(String userId);
     UserUpdateResponseDto update(UserUpdateRequestDto userUpdateRequestDto);
     ChangePasswordResponseDto changePassword(ChangePasswordRequestDto changePasswordRequestDto);
-    Boolean checkLicense(String licenseNumber);
+
     String signOut();
+
 
 }
