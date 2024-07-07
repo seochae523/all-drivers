@@ -48,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 public class UserServiceTest {
 
     @InjectMocks
@@ -64,6 +65,43 @@ public class UserServiceTest {
     @Mock
     private AuthenticationManager authenticationManager;
 
+    @Test
+    @DisplayName("로그인 성공")
+    void login(){
+        // given
+        // user 설정
+        Optional<User> user = Optional.ofNullable(setUpUser());
+
+        // login request 설정
+        LoginRequestDto loginRequestDto = LoginRequestDto.builder()
+                .userId("testUser")
+                .password("testPassword")
+                .build();
+        List<String> roles = new ArrayList<>();
+        Collections.addAll(roles, user.get().getRole());
+
+        // auth 관련 mocking
+        Authentication authentication = mock(Authentication.class);
+        AuthToken authToken = mock(AuthToken.class);
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginRequestDto.getUserId(), loginRequestDto.getPassword());
+
+        when(authentication.getPrincipal()).thenReturn(user.get());
+        when(authenticationManagerBuilder.getObject()).thenReturn(authenticationManager);
+        when(authenticationManager.authenticate(authenticationToken)).thenReturn(authentication);
+
+
+        try (MockedStatic<JwtUtils> jwtUtils = mockStatic(JwtUtils.class)){
+            when(JwtUtils.generateToken(anyString(), anyList())).thenReturn(authToken);
+            // when
+            LoginResponseDto response = userService.login(loginRequestDto);
+
+            // then
+            assertThat(response.getUserId()).isEqualTo("testUser");
+            assertThat(response.getNickname()).isEqualTo("testNickname");
+            assertThat(response.getAuthToken()).isInstanceOf(AuthToken.class);
+        }
+    }
     @Test
     @DisplayName("회원가입 성공")
     void 회원가입_성공(){
@@ -82,70 +120,10 @@ public class UserServiceTest {
 
 
 
-    @Test
-    @DisplayName("로그인 성공")
-    @WithMockUser(username = "testUser", password = "12345678")
-    void 로그인_성공(){
-        // given
-
-        Optional<User> user = Optional.ofNullable(setUpUser());
-        LoginRequestDto loginRequestDto = LoginRequestDto.builder()
-                .userId("testUser")
-                .password("testPassword")
-                .build();
-
-        String userId = loginRequestDto.getUserId();
-        String password = loginRequestDto.getPassword();
-        List<String> roles = new ArrayList<>();
-        Collections.addAll(roles, user.get().getRole());
-        Authentication authentication = mock(Authentication.class);
-        AuthToken authToken = mock(AuthToken.class);
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, password);
-
-        when(authentication.getPrincipal()).thenReturn(user.get());
-        when(authenticationManagerBuilder.getObject()).thenReturn(authenticationManager);
-        when(authenticationManager.authenticate(authenticationToken)).thenReturn(authentication);
-
-        try (MockedStatic<JwtUtils> jwtUtils = mockStatic(JwtUtils.class)){
-            when(JwtUtils.generateToken(anyString(), anyList())).thenReturn(authToken);
-            // when
-            LoginResponseDto response = userService.login(loginRequestDto);
-
-            // then
-            assertThat(response.getUserId()).isEqualTo("testUser");
-            assertThat(response.getNickname()).isEqualTo("testNickname");
-            assertThat(response.getAuthToken()).isInstanceOf(AuthToken.class);
-
-        }
 
 
-    }
 
 
-    @Test
-    @DisplayName("닉네임 중복 검사 - 중복 있을 때")
-    void 닉네임_중복_검사_실패(){
-        // given
-        when(userRepository.findByNickname("test")).thenThrow(new CustomException(ErrorCode.DUPLICATED_NICKNAME));
-
-        // when
-        CustomException customException = assertThrows(CustomException.class, () -> userService.checkNickname("test"));
-
-        // then
-        assertThat(customException.getMessage()).isEqualTo(ErrorCode.DUPLICATED_NICKNAME.getMessage());
-
-    }
-
-    @Test
-    @DisplayName("닉네임 중복 검사 - 중복 없을 때")
-    void 닉네임_중복_검사_성공(){
-        // given
-        when(userRepository.findByNickname("newNickname")).thenReturn(Optional.empty());
-        // when
-        Boolean b = userService.checkNickname("newNickname");
-
-        assertThat(b).isTrue();
-    }
 
     @Test
     @DisplayName("유저 삭제 성공")

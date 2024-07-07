@@ -49,15 +49,13 @@ public class UserServiceImpl implements UserService {
         String password = loginRequestDto.getPassword();
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, password);
-        // 여긴 자격 증명 확인하는 곳
+        // 자격 증명 확인
         Authentication authenticate = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
         // roles
         Collection<? extends GrantedAuthority> authorities = authenticate.getAuthorities();
         List<String> roles = authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
-
         // user
         User user = (User) authenticate.getPrincipal();
         AuthToken authToken = JwtUtils.generateToken(userId, roles);
@@ -175,23 +173,6 @@ public class UserServiceImpl implements UserService {
         return "로그아웃 성공. user Id = " + user.getUserId();
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Boolean checkNickname(String nickname) {
-        if(nickname == null) throw new CustomException(ErrorCode.NICKNAME_NOT_FOUND);
-
-        userRepository.findByNickname(nickname)
-                .ifPresent(x ->{
-                    if(!x.getDeleted()) {
-                        throw new CustomException(ErrorCode.DUPLICATED_NICKNAME, "Nickname = "+ nickname);
-                    }
-        });
-
-        return true;
-    }
-
-
-
 
     @Override
     public UserUpdateResponseDto update(UserUpdateRequestDto userUpdateRequestDto) {
@@ -215,9 +196,6 @@ public class UserServiceImpl implements UserService {
         String userId = changePasswordRequestDto.getUserId();
         String password = changePasswordRequestDto.getPassword();
 
-        if(userId == null) throw new CustomException(ErrorCode.USER_ID_NOT_FOUND);
-        if(password == null) throw new CustomException(ErrorCode.PASSWORD_NOT_FOUND);
-
         User user = userRepository.findByUserId(userId).
                 filter(x -> !x.getDeleted()).
                 orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
@@ -230,33 +208,6 @@ public class UserServiceImpl implements UserService {
                 .nickname(user.getNickname())
                 .userId(userId)
                 .build();
-    }
-    @Override
-    @Transactional(readOnly = true)
-    public Boolean checkPhoneNumber(PhoneNumberCheckRequestDto phoneNumberCheckRequestDto) {
-        String phoneNumber = phoneNumberCheckRequestDto.getPhoneNumber();
-        Integer type = phoneNumberCheckRequestDto.getType();
-        if(type==0) {
-            userRepository.findByPhoneNumber(phoneNumber)
-                    .ifPresent(x -> {
-                        throw new CustomException(ErrorCode.DUPLICATED_PHONE_NUMBER);
-                    });
-        }
-        else if(type==1){
-            userRepository.findByPhoneNumber(phoneNumber)
-                    .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
-        }
-        return true;
-    }
-    @Override
-    @Transactional(readOnly = true)
-    public Boolean checkLicense(String licenseNumber) {
-        licenseRepository.findByLicenseNumber(licenseNumber)
-                .ifPresent(x ->{
-                   throw new CustomException(ErrorCode.DUPLICATED_LICENSE_NUMBER);
-                });
-
-        return true;
     }
 
     @Override
@@ -271,14 +222,6 @@ public class UserServiceImpl implements UserService {
         return "회원 탈퇴 완료.";
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Boolean checkDuplicatedAccount(String userId){
-        userRepository.findByUserId(userId)
-                .ifPresent(x ->{
-                    throw new CustomException(ErrorCode.DUPLICATED_ACCOUNT);
-                });
-        return true;
-    }
+
 
 }

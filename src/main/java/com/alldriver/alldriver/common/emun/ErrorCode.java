@@ -41,7 +41,8 @@ public enum ErrorCode {
     CAR_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-008", "Car Not Found."),
     JOB_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-009", "Job Not Found."),
     LIKE_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-010", "Like Not Found."),
-    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "AEB-011", "Invalid Parameter.");
+
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "AEC-001", "Invalid Parameter.");
 
 
     private final HttpStatus status;
