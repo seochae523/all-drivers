@@ -232,6 +232,7 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
     @Override
+    @Transactional(readOnly = true)
     public Boolean checkPhoneNumber(PhoneNumberCheckRequestDto phoneNumberCheckRequestDto) {
         String phoneNumber = phoneNumberCheckRequestDto.getPhoneNumber();
         Integer type = phoneNumberCheckRequestDto.getType();
