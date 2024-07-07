@@ -1,16 +1,21 @@
-package com.alldriver.alldriver.common.token.filter;
+package com.alldriver.alldriver.common.configuration;
 
 
-import com.alldriver.alldriver.common.token.AuthTokenProvider;
+import com.alldriver.alldriver.common.util.JwtUtils;
 
+import com.alldriver.alldriver.user.service.CustomUserDetailService;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -22,8 +27,8 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final AuthTokenProvider tokenProvider;
 
+    private final CustomUserDetailService customUserDetailService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -33,8 +38,8 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = resolveToken(request);
 
 
-            if(token != null && tokenProvider.validateToken(token)){
-                Authentication authentication = tokenProvider.getAuthentication(token);
+            if(token != null && JwtUtils.validateToken(token)){
+                Authentication authentication = this.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
 
@@ -60,5 +65,15 @@ public class JwtFilter extends OncePerRequestFilter {
             return bearerToken.substring(7);
         }
         return null;
+    }
+    private Authentication getAuthentication(String accessToken) {
+        // 여긴 security에 권한 넣어주는 곳임
+        Claims claims = JwtUtils.parseClaims(accessToken);
+        String userId = claims.getSubject();
+
+        UserDetails userDetails = customUserDetailService.loadUserByUsername(userId);
+        String findUserId = userDetails.getUsername();
+        UserDetails principal = new User(findUserId , "", userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(principal, "", userDetails.getAuthorities());
     }
 }

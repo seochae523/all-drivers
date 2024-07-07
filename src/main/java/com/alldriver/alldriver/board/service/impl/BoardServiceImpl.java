@@ -7,6 +7,7 @@ import com.alldriver.alldriver.board.repository.*;
 import com.alldriver.alldriver.board.service.BoardService;
 import com.alldriver.alldriver.common.emun.ErrorCode;
 import com.alldriver.alldriver.common.exception.CustomException;
+import com.alldriver.alldriver.common.util.JwtUtils;
 import com.alldriver.alldriver.common.util.S3Utils;
 import com.alldriver.alldriver.user.domain.User;
 import com.alldriver.alldriver.user.repository.UserRepository;
@@ -23,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -44,6 +47,7 @@ public class BoardServiceImpl implements BoardService {
     private final CarBoardRepository carBoardRepository;
     private final JobBoardRepository jobBoardRepository;
     private final LocationBoardRepository locationBoardRepository;
+
     private final S3Utils s3Utils;
 
 
@@ -108,87 +112,109 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public String update(List<MultipartFile> images, BoardUpdateRequestDto boardUpdateRequestDto) throws IOException {
-        Long id = boardUpdateRequestDto.getId();
+        Board board = boardRepository.findById(boardUpdateRequestDto.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND, " Board Id = " + boardUpdateRequestDto.getId()));
+
+        String userId = boardUpdateRequestDto.getUserId();
+        if(!board.getUser().getUserId().equals(userId)) throw new CustomException(ErrorCode.INVALID_USER, " Author = " + board.getUser().getUserId() + " Updater = " + userId);
+
         List<JobUpdateRequestDto> jobInfos = boardUpdateRequestDto.getJobInfos();
         List<CarUpdateRequestDto> carInfos = boardUpdateRequestDto.getCarInfos();
         List<LocationUpdateRequestDto> locationInfos = boardUpdateRequestDto.getLocationInfos();
         List<Long> imageIds = boardUpdateRequestDto.getImageIds();
-        String userId = boardUpdateRequestDto.getUserId();
-        Board board = boardRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
-        if(!board.getUser().getUserId().equals(userId)) throw new CustomException(ErrorCode.INVALID_USER);
+        Long boardId = board.getId();
+
 
         board.updateBoard(boardUpdateRequestDto);
-        for (CarUpdateRequestDto carInfo : carInfos) {
-            if (carInfo.type() == 0) {
+        if(carInfos != null) {
+            // 삭제를 먼저하기 위해 정렬
+            carInfos.sort(Comparator.comparing(CarUpdateRequestDto::type));
+            for (CarUpdateRequestDto carInfo : carInfos) {
                 Car car = carRepository.findById(carInfo.id())
-                        .orElseThrow(() -> new CustomException(ErrorCode.CAR_NOT_FOUND));
+                        .orElseThrow(() -> new CustomException(ErrorCode.CAR_NOT_FOUND, " Car Id = " + carInfo.id()));
+                Long carId = car.getId();
 
-                // 추가
-                CarBoard carBoard = CarBoard.builder()
-                        .car(car)
-                        .board(board)
-                        .build();
-                board.addCarBoard(carBoard);
+                if (carInfo.type() == 0) {
+                    // 추가
+                    CarBoard carBoard = CarBoard.builder()
+                            .car(car)
+                            .board(board)
+                            .build();
+                    board.addCarBoard(carBoard);
 
-            }
-            else if (carInfo.type() == -1) {
-                CarBoard carBoard = carBoardRepository.findById(carInfo.id())
-                        .orElseThrow(() -> new CustomException(ErrorCode.CAR_NOT_FOUND));
+                } else if (carInfo.type() == -1) {
+                    // 삭제
+                    CarBoard carBoard = carBoardRepository.findByBoardIdAndCarId(boardId, carId)
+                            .orElseThrow(() -> new CustomException(ErrorCode.CAR_NOT_FOUND, " Car Id = " + carInfo.id() + " Board Id = " + boardId));
 
-                carBoardRepository.delete(carBoard);
-                board.getCarBoards().remove(carBoard);
+                    carBoardRepository.delete(carBoard);
+                    board.getCarBoards().remove(carBoard);
+                }
             }
         }
-        for (JobUpdateRequestDto jobInfo : jobInfos) {
-            if(jobInfo.type() == 0){
+        if(jobInfos != null) {
+            // 삭제를 먼저하기 위해 정렬
+            jobInfos.sort(Comparator.comparing(JobUpdateRequestDto::type));
+            for (JobUpdateRequestDto jobInfo : jobInfos) {
                 Job job = jobRepository.findById(jobInfo.id())
-                        .orElseThrow(() -> new CustomException(ErrorCode.JOB_NOT_FOUND));
+                        .orElseThrow(() -> new CustomException(ErrorCode.JOB_NOT_FOUND, " Job Id = " + jobInfo.id()));
+                Long jobId = job.getId();
 
-                JobBoard jobBoard = JobBoard.builder()
-                        .job(job)
-                        .board(board)
-                        .build();
-                board.addJobBoard(jobBoard);
-            }
-            else if (jobInfo.type() == -1) {
-                JobBoard jobBoard = jobBoardRepository.findById(jobInfo.id())
-                        .orElseThrow(() -> new CustomException(ErrorCode.CAR_NOT_FOUND));
+                if (jobInfo.type() == 0) {
+                    JobBoard jobBoard = JobBoard.builder()
+                            .job(job)
+                            .board(board)
+                            .build();
+                    board.addJobBoard(jobBoard);
 
-                jobBoardRepository.delete(jobBoard);
-                board.getJobBoards().remove(jobBoard);
+                }
+                else if (jobInfo.type() == -1) {
+                    JobBoard jobBoard = jobBoardRepository.findByBoardIdAndJobId(boardId, jobId)
+                            .orElseThrow(() -> new CustomException(ErrorCode.JOB_NOT_FOUND, " Job Id = " + jobInfo.id() + " Board Id = " + boardId));
+
+                    jobBoardRepository.delete(jobBoard);
+                    board.getJobBoards().remove(jobBoard);
+                }
+
             }
         }
-        for (LocationUpdateRequestDto locationInfo : locationInfos) {
-            if(locationInfo.type() == 0){
+        if(locationInfos != null) {
+            // 삭제를 먼저하기 위해 정렬
+            locationInfos.sort(Comparator.comparing(LocationUpdateRequestDto::type));
+            for (LocationUpdateRequestDto locationInfo : locationInfos) {
                 SubLocation subLocation = subLocationRepository.findById(locationInfo.id())
-                        .orElseThrow(() -> new CustomException(ErrorCode.SUB_LOCATION_NOT_FOUND));
+                        .orElseThrow(() -> new CustomException(ErrorCode.SUB_LOCATION_NOT_FOUND, " Sub Location Id = " + locationInfo.id()));
+                Long subLocationId = subLocation.getId();
 
-                LocationBoard locationBoard = LocationBoard.builder()
-                        .subLocation(subLocation)
-                        .board(board)
-                        .build();
+                if (locationInfo.type() == 0) {
+                    LocationBoard locationBoard = LocationBoard.builder()
+                            .subLocation(subLocation)
+                            .board(board)
+                            .build();
 
-                board.addLocationBoard(locationBoard);
-            }
-            else if (locationInfo.type() == -1) {
-                LocationBoard locationBoard = locationBoardRepository.findById(locationInfo.id())
-                        .orElseThrow(() -> new CustomException(ErrorCode.SUB_LOCATION_NOT_FOUND));
+                    board.addLocationBoard(locationBoard);
+                } else if (locationInfo.type() == -1) {
+                    LocationBoard locationBoard = locationBoardRepository.findByBoardIdAndSubLocationId(boardId, subLocationId)
+                            .orElseThrow(() -> new CustomException(ErrorCode.SUB_LOCATION_NOT_FOUND, " Sub Location Id = " + locationInfo.id() + " Board Id = " + boardId));
 
-                locationBoardRepository.delete(locationBoard);
-                board.getLocationBoards().remove(locationBoard);
+                    locationBoardRepository.delete(locationBoard);
+                    board.getLocationBoards().remove(locationBoard);
+                }
+
             }
         }
         boardRepository.save(board);
 
-        for (Long imageId : imageIds) {
-            BoardImage boardImage = boardImageRepository.findById(imageId)
-                    .orElseThrow(() -> new CustomException(ErrorCode.IMAGE_NOT_FOUND));
+        if(imageIds!=null) {
+            for (Long imageId : imageIds) {
+                BoardImage boardImage = boardImageRepository.findById(imageId)
+                        .orElseThrow(() -> new CustomException(ErrorCode.IMAGE_NOT_FOUND, " Image Id = " + imageId));
 
-            boardImageRepository.delete(boardImage);
-            s3Utils.deleteFile(boardImage.getUrl());
+                boardImageRepository.delete(boardImage);
+                s3Utils.deleteFile(boardImage.getUrl());
 
+            }
         }
         if(images != null) {
             for (MultipartFile image : images) {
@@ -208,7 +234,8 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public String delete(Long id, String userId) {
+    public String delete(Long id) {
+        String userId = JwtUtils.getUserId();
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 

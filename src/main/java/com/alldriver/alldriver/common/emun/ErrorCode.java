@@ -26,20 +26,22 @@ public enum ErrorCode {
     DUPLICATED_LICENSE_NUMBER(HttpStatus.CONFLICT, "AEU-016", "Duplicated License Number."),
     INVALID_USER(HttpStatus.BAD_REQUEST, "AEU-017", "Invalid User."),
     INCORRECT_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "AET-001", "Incorrect Refresh Token."),
-    INVALID_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "AET-002", "Invalid Auth Token."),
+    INVALID_AUTH_TOKEN(HttpStatus.UNAUTHORIZED, "AET-002", "Invalid Auth Token."),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "AET-003", "Invalid Refresh Token."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "AET-004", "Refresh Token Not Found."),
     AUTH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AET-005", "Auth Token Expired."),
 
     BOARD_ID_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-001", "Board Id Not Found."),
-    BOARD_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-002", "Board Not Found,"),
-    CONTENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-003", "Content Not Found"),
-    IMAGE_ID_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-004", "Image Id Not Found"),
+    BOARD_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-002", "Board Not Found."),
+    CONTENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-003", "Content Not Found."),
+    IMAGE_ID_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-004", "Image Id Not Found."),
     IMAGE_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-005", "Image Not Found."),
     MAIN_LOCATION_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-006", "Main Location Not Found."),
     SUB_LOCATION_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-007", "Sub Location Not Found."),
     CAR_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-008", "Car Not Found."),
-    JOB_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-009", "Job Not Found.");
+    JOB_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-009", "Job Not Found."),
+    LIKE_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-010", "Like Not Found."),
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "AEB-011", "Invalid Parameter.");
 
 
     private final HttpStatus status;

@@ -49,7 +49,8 @@ public class User implements UserDetails {
 
     @Column(name="nickname", columnDefinition = "varchar", length = 20, nullable = false)
     private String nickname;
-
+    @Column(name = "refresh_token", columnDefinition = "text")
+    private String refreshToken;
 
     @Column(name="created_at", columnDefinition = "timestamp", nullable = false)
     @CreationTimestamp
@@ -57,10 +58,6 @@ public class User implements UserDetails {
 
     @Column(name="role", columnDefinition = "varchar", length = 30, nullable = false)
     private String role;
-
-
-    @Column(name = "refresh_token", columnDefinition = "text")
-    private String refreshToken;
 
     @OneToMany(mappedBy = "user")
     private Set<License> license;
@@ -88,9 +85,6 @@ public class User implements UserDetails {
         this.deleted = deleted;
     }
     public void setRefreshToken(String refreshToken){
-        this.refreshToken = refreshToken;
-    }
-    public void updateRefreshToken(String refreshToken){
         this.refreshToken = refreshToken;
     }
     public User hashPassword(PasswordEncoder passwordEncoder){

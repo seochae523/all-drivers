@@ -1,5 +1,6 @@
 package com.alldriver.alldriver.common.configuration;
 
+import com.alldriver.alldriver.user.service.CustomUserDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,16 +12,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import com.alldriver.alldriver.common.token.AuthTokenProvider;
-import com.alldriver.alldriver.common.token.filter.JwtFilter;
+import com.alldriver.alldriver.common.util.JwtUtils;
 
 
 @EnableWebSecurity
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final AuthTokenProvider authTokenProvider;
 
+    private final CustomUserDetailService customUserDetailService;
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
@@ -35,14 +35,15 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/user/**").hasRole("USER")
-                        .requestMatchers("/car-owner/**").hasRole("CAR_OWNER")
-                        .requestMatchers("/owner/**").hasRole("OWNER")
+                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/car-owner/**").hasAnyRole("CAR_OWNER", "ADMIN")
+                        .requestMatchers("/owner/**").hasAnyRole("OWNER", "ADMIN")
+
                         .requestMatchers( "/find-nickname", "/login", "/sign-up/**", "/swagger-ui/**", "/v3/api-docs/**", "/check/**",
                                          "/change-forget-password", "/refresh","/ws/chat", "/sms/**" , "/verify/**").permitAll()
                  )
 
-                .addFilterBefore(new JwtFilter(authTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(customUserDetailService), UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 

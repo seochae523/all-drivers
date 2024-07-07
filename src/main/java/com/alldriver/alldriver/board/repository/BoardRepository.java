@@ -1,5 +1,6 @@
 package com.alldriver.alldriver.board.repository;
 
+import com.alldriver.alldriver.board.vo.BoardFindVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,57 +15,77 @@ import java.util.Optional;
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
-    @Query("SELECT b from board b left join fetch b.user u left join fetch b.boardImages i " +
-            "left join fetch b.carBoards cb left join fetch cb.car c " +
-            "left join fetch b.locationBoards lb left join fetch lb.subLocation l " +
-            "left join fetch b.jobBoards jb left join fetch jb.job j " +
-            "order by b.createdAt DESC")
-    Page<Board> findAll(Pageable pageable);
-    @Query("SELECT b from board b left join fetch b.user u left join fetch b.boardImages i " +
-            "left join fetch b.carBoards cb left join fetch cb.car c " +
-            "left join fetch b.locationBoards lb left join fetch lb.subLocation l " +
-            "left join fetch b.jobBoards jb left join fetch jb.job j " +
-            "where c.id in :carIds " +
-            "order by b.createdAt DESC")
-    Page<Board> findByCars(Pageable pageable, @Param("carIds") List<Long> carIds);
-    @Query("SELECT b from board b left join fetch b.user u left join fetch b.boardImages i " +
-            "left join fetch b.carBoards cb left join fetch cb.car c " +
-            "left join fetch b.locationBoards lb left join fetch lb.subLocation l " +
-            "left join fetch b.jobBoards jb left join fetch jb.job j " +
-            "where j.id in :jobIds " +
-            "order by b.createdAt DESC")
-    Page<Board> findByJobs(Pageable pageable, @Param("jobIds") List<Long> jobIds);
-    @Query("SELECT b from board b left join fetch b.user u left join fetch b.boardImages i " +
-            "left join fetch b.carBoards cb left join fetch cb.car c " +
-            "left join fetch b.locationBoards lb left join fetch lb.subLocation l " +
-            "left join fetch b.jobBoards jb left join fetch jb.job j " +
-            "where l.id in :locationIds " +
-            "order by b.createdAt DESC")
-    Page<Board> findBySubLocations(Pageable pageable, @Param("locationIds") List<Long> LocationIds);
-    @Query("SELECT b from board b left join fetch b.user u left join fetch b.boardImages i " +
-            "left join fetch b.carBoards cb left join fetch cb.car c " +
-            "left join fetch b.locationBoards lb left join fetch lb.subLocation l " +
-            "left join fetch b.jobBoards jb left join fetch jb.job j " +
-            "where l.mainLocation.id = :mainLocationId " +
-            "order by b.createdAt DESC")
-    Page<Board> findByMainLocation(Pageable pageable, @Param("mainLocationId") Long mainLocationId);
+    // 공통된 기본 쿼리
+    String BASE_QUERY = "select distinct b.id as boardId, b.title as title, b.content as content, b.company_location as companyLocation, b.created_at as createdAt, " +
+            "        b.start_at as startAt, b.end_at as endAt, b.pay_type as payType, b.payment as payment, b.recruit_type as recruitType, " +
+            "        ml.category as mainLocation, " +
+            "        group_concat(distinct c.category) as carCategory, " +
+            "        group_concat(distinct j.category) as jobCategory, " +
+            "        group_concat(distinct sl.category) as locationCategory, " +
+            "        u.user_id as userId, u.nickname as userNickname, " +
+            "        (select count(*) from bookmark b1 where b1.board_id=b.id) as bookmarkCount, " +
+            "        case when bm.user_id is not null then true else false end as bookmarked "+
+            "    from board b " +
+            "    left join user u on u.id=b.user_id " +
+            "    left join board_image bi on b.id=bi.board_id " +
+            "    left join car_board cb on b.id=cb.board_id " +
+            "    left join car c on c.id=cb.car_id " +
+            "    left join job_board jb on b.id=jb.board_id " +
+            "    left join job j on j.id=jb.job_id " +
+            "    left join location_board lb on b.id=lb.board_id " +
+            "    left join sub_location sl on sl.id=lb.location_id " +
+            "    left join main_location ml on ml.id=sl.main_location_id " +
+            "    left join bookmark bm on bm.board_id=b.id and bm.user_id = (select id from user u1 where u1.user_id=:userId) "+
+            "    where b.deleted=false ";
 
-    @Query("SELECT b from board b left join fetch b.user u left join fetch b.boardImages i " +
-            "left join fetch b.carBoards cb left join fetch cb.car c " +
-            "left join fetch b.locationBoards lb left join fetch lb.subLocation l " +
-            "left join fetch b.jobBoards jb left join fetch jb.job j " +
-            "where u.userId = :userId " +
-            "order by b.createdAt DESC")
-    Page<Board> findByUserId(Pageable pageable, @Param("userId") String userId);
-    @Query("SELECT b from board b left join fetch b.user u left join fetch b.boardImages i " +
-            "left join fetch b.carBoards cb left join fetch cb.car c " +
-            "left join fetch b.locationBoards lb left join fetch lb.subLocation l " +
-            "left join fetch b.jobBoards jb left join fetch jb.job j " +
-            "where b.content like concat(:keyword, '%') or " +
-            "b.title like concat(:keyword, '%') or " +
-            "c.category like concat(:keyword, '%') or " +
-            "l.category like concat(:keyword, '%') or " +
-            "j.category like concat(:keyword, '%') " +
-            "order by b.createdAt DESC")
-    Page<Board> search(Pageable pageable, @Param("keyword") String keyword);
+    // 정렬 쿼리
+    String SORT_QUERY = "group by b.id, b.title, b.content, b.company_location, b.created_at, b.start_at, b.end_at, b.pay_type, b.payment, b.recruit_type, u.user_id, u.nickname, ml.category, bookmarked " +
+                        "order by bookmarked desc, b.created_at desc ";
+    // 전체 검색
+    @Query(value = BASE_QUERY +
+            SORT_QUERY +
+            "limit :limit offset :offset", nativeQuery = true)
+    List<BoardFindVo> findAll(@Param("limit") int limit, @Param("offset") int offset, @Param("userId") String userId);
+
+    // Car ID에 따른 검색
+    @Query(value = BASE_QUERY +
+            "and c.id in (:carIds) " +
+            SORT_QUERY +
+            "limit :limit offset :offset", nativeQuery = true)
+    List<BoardFindVo> findByCars(@Param("limit") int limit, @Param("offset") int offset, @Param("carIds") List<Long> carIds, @Param("userId") String userId);
+
+    // Job ID에 따른 검색
+    @Query(value = BASE_QUERY +
+            "and j.id in (:jobIds) " +
+             SORT_QUERY +
+            "limit :limit offset :offset", nativeQuery = true)
+    List<BoardFindVo> findByJobs(@Param("limit") int limit, @Param("offset") int offset, @Param("jobIds") List<Long> jobIds, @Param("userId") String userId);
+
+    // Sub Location ID에 따른 검색
+    @Query(value = BASE_QUERY +
+            "and sl.id in (:locationIds) " +
+             SORT_QUERY +
+            "limit :limit offset :offset", nativeQuery = true)
+    List<BoardFindVo> findBySubLocations(@Param("limit") int limit, @Param("offset") int offset, @Param("locationIds") List<Long> LocationIds, @Param("userId") String userId);
+
+    // Main Location ID에 따른 검색
+    @Query(value = BASE_QUERY +
+            "and ml.id=:mainLocationId " +
+             SORT_QUERY +
+            "limit :limit offset :offset", nativeQuery = true)
+    List<BoardFindVo> findByMainLocation(@Param("limit") int limit, @Param("offset") int offset, @Param("mainLocationId") Long mainLocationId, @Param("userId") String userId);
+
+    // User ID에 따른 검색
+    @Query(value = BASE_QUERY +
+            "and u.user_id=:userId " +
+             SORT_QUERY +
+            "limit :limit offset :offset", nativeQuery = true)
+    List<BoardFindVo> findByUserId(@Param("limit") int limit, @Param("offset") int offset, @Param("userId") String userId);
+
+    // 키워드 검색
+    @Query(value = BASE_QUERY +
+            "and (title like concat(:keyword, '%') or content like concat(:keyword, '%') or c.category like concat(:keyword, '%') or j.category like concat(:keyword, '%') or sl.category like concat(:keyword, '%') or ml.category like concat(:keyword, '%')) " +
+             SORT_QUERY +
+            "limit :limit offset :offset", nativeQuery = true)
+    List<BoardFindVo> search(@Param("limit") int limit, @Param("offset") int offset, @Param("keyword") String keyword, @Param("userId") String userId);
 }
