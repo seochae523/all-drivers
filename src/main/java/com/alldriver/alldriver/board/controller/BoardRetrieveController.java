@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/owner")
+@RequestMapping("/user")
 @Tag(name = "board retrieve")
 public class BoardRetrieveController {
     private final BoardRetrieveService boardRetrieveService;
@@ -65,5 +65,14 @@ public class BoardRetrieveController {
     public ResponseEntity<List<BoardFindResponseDto>> findByUserId(@RequestParam(value = "page", defaultValue = "0") Integer page){
         return ResponseEntity.ok(boardRetrieveService.findByUserId(page));
     }
-
+    @Operation(description = "게시글을 여러 파라미터들로 로 10개씩 조회 (페이지 시작 0부터) <br> [page 제외 파라미터들 기입 안하면 해당 카테고리 전체 조회입니다.]")
+    @GetMapping("/board/parameters")
+    @Parameter(name = "page", description = "페이지 번호 기본 값 0")
+    public ResponseEntity<List<BoardFindResponseDto>> findByComplexParameters(@RequestParam(value = "page", defaultValue = "0") Integer page,
+                                                                              @RequestParam(value = "carIds", required = false) List<Long> carIds,
+                                                                              @RequestParam(value = "jobIds", required = false) List<Long> jobIds,
+                                                                              @RequestParam(value = "subLocationIds", required = false) List<Long> subLocationIds,
+                                                                              @RequestParam(value = "mainLocationId", required = false) Long mainLocationId){
+        return ResponseEntity.ok(boardRetrieveService.findByComplexParameters(page, carIds, jobIds, subLocationIds, mainLocationId));
+    }
 }
