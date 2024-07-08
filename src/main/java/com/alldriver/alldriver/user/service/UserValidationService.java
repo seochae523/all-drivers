@@ -7,4 +7,5 @@ public interface UserValidationService {
     Boolean checkPhoneNumber(PhoneNumberCheckRequestDto phoneNumberCheckRequestDto);
     Boolean checkLicense(String licenseNumber);
     Boolean checkDuplicatedAccount(String userId);
+
 }

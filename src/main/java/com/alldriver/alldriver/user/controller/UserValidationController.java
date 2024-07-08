@@ -36,7 +36,8 @@ public class UserValidationController {
         return new ResponseEntity(userValidationService.checkNickname(nickname), HttpStatus.OK);
     }
     @PostMapping("/phoneNumber")
-    @Operation(description = "전화번호에 따른 회원 유무 판별. type = 검증 종류별 타입. 0 = 회원 가입 시 중복 계정 확인 1 = 비밀번호 변경 시 회원 존재 유무 확인")
+    @Operation(description = "전화번호에 따른 회원 유무 판별. type = 검증 종류별 타입. " +
+            "[ 0 = 회원 가입 시 인증 번호 발급 / 1 = 비밀번호 변경 시 계정 확인 / 2 = 잊어버린 비밀번호 변경 시 계정 확인. 이때는 user id 필요 ]")
     public ResponseEntity<Boolean> checkPhoneNumber(@RequestBody @Valid PhoneNumberCheckRequestDto phoneNumberCheckRequestDto){
         return new ResponseEntity(userValidationService.checkPhoneNumber(phoneNumberCheckRequestDto), HttpStatus.OK);
     }

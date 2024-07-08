@@ -2,6 +2,8 @@ package com.alldriver.alldriver.user.service.impl;
 
 import com.alldriver.alldriver.common.emun.ErrorCode;
 import com.alldriver.alldriver.common.exception.CustomException;
+import com.alldriver.alldriver.common.util.JwtUtils;
+import com.alldriver.alldriver.user.domain.User;
 import com.alldriver.alldriver.user.dto.request.PhoneNumberCheckRequestDto;
 import com.alldriver.alldriver.user.repository.LicenseRepository;
 import com.alldriver.alldriver.user.repository.UserRepository;
@@ -32,21 +34,34 @@ public class UserValidationServiceImpl implements UserValidationService {
     public Boolean checkPhoneNumber(PhoneNumberCheckRequestDto phoneNumberCheckRequestDto) {
         String phoneNumber = phoneNumberCheckRequestDto.getPhoneNumber();
         Integer type = phoneNumberCheckRequestDto.getType();
+        // TYPE == 0 : 회원 가입 시 핸드폰 번호 검증
         if(type == 0) {
             userRepository.findByPhoneNumber(phoneNumber)
                     .ifPresent(x -> {
                         throw new CustomException(ErrorCode.DUPLICATED_PHONE_NUMBER);
                     });
         }
+
+        // TYPE == 1 : 비밀번호 번경 시 핸드폰 번호 검증
         else if(type == 1){
             userRepository.findByPhoneNumber(phoneNumber)
                     .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
         }
+
+        // TYPE == 2 : 잊어버린 비밀번호 변경 시 유저 아이디 + 핸드폰 번호로 유저 검증
+        else if(type ==2) {
+            String userId = phoneNumberCheckRequestDto.getUserId();
+            userRepository.findByUserIdAndPhoneNumber(userId, phoneNumber)
+                    .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+        }
+
         else{
             throw new CustomException(ErrorCode.INVALID_PARAMETER, " Type Must Be 0 Or 1.");
         }
         return true;
     }
+
     @Override
     public Boolean checkLicense(String licenseNumber) {
         licenseRepository.findByLicenseNumber(licenseNumber)
@@ -56,6 +71,7 @@ public class UserValidationServiceImpl implements UserValidationService {
 
         return true;
     }
+
     @Override
     public Boolean checkDuplicatedAccount(String userId){
         userRepository.findByUserId(userId)

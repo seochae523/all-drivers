@@ -165,6 +165,32 @@ class UserValidationServiceTest {
         assertThat(customException.getErrorCode()).isEqualTo(ErrorCode.ACCOUNT_NOT_FOUND);
         assertThat(customException.getMessage()).isEqualTo(ErrorCode.ACCOUNT_NOT_FOUND.getMessage());
     }
+
+    @Test
+    @DisplayName("잊어버린 비밀번호 변경 전화 번호 검증 - 사용자 있을 때")
+    void checkUnDuplicatedPhoneNumberWhenChangeForgetPassword() {
+        // given
+        PhoneNumberCheckRequestDto phoneNumberCheckRequestDto = setUpPhoneNumberCheckRequest(phoneNumber, 2);
+        when(userRepository.findByUserIdAndPhoneNumber(any(), any())).thenReturn(Optional.of(new User()));
+        // when
+        Boolean b = userValidationService.checkPhoneNumber(phoneNumberCheckRequestDto);
+        // then
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    @DisplayName("잊어버린 비밀번호 변경 전화 번호 검증 - 사용자 없을 때")
+    void checkDuplicatedPhoneNumberWhenChangeForgetPassword() {
+        // given
+        PhoneNumberCheckRequestDto phoneNumberCheckRequestDto = setUpPhoneNumberCheckRequest(phoneNumber, 2);
+        when(userRepository.findByUserIdAndPhoneNumber(any(), any())).thenThrow(new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+        // when
+        CustomException customException = assertThrows(CustomException.class, () -> userValidationService.checkPhoneNumber(phoneNumberCheckRequestDto));
+
+        // then
+        assertThat(customException.getErrorCode()).isEqualTo(ErrorCode.ACCOUNT_NOT_FOUND);
+        assertThat(customException.getMessage()).isEqualTo(ErrorCode.ACCOUNT_NOT_FOUND.getMessage());
+    }
     @Test
     @DisplayName("전화 번호 검증 - 타입 파라미터 에러")
     void checkDuplicatedPhoneNumberWhenTypeHasError() {
