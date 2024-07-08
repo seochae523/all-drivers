@@ -16,6 +16,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import scala.Int;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -190,5 +192,41 @@ class UserValidationControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(ErrorCode.ACCOUNT_NOT_FOUND.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.ACCOUNT_NOT_FOUND.getMessage()));
+    }
+    @Test
+    @DisplayName("잊어 버린 비밀번호 변경 전화 번호 검증 - 사용자 있을 때")
+    void checkDuplicatedPhoneNumberWhenChangeForgetPassword() throws Exception {
+        // given
+        String phoneNumber = "01012345678";
+        String userId = "test";
+        Integer type = 2;
+        PhoneNumberCheckRequestDto phoneNumberCheckRequestDto = PhoneNumberCheckRequestDto.builder().phoneNumber(phoneNumber).userId(userId).type(type).build();
+        when(userValidationService.checkPhoneNumber(any())).thenThrow(new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        // when, then
+        mockMvc.perform(post("/check/phoneNumber").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(phoneNumberCheckRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(ErrorCode.ACCOUNT_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.ACCOUNT_NOT_FOUND.getMessage()));
+    }
+    @Test
+    @DisplayName("잊어 버린 비밀번호 변경 전화 번호 검증 - 사용자 없을 때")
+    void checkUnDuplicatedPhoneNumberWhenChangeForgetPassword() throws Exception {
+        // given
+        String phoneNumber = "01012345678";
+        String userId = "test";
+        Integer type = 2;
+        PhoneNumberCheckRequestDto phoneNumberCheckRequestDto = PhoneNumberCheckRequestDto.builder().phoneNumber(phoneNumber).userId(userId).type(type).build();
+        when(userValidationService.checkPhoneNumber(any())).thenReturn(true);
+
+        // when, then
+        mockMvc.perform(post("/check/phoneNumber").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(phoneNumberCheckRequestDto)))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Boolean.valueOf(true).toString()));
+
     }
 }
