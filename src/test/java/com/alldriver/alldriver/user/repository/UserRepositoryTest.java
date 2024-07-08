@@ -44,6 +44,53 @@ public class UserRepositoryTest {
             userRepository.save(user);
     }
 
+    @Test
+    @DisplayName("user id + 전화 번호로 유저 조회 성공")
+    void findByUserIdAndPhoneNumberSuccess(){
+        // given
+        String correctPhoneNumber = "01012345678";
+        String userId ="test";
+        // when
+        Optional<User> result = userRepository.findByUserIdAndPhoneNumber(userId, correctPhoneNumber);
+        // then
+        assertThat(result).isNotEmpty();
+    }
+
+    @Test
+    @DisplayName("user id + 전화 번호로 유저 조회 실패 - user id 틀릴 때")
+    void findByUserIdAndPhoneNumberFailWhenUserIdIsWrong(){
+        // given
+        String correctPhoneNumber = "01012345678";
+        String userId ="wrong";
+        // when
+        Optional<User> result = userRepository.findByUserIdAndPhoneNumber(userId, correctPhoneNumber);
+        // then
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("user id + 전화 번호로 유저 조회 실패 - phone number 틀릴 때")
+    void findByUserIdAndPhoneNumberFailWhenPhoneNumberIsWrong(){
+        // given
+        String correctPhoneNumber = "01011111111";
+        String userId ="test";
+        // when
+        Optional<User> result = userRepository.findByUserIdAndPhoneNumber(userId, correctPhoneNumber);
+        // then
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("user id + 전화 번호로 유저 조회 실패 - 둘 다 틀릴 때")
+    void findByUserIdAndPhoneNumberFailWhenBothAreWrong(){
+        // given
+        String correctPhoneNumber = "01011111111";
+        String userId ="wrong";
+        // when
+        Optional<User> result = userRepository.findByUserIdAndPhoneNumber(userId, correctPhoneNumber);
+        // then
+        assertThat(result).isEmpty();
+    }
 
     @Test
     @DisplayName("올바른 전화번호 조회")
