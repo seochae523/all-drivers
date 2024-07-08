@@ -95,6 +95,15 @@ public class BoardRetrieveServiceImpl implements BoardRetrieveService {
         return getBoardFindResponseDto(findVoList);
     }
 
+    @Override
+    public List<BoardFindResponseDto> findByComplexParameters(Integer page, List<Long> carIds, List<Long> jobIds, List<Long> subLocationIds, Long mainLocationId) {
+        String userId = JwtUtils.getUserId();
+        Integer offset = page * pageSize;
+        List<BoardFindVo> findVoList = boardRepository.findByComplexParameters(pageSize, offset, carIds, jobIds, subLocationIds, mainLocationId, userId);
+
+        return getBoardFindResponseDto(findVoList);
+    }
+
     private List<BoardFindResponseDto> getBoardFindResponseDto(List<BoardFindVo> findVoList){
         Map<Long, BoardFindResponseDto> boardMap = new LinkedHashMap<>();
 

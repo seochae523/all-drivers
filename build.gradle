@@ -73,7 +73,7 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'com.h2database:h2'
 	testImplementation 'io.findify:s3mock_2.12:0.2.4'
-
+	testImplementation "com.graphhopper.external:jackson-datatype-jts:1.0-2.7"
 }
 
 tasks.named('test') {

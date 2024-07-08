@@ -84,8 +84,23 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     // 키워드 검색
     @Query(value = BASE_QUERY +
-            "and (title like concat(:keyword, '%') or content like concat(:keyword, '%') or c.category like concat(:keyword, '%') or j.category like concat(:keyword, '%') or sl.category like concat(:keyword, '%') or ml.category like concat(:keyword, '%')) " +
+            "and (title like concat('%',:keyword, '%') or " +
+            "content like concat('%', :keyword, '%') or " +
+            "c.category like concat('%', :keyword, '%') or " +
+            "j.category like concat('%', :keyword, '%') or " +
+            "sl.category like concat('%', :keyword, '%') or " +
+            "ml.category like concat('%',:keyword, '%')) " +
              SORT_QUERY +
             "limit :limit offset :offset", nativeQuery = true)
     List<BoardFindVo> search(@Param("limit") int limit, @Param("offset") int offset, @Param("keyword") String keyword, @Param("userId") String userId);
+
+    @Query(value = BASE_QUERY +
+            "and (COALESCE(:carIds) is null or c.id in (:carIds) ) " +
+            "and (COALESCE(:jobIds) is null or j.id in (:jobIds) ) " +
+            "and (COALESCE(:locationIds) is null or sl.id in (:locationIds) ) " +
+            "and (COALESCE(:mainLocationId) is null or ml.id=:mainLocationId )  " +
+            SORT_QUERY +
+            "limit :limit offset :offset", nativeQuery = true)
+    List<BoardFindVo> findByComplexParameters(@Param("limit") int limit, @Param("offset") int offset, @Param("carIds") List<Long> carIds, @Param("jobIds") List<Long> jobIds, @Param("locationIds") List<Long> LocationIds, @Param("mainLocationId") Long mainLocationId, @Param("userId") String userId);
+
 }
