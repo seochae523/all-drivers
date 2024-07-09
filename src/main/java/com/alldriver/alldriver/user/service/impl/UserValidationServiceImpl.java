@@ -6,6 +6,7 @@ import com.alldriver.alldriver.common.util.JwtUtils;
 import com.alldriver.alldriver.user.domain.User;
 import com.alldriver.alldriver.user.dto.request.PhoneNumberCheckRequestDto;
 import com.alldriver.alldriver.user.repository.LicenseRepository;
+import com.alldriver.alldriver.user.repository.UserCarRepository;
 import com.alldriver.alldriver.user.repository.UserRepository;
 import com.alldriver.alldriver.user.service.UserValidationService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserValidationServiceImpl implements UserValidationService {
     private final UserRepository userRepository;
     private final LicenseRepository licenseRepository;
+    private final UserCarRepository userCarRepository;
     @Override
     public Boolean checkNickname(String nickname) {
         userRepository.findByNickname(nickname)
@@ -68,7 +70,15 @@ public class UserValidationServiceImpl implements UserValidationService {
                 .ifPresent(x ->{
                     throw new CustomException(ErrorCode.DUPLICATED_LICENSE_NUMBER, " License Number = " + licenseNumber);
                 });
+        return true;
+    }
 
+    @Override
+    public Boolean checkCarNumber(String carNumber) {
+        userRepository.findByCarNumber(carNumber)
+                .ifPresent(x ->{
+                    throw new CustomException(ErrorCode.DUPLICATED_CAR_NUMBER, " Car Number = " + carNumber);
+                });
         return true;
     }
 

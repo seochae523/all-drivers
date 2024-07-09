@@ -42,14 +42,13 @@ public class CarOwnerSignUpRequestDto {
     @Schema(description = "차 정보")
     private CarInformationRequestDto carInformation;
 
-    public User toEntity(Set<UserCar> userCarSet){
+    public User toEntity(){
         return User.builder()
                 .userId(userId)
                 .name(name)
                 .password(password)
                 .nickname(nickname)
                 .phoneNumber(phoneNumber)
-                .userCar(userCarSet)
                 .deleted(false)
                 .createdAt(LocalDateTime.now())
                 .build();

@@ -1,11 +1,9 @@
 package com.alldriver.alldriver.user.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -31,8 +29,15 @@ public class UserCar {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @Setter
     private User user;
 
-    @OneToMany(mappedBy = "userCar")
-    private List<CarImage> carImage;
+    @OneToMany(mappedBy = "userCar", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Builder.Default
+    private List<CarImage> carImage= new ArrayList<>();
+
+    public void addCarImage(CarImage carImage){
+        this.carImage.add(carImage);
+        carImage.setUserCar(this);
+    }
 }
