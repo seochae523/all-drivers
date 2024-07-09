@@ -78,7 +78,7 @@ public class UserController {
     public ResponseEntity<ChangePasswordResponseDto> updatePassword(@RequestBody @Valid ChangePasswordRequestDto changePasswordRequestDto){
         return ResponseEntity.ok(userService.changePassword(changePasswordRequestDto));
     }
-    @PutMapping("/user/update")
+    @PutMapping("/user/upgrade")
     @Operation(description = "회원 권한 상승 <br> type : 상승 할 권한 [type = 0 - 일반 유저에서 차주로 권한 업그레이드 이때는 차량 이미지 3장 필요, type = 1 - 일반 유저에서 화주로 권한 업그레이드 이때는 사진 1장만 필요]")
     public ResponseEntity<String> upgradeUser(@RequestPart(value = "images") List<MultipartFile> images,
                                               @RequestPart(value = "request") UserUpgradeRequestDto userUpgradeRequestDto) throws IOException {
