@@ -28,6 +28,6 @@ public class RefreshController {
     @Operation(description = "access token 만료시 refresh token을 이용하여 재발급")
     @PostMapping
     public ResponseEntity<AuthToken> refresh(@RequestBody @Valid RefreshRequestDto refreshRequestDto) throws ParseException {
-        return new ResponseEntity<>(refreshService.refresh(refreshRequestDto), HttpStatus.OK);
+        return ResponseEntity.ok(refreshService.refresh(refreshRequestDto));
     }
 }

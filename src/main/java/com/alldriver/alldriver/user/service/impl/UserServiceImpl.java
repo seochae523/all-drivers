@@ -14,6 +14,7 @@ import com.amazonaws.services.ec2.model.LocalGateway;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -35,11 +36,8 @@ import java.util.stream.Collectors;
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final UserCarRepository userCarRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final LicenseRepository licenseRepository;
-    private final CarImageRepository carImageRepository;
     private final S3Utils s3Utils;
 
 
@@ -97,24 +95,25 @@ public class UserServiceImpl implements UserService {
      * and 화주는 사업자 등록증 입력하기
      */
     @Override
-    public SignUpResponseDto signUpOwner(OwnerSignUpRequestDto ownerSignUpRequestDto, MultipartFile image) throws IOException {
+    public SignUpResponseDto signUpOwner(OwnerSignUpRequestDto ownerSignUpRequestDto, List<MultipartFile> images) throws IOException {
         User user = ownerSignUpRequestDto.toEntity();
         user.hashPassword(passwordEncoder);
         user.setRole(Role.USER);
         user.setRole(Role.OWNER);
 
+        for (MultipartFile image : images) {
+            String url = s3Utils.uploadFile(image);
+
+            License license = License.builder()
+                    .licenseNumber(ownerSignUpRequestDto.getLicense())
+                    .url(url)
+                    .build();
+
+            user.addLicense(license);
+        }
+
+
         User save = userRepository.save(user);
-
-        String url = s3Utils.uploadFile(image);
-
-        License license = License.builder()
-                .licenseNumber(ownerSignUpRequestDto.getLicense())
-                .url(url)
-                .user(save)
-                .build();
-
-        licenseRepository.save(license);
-
 
         return SignUpResponseDto.builder()
                 .userId(save.getUserId())
@@ -125,22 +124,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SignUpResponseDto signUpCarOwner(CarOwnerSignUpRequestDto carOwnerSignUpRequestDto, List<MultipartFile> images) throws IOException {
-        Set<UserCar> cars = new HashSet<>();
         CarInformationRequestDto carInformation = carOwnerSignUpRequestDto.getCarInformation();
+
+        User user = carOwnerSignUpRequestDto.toEntity();
         UserCar userCar = carInformation.toEntity();
 
-        userCarRepository.findByCarNumber(carInformation.getCarNumber())
-                .ifPresent(x -> {
-                    throw new CustomException(ErrorCode.DUPLICATED_CAR_NUMBER, " Car Number = "+carInformation.getCarNumber());
-                });
-
-        userCarRepository.save(userCar);
-        cars.add(userCar);
-
-        User user = carOwnerSignUpRequestDto.toEntity(cars);
         user.hashPassword(passwordEncoder);
         user.setRole(Role.USER);
         user.setRole(Role.CAR_OWNER);
+        user.addUserCar(userCar);
 
         User save = userRepository.save(user);
 
@@ -152,7 +144,7 @@ public class UserServiceImpl implements UserService {
                     .url(url)
                     .build();
 
-            carImageRepository.save(carImage);
+            userCar.addCarImage(carImage);
         }
 
         return SignUpResponseDto.builder()
@@ -170,7 +162,7 @@ public class UserServiceImpl implements UserService {
 
         user.setRefreshToken(null);
 
-        return "로그아웃 성공. user Id = " + user.getUserId();
+        return "로그아웃 성공. User Id = " + user.getUserId();
     }
 
 
@@ -222,6 +214,58 @@ public class UserServiceImpl implements UserService {
         return "회원 탈퇴 완료.";
     }
 
+    @Override
+    public String upgradeUser(List<MultipartFile> images, UserUpgradeRequestDto userUpgradeRequestDto) throws IOException {
+        Integer type = userUpgradeRequestDto.getType();
+        String userId = JwtUtils.getUserId();
 
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND, " User Id = " + userId));
+
+        // type == 0 : user -> car owner
+        if(type == 0){
+            // 차량 정보는 단건만 저장
+            CarInformationRequestDto carInfo = userUpgradeRequestDto.getCarInfo();
+            UserCar userCar = carInfo.toEntity();
+
+            user.setRole(Role.CAR_OWNER);
+            user.addUserCar(userCar);
+
+            userRepository.save(user);
+            for (MultipartFile image : images) {
+                String url = s3Utils.uploadFile(image);
+
+                CarImage carImage = CarImage.builder()
+                        .userCar(userCar)
+                        .url(url)
+                        .build();
+
+                userCar.addCarImage(carImage);
+            }
+
+        }
+
+        // type == 1 user -> owner
+        else if(type == 1){
+            user.setRole(Role.OWNER);
+
+            for(MultipartFile image : images) {
+                String url = s3Utils.uploadFile(image);
+
+                License license = License.builder()
+                        .licenseNumber(userUpgradeRequestDto.getLicenseNumber())
+                        .url(url)
+                        .build();
+
+                user.addLicense(license);
+            }
+            userRepository.save(user);
+        }
+        else{
+            throw new CustomException(ErrorCode.INVALID_PARAMETER, " Type Muse Be 0 Or 1.");
+        }
+
+        return "유저 업그레이드 완료.";
+    }
 
 }

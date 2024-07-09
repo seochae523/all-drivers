@@ -46,7 +46,7 @@ public class SmsServiceImpl implements SmsService {
 
 
     @Override
-    public void sendAuthCode(SmsSendRequestDto smsSendRequestDto) {
+    public String sendAuthCode(SmsSendRequestDto smsSendRequestDto) {
         String phoneNumber = smsSendRequestDto.getPhoneNumber();
 
 
@@ -86,6 +86,8 @@ public class SmsServiceImpl implements SmsService {
         } catch (Exception exception) {
             log.error("{}",exception.getMessage());
         }
+
+        return "문자 발송 완료";
     }
 
     @Override
