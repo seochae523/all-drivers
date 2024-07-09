@@ -16,9 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter
@@ -59,11 +57,13 @@ public class User implements UserDetails {
     @Column(name="role", columnDefinition = "varchar", length = 30, nullable = false)
     private String role;
 
-    @OneToMany(mappedBy = "user")
-    private Set<License> license;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Builder.Default
+    private Set<License> license = new HashSet<>();
 
-    @OneToMany(mappedBy = "user")
-    private Set<UserCar> userCar;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Builder.Default
+    private Set<UserCar> userCar = new HashSet<>();
 
 
     public void setRole(Role role){
@@ -75,7 +75,14 @@ public class User implements UserDetails {
             this.role += role.getValue();
         }
     }
-
+    public void addUserCar(UserCar userCar){
+        this.userCar.add(userCar);
+        userCar.setUser(this);
+    }
+    public void addLicense(License license){
+        this.license.add(license);
+        license.setUser(this);
+    }
     public void updateUserInfo(UserUpdateRequestDto updateRequestDto){
         this.userId = updateRequestDto.getUserId();
         this.nickname = updateRequestDto.getNickname();

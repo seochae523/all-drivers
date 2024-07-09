@@ -35,7 +35,7 @@ class BoardRetrieveControllerTest {
     @MockBean
     BoardRetrieveService boardRetrieveService;
     private final Integer page = 0;
-    private final String requestPrefix ="/owner/board";
+    private final String requestPrefix ="/user/board";
     @Test
     @DisplayName("게시판 전체 조회")
     void findAllBoards() throws Exception {
