@@ -29,6 +29,7 @@ public class CarInformationRequestDto {
                 .carNumber(carNumber)
                 .category(category)
                 .weight(weight)
+
                 .build();
     }
 }
