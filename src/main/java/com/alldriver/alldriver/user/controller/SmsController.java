@@ -32,7 +32,7 @@ public class SmsController {
     @PostMapping("/sms/verify")
     @Operation(description = "sms 문자 인증 검증")
     public ResponseEntity<SmsVerifyResponseDto> sendSmsAuthCode(@RequestBody @Valid SmsVerifyRequestDto smsVerifyRequestDto){
-        return ResponseEntity.ok(smsService.verifiedCode(smsVerifyRequestDto);
+        return ResponseEntity.ok(smsService.verifiedCode(smsVerifyRequestDto));
     }
 
 
