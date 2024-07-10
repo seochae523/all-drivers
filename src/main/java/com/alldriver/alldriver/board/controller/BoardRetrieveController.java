@@ -1,6 +1,7 @@
 package com.alldriver.alldriver.board.controller;
 
 import com.alldriver.alldriver.board.dto.response.BoardFindResponseDto;
+import com.alldriver.alldriver.board.dto.response.ImageFindResponseDto;
 import com.alldriver.alldriver.board.service.BoardRetrieveService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -75,4 +76,17 @@ public class BoardRetrieveController {
                                                                               @RequestParam(value = "mainLocationId", required = false) Long mainLocationId){
         return ResponseEntity.ok(boardRetrieveService.findByComplexParameters(page, carIds, jobIds, subLocationIds, mainLocationId));
     }
+    @Operation(description = "user가 즐겨찾기한 게시글을 조회")
+    @GetMapping("/board/bookmark")
+    @Parameter(name = "page", description = "페이지 번호 기본 값 0")
+    public ResponseEntity<List<BoardFindResponseDto>> findByUserBookmark(@RequestParam(value = "page", defaultValue = "0") Integer page){
+        return ResponseEntity.ok(boardRetrieveService.findMyBookmarkedBoard(page));
+    }
+    @Operation(description = "게시글 이미지를 board id로 조회")
+    @GetMapping("/board/images/{boardId}")
+    public ResponseEntity<List<ImageFindResponseDto>> findImageByBoardId(@PathVariable Long boardId){
+        return ResponseEntity.ok(boardRetrieveService.findImageByBoardId(boardId));
+    }
+
+
 }
