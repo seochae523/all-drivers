@@ -1,7 +1,9 @@
 package com.alldriver.alldriver.board.service.impl;
 
 import com.alldriver.alldriver.board.domain.Board;
+import com.alldriver.alldriver.board.domain.BoardImage;
 import com.alldriver.alldriver.board.dto.response.*;
+import com.alldriver.alldriver.board.repository.BoardImageRepository;
 import com.alldriver.alldriver.board.repository.BoardRepository;
 import com.alldriver.alldriver.board.service.BoardRetrieveService;
 import com.alldriver.alldriver.board.vo.BoardFindVo;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class BoardRetrieveServiceImpl implements BoardRetrieveService {
     private final BoardRepository boardRepository;
+    private final BoardImageRepository boardImageRepository;
     @Value("${spring.data.rest.default-page-size}")
     private Integer pageSize;
 
@@ -100,6 +103,25 @@ public class BoardRetrieveServiceImpl implements BoardRetrieveService {
         String userId = JwtUtils.getUserId();
         Integer offset = page * pageSize;
         List<BoardFindVo> findVoList = boardRepository.findByComplexParameters(pageSize, offset, carIds, jobIds, subLocationIds, mainLocationId, userId);
+
+        return getBoardFindResponseDto(findVoList);
+    }
+
+    @Override
+    public List<ImageFindResponseDto> findImageByBoardId(Long boardId) {
+        List<ImageFindResponseDto> result = new ArrayList<>();
+        List<BoardImage> images = boardImageRepository.findByBoardId(boardId);
+        for (BoardImage image : images) {
+            result.add(new ImageFindResponseDto(image.getId(), image.getUrl()));
+        }
+        return result;
+    }
+
+    @Override
+    public List<BoardFindResponseDto> findMyBookmarkedBoard(Integer page) {
+        String userId = JwtUtils.getUserId();
+        Integer offset = page * pageSize;
+        List<BoardFindVo> findVoList = boardRepository.findByBookmark(pageSize, offset, userId);
 
         return getBoardFindResponseDto(findVoList);
     }
