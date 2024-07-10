@@ -103,4 +103,10 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "limit :limit offset :offset", nativeQuery = true)
     List<BoardFindVo> findByComplexParameters(@Param("limit") int limit, @Param("offset") int offset, @Param("carIds") List<Long> carIds, @Param("jobIds") List<Long> jobIds, @Param("locationIds") List<Long> LocationIds, @Param("mainLocationId") Long mainLocationId, @Param("userId") String userId);
 
+
+    @Query(value = BASE_QUERY +
+            "and bm.user_id = (select id from user u1 where u1.user_id=:userId) " +
+            SORT_QUERY +
+            "limit :limit offset :offset", nativeQuery = true)
+    List<BoardFindVo> findByBookmark(@Param("limit") int limit, @Param("offset") int offset, @Param("userId") String userId);
 }
