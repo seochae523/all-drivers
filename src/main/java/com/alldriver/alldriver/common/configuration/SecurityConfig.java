@@ -21,6 +21,7 @@ import com.alldriver.alldriver.common.util.JwtUtils;
 public class SecurityConfig {
 
     private final CustomUserDetailService customUserDetailService;
+   // private final JwtExceptionFilter jwtExceptionFilter;
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
@@ -43,7 +44,8 @@ public class SecurityConfig {
                                          "/change-forget-password", "/refresh","/ws/chat", "/sms/**" , "/verify/**").permitAll()
                  )
                 .formLogin(AbstractHttpConfigurer::disable)
-                .addFilterBefore(new JwtFilter(customUserDetailService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(customUserDetailService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtExceptionFilter(), JwtFilter.class);
         return httpSecurity.build();
     }
 
