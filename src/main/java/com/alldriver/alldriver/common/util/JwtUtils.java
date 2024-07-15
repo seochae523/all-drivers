@@ -4,6 +4,7 @@ package com.alldriver.alldriver.common.util;
 
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.emun.ErrorCode;
+import com.alldriver.alldriver.common.exception.JwtException;
 import com.alldriver.alldriver.common.token.dto.AuthToken;
 import com.alldriver.alldriver.user.service.CustomUserDetailService;
 import io.jsonwebtoken.*;
@@ -54,7 +55,7 @@ public class JwtUtils {
                     .setSubject(userId)
                     .claim("roles", roles)
                     .setIssuedAt(new Date(System.currentTimeMillis()))
-                    .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_TIME))
+                    .setExpiration(new Date(System.currentTimeMillis() + 3000L))
                     .signWith(SignatureAlgorithm.HS512, JWT_SECRET_KEY)
                     .compact();
         }
@@ -85,19 +86,19 @@ public class JwtUtils {
         }
         catch (SecurityException e) {
             log.info("Invalid JWT Signature");
-            throw new CustomException(ErrorCode.INVALID_AUTH_TOKEN);
+            throw new JwtException(ErrorCode.INVALID_AUTH_TOKEN);
         } catch (MalformedJwtException e) {
             log.info("Invalid JWT token.");
-            throw new CustomException(ErrorCode.INVALID_AUTH_TOKEN);
+            throw new JwtException(ErrorCode.INVALID_AUTH_TOKEN);
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT token.");
-            throw new CustomException(ErrorCode.AUTH_TOKEN_EXPIRED);
+            throw new JwtException(ErrorCode.AUTH_TOKEN_EXPIRED);
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT token.");
-            throw new CustomException(ErrorCode.INVALID_AUTH_TOKEN);
+            throw new JwtException(ErrorCode.INVALID_AUTH_TOKEN);
         } catch (IllegalArgumentException e) {
             log.info("JWT token compact of handler are invalid.");
-            throw new CustomException(ErrorCode.INVALID_AUTH_TOKEN);
+            throw new JwtException(ErrorCode.INVALID_AUTH_TOKEN);
         }
     }
     public static Claims parseClaims(String token){
