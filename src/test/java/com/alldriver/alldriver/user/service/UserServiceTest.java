@@ -1,8 +1,8 @@
 package com.alldriver.alldriver.user.service;
 
-import com.alldriver.alldriver.common.emun.Role;
+import com.alldriver.alldriver.common.enums.Role;
 import com.alldriver.alldriver.common.exception.CustomException;
-import com.alldriver.alldriver.common.emun.ErrorCode;
+import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.util.JwtUtils;
 import com.alldriver.alldriver.common.token.dto.AuthToken;
 import com.alldriver.alldriver.user.domain.User;
@@ -15,23 +15,17 @@ import com.alldriver.alldriver.user.dto.response.SignUpResponseDto;
 import com.alldriver.alldriver.user.repository.UserRepository;
 import com.alldriver.alldriver.user.service.impl.UserServiceImpl;
 
-import io.jsonwebtoken.Jwt;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;

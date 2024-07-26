@@ -19,6 +19,8 @@ public class BoardFindResponseDto {
     private String content;
     @Schema(description = "제목", example = "example")
     private String title;
+    @Schema(description = "취급 물류 카테고리", example = "example")
+    private String category;
     @Schema(description = "아이디", example = "example")
     private String userId;
     @Schema(description = "닉네임", example = "example")

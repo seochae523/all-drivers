@@ -1,21 +1,18 @@
 package com.alldriver.alldriver.user.service;
 
-import com.alldriver.alldriver.common.emun.ErrorCode;
+import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.exception.CustomException;
-import com.alldriver.alldriver.user.domain.License;
 import com.alldriver.alldriver.user.domain.User;
 import com.alldriver.alldriver.user.dto.request.PhoneNumberCheckRequestDto;
 import com.alldriver.alldriver.user.repository.LicenseRepository;
 import com.alldriver.alldriver.user.repository.UserRepository;
 import com.alldriver.alldriver.user.service.impl.UserValidationServiceImpl;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
 
 import java.util.Optional;
 
@@ -23,10 +20,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @ExtendWith(MockitoExtension.class)

@@ -12,7 +12,7 @@ import java.net.URISyntaxException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping
-@Tag(name = "open-api")
+@Tag(name = "차랑, 사업자 등록증 검증 관련 api")
 public class OpenApiController {
     private final OpenApiService openApiService;
 

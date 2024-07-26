@@ -26,6 +26,8 @@ import java.util.*;
 public class BoardSaveRequestDto {
     @Schema(description = "내용", example = "이 편지는 1970년 영국으로부터 시작되어...")
     private String content;
+    @Schema(description = "취급 물류 카테고리", example = "example")
+    private String category;
     @Schema(description = "제목", example = "행운의 편지")
     private String title;
     @Schema(description = "작성자 아이디", example = "example")
@@ -56,6 +58,7 @@ public class BoardSaveRequestDto {
         return Board.builder()
                 .content(content)
                 .title(title)
+                .category(category)
                 .user(user)
                 .payType(payType)
                 .payment(payment)

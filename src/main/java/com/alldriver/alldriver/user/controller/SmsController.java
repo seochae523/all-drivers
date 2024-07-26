@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping
-@Tag(name = "sms")
+@Tag(name = "문자 관련 api")
 public class SmsController {
     private final SmsService smsService;
 

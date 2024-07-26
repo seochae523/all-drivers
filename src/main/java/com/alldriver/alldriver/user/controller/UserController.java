@@ -22,7 +22,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping
-@Tag(name ="user")
+@Tag(name ="유저 관련 api")
 @Validated
 public class UserController {
     private final UserService userService;

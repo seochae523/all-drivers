@@ -1,6 +1,6 @@
 package com.alldriver.alldriver.common.exception;
 
-import com.alldriver.alldriver.common.emun.ErrorCode;
+import com.alldriver.alldriver.common.enums.ErrorCode;
 import lombok.Getter;
 import lombok.Setter;
 
