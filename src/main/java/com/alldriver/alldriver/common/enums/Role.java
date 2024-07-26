@@ -1,4 +1,4 @@
-package com.alldriver.alldriver.common.emun;
+package com.alldriver.alldriver.common.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,8 +1,8 @@
 package com.alldriver.alldriver.user.service.impl;
 
-import com.alldriver.alldriver.common.emun.Role;
+import com.alldriver.alldriver.common.enums.Role;
 import com.alldriver.alldriver.common.exception.CustomException;
-import com.alldriver.alldriver.common.emun.ErrorCode;
+import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.util.JwtUtils;
 import com.alldriver.alldriver.common.token.dto.AuthToken;
 import com.alldriver.alldriver.common.util.S3Utils;
@@ -10,16 +10,13 @@ import com.alldriver.alldriver.user.domain.*;
 import com.alldriver.alldriver.user.dto.request.*;
 import com.alldriver.alldriver.user.dto.response.*;
 import com.alldriver.alldriver.user.repository.*;
-import com.amazonaws.services.ec2.model.LocalGateway;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.alldriver.alldriver.user.service.UserService;
@@ -158,7 +155,7 @@ public class UserServiceImpl implements UserService {
     public String logout() {
         String userId = JwtUtils.getUserId();
         User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND, " User Id = " + userId));
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND, " 사용자 아이디 = " + userId));
 
         user.setRefreshToken(null);
 
@@ -220,7 +217,7 @@ public class UserServiceImpl implements UserService {
         String userId = JwtUtils.getUserId();
 
         User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND, " User Id = " + userId));
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND, " 사용자 아아디 = " + userId));
 
         // type == 0 : user -> car owner
         if(type == 0){
@@ -262,7 +259,7 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
         }
         else{
-            throw new CustomException(ErrorCode.INVALID_PARAMETER, " Type Muse Be 0 Or 1.");
+            throw new CustomException(ErrorCode.INVALID_PARAMETER, " type 파라미터는 0 또는 1이어야 합니다.");
         }
 
         return "유저 업그레이드 완료.";

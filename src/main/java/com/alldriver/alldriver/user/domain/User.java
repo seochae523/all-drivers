@@ -1,7 +1,7 @@
 package com.alldriver.alldriver.user.domain;
 
 
-import com.alldriver.alldriver.common.emun.Role;
+import com.alldriver.alldriver.common.enums.Role;
 import com.alldriver.alldriver.user.dto.request.UserUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

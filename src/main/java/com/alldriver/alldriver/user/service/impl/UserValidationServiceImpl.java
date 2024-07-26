@@ -1,9 +1,7 @@
 package com.alldriver.alldriver.user.service.impl;
 
-import com.alldriver.alldriver.common.emun.ErrorCode;
+import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.exception.CustomException;
-import com.alldriver.alldriver.common.util.JwtUtils;
-import com.alldriver.alldriver.user.domain.User;
 import com.alldriver.alldriver.user.dto.request.PhoneNumberCheckRequestDto;
 import com.alldriver.alldriver.user.repository.LicenseRepository;
 import com.alldriver.alldriver.user.repository.UserCarRepository;
@@ -21,12 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserValidationServiceImpl implements UserValidationService {
     private final UserRepository userRepository;
     private final LicenseRepository licenseRepository;
-    private final UserCarRepository userCarRepository;
+
     @Override
     public Boolean checkNickname(String nickname) {
         userRepository.findByNickname(nickname)
                 .ifPresent(x ->{
-                        throw new CustomException(ErrorCode.DUPLICATED_NICKNAME, " Nickname = "+ nickname);
+                        throw new CustomException(ErrorCode.DUPLICATED_NICKNAME, " 닉네임 = "+ nickname);
                 });
 
         return true;
@@ -59,7 +57,7 @@ public class UserValidationServiceImpl implements UserValidationService {
         }
 
         else{
-            throw new CustomException(ErrorCode.INVALID_PARAMETER, " Type Must Be 0 Or 1.");
+            throw new CustomException(ErrorCode.INVALID_PARAMETER, " type 파라미터는 0 또는 1이어야 합니다.");
         }
         return true;
     }
@@ -68,7 +66,7 @@ public class UserValidationServiceImpl implements UserValidationService {
     public Boolean checkLicense(String licenseNumber) {
         licenseRepository.findByLicenseNumber(licenseNumber)
                 .ifPresent(x ->{
-                    throw new CustomException(ErrorCode.DUPLICATED_LICENSE_NUMBER, " License Number = " + licenseNumber);
+                    throw new CustomException(ErrorCode.DUPLICATED_LICENSE_NUMBER, " 사업자 등록 번호 = " + licenseNumber);
                 });
         return true;
     }
@@ -77,7 +75,7 @@ public class UserValidationServiceImpl implements UserValidationService {
     public Boolean checkCarNumber(String carNumber) {
         userRepository.findByCarNumber(carNumber)
                 .ifPresent(x ->{
-                    throw new CustomException(ErrorCode.DUPLICATED_CAR_NUMBER, " Car Number = " + carNumber);
+                    throw new CustomException(ErrorCode.DUPLICATED_CAR_NUMBER, " 차량 번호 = " + carNumber);
                 });
         return true;
     }
@@ -86,7 +84,7 @@ public class UserValidationServiceImpl implements UserValidationService {
     public Boolean checkDuplicatedAccount(String userId){
         userRepository.findByUserId(userId)
                 .ifPresent(x ->{
-                    throw new CustomException(ErrorCode.DUPLICATED_ACCOUNT, " User Id = " + userId);
+                    throw new CustomException(ErrorCode.DUPLICATED_ACCOUNT, " 사용자 아이디 = " + userId);
                 });
         return true;
     }

@@ -1,16 +1,14 @@
 package com.alldriver.alldriver.user.controller;
 
 import com.alldriver.alldriver.common.exception.CustomException;
-import com.alldriver.alldriver.common.emun.ErrorCode;
+import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.token.dto.AuthToken;
-import com.alldriver.alldriver.user.domain.User;
 import com.alldriver.alldriver.user.dto.request.*;
 import com.alldriver.alldriver.user.dto.response.ChangePasswordResponseDto;
 import com.alldriver.alldriver.user.dto.response.LoginResponseDto;
 import com.alldriver.alldriver.user.dto.response.SignUpResponseDto;
 import com.alldriver.alldriver.user.dto.response.UserUpdateResponseDto;
 import com.alldriver.alldriver.user.service.impl.UserServiceImpl;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,14 +19,10 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Mockito.*;
@@ -107,7 +101,7 @@ public class UserControllerTest {
         mockMvc.perform(post("/sign-up/user").with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userSignUpRequestDto)))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userId").value("testUser"))
                 .andExpect(jsonPath("$.nickname").value("testNick"))
                 .andExpect(jsonPath("$.name").value("testName"));
@@ -118,7 +112,7 @@ public class UserControllerTest {
     void signUpOwner() throws Exception {
         // given
         OwnerSignUpRequestDto ownerSignUpRequestDto = setUpOwner();
-        MockMultipartFile multipartFile = new MockMultipartFile("image", "test.jpg", "image/jpg", "test file".getBytes(StandardCharsets.UTF_8) );
+        MockMultipartFile multipartFile = new MockMultipartFile("images", "test.jpg", "image/jpg", "test file".getBytes(StandardCharsets.UTF_8) );
         MockMultipartFile request = new MockMultipartFile("request", "request", "application/json", objectMapper.writeValueAsString(ownerSignUpRequestDto).getBytes(StandardCharsets.UTF_8));
         SignUpResponseDto signUpResponseDto = setUpSignUpResponse();
         when(userService.signUpOwner(any(), any())).thenReturn(signUpResponseDto);
@@ -127,7 +121,7 @@ public class UserControllerTest {
         mockMvc.perform(multipart("/sign-up/owner")
                         .file(multipartFile)
                         .file(request).with(csrf()))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userId").value("testUser"))
                 .andExpect(jsonPath("$.nickname").value("testNick"))
                 .andExpect(jsonPath("$.name").value("testName"));
@@ -150,7 +144,7 @@ public class UserControllerTest {
                         .file(multipartFile1)
                         .file(multipartFile2)
                         .file(request).with(csrf()))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userId").value("testUser"))
                 .andExpect(jsonPath("$.nickname").value("testNick"))
                 .andExpect(jsonPath("$.name").value("testName"));

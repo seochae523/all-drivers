@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/check")
-@Tag(name ="user validation")
+@Tag(name ="유저 검증 관련 api")
 @Validated
 public class UserValidationController {
     private final UserValidationService userValidationService;

@@ -134,6 +134,7 @@ public class BoardRetrieveServiceImpl implements BoardRetrieveService {
             BoardFindResponseDto boardDto = boardMap.computeIfAbsent(boardId, id -> {
                 BoardFindResponseDto dto = new BoardFindResponseDto();
                 dto.setId(boardFindVo.getBoardId());
+                dto.setCategory(boardFindVo.getCategory());
                 dto.setContent(boardFindVo.getContent());
                 dto.setTitle(boardFindVo.getTitle());
                 dto.setUserId(boardFindVo.getUserId());
