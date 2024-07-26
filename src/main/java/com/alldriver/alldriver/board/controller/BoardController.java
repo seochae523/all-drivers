@@ -22,13 +22,13 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
-@Tag(name = "board")
+@RequestMapping("/user/board")
+@Tag(name = "게시글 관련 api")
 public class BoardController {
     private final BoardService boardService;
 
     @Operation(description = "게시글을 form-data 타입을 통해 저장 (json x)")
-    @PostMapping("/board/save")
+    @PostMapping("/save")
     @Parameters({
             @Parameter(name="images", description = "이미지 첨부"),
             @Parameter(name="request", description = "게시글에 필요한 리퀘스트", required = true)
@@ -39,7 +39,7 @@ public class BoardController {
     }
 
     @Operation(description = "게시글 업데이트")
-    @PutMapping("/board/update")
+    @PutMapping("/update")
     @Parameters({
             @Parameter(name="images", description = "추가 할 이미지"),
             @Parameter(name="request", description = "게시글에 필요한 리퀘스트", required = true)
@@ -48,5 +48,9 @@ public class BoardController {
                                                      @RequestPart(value = "request", required = false) BoardUpdateRequestDto boardUpdateRequestDto) throws IOException {
         return ResponseEntity.ok(boardService.update(multipartFile, boardUpdateRequestDto));
     }
-
+    @Operation(description = "게시글 삭제")
+    @DeleteMapping("/delete/{boardId}")
+    public ResponseEntity<String> delete(@PathVariable Long boardId){
+        return ResponseEntity.ok(boardService.delete(boardId));
+    }
 }

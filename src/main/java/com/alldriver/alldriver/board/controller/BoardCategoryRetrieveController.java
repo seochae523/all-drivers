@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
-@Tag(name = "board category retrieve")
+@Tag(name = "게시글 카테고리 조회 관련 api")
 public class BoardCategoryRetrieveController {
 
     private final BoardCategoryRetrieveService boardCategoryRetrieveService;

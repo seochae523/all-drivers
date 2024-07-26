@@ -3,7 +3,7 @@ package com.alldriver.alldriver.user.service.impl;
 
 
 import com.alldriver.alldriver.common.exception.CustomException;
-import com.alldriver.alldriver.common.emun.ErrorCode;
+import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.util.JwtUtils;
 import com.alldriver.alldriver.common.token.dto.AuthToken;
 import com.alldriver.alldriver.common.token.dto.RefreshRequestDto;
@@ -35,7 +35,7 @@ public class RefreshServiceImpl implements RefreshService {
         String userId = JwtUtils.getUserIdFromRefreshToken(refreshToken);
 
         User findUser = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND, " User Id = " + userId));
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND, " 사용자 아이디 = " + userId));
 
         String role = findUser.getRole();
         List<String> roles = new ArrayList<>();

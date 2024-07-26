@@ -7,6 +7,7 @@ import java.util.List;
 public interface BoardFindVo {
     Long getBoardId();
     String getContent();
+    String getCategory();
     String getTitle();
     String getUserId();
     LocalDateTime getCreatedAt();

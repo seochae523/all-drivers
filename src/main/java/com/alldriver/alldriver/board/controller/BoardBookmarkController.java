@@ -10,20 +10,20 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
-@Tag(name = "board bookmark")
+@RequestMapping("/user/board/bookmark")
+@Tag(name = "게시글 즐겨찾기 관련 api")
 public class BoardBookmarkController {
     private final BoardBookmarkService boardBookmarkService;
 
     @Operation(description = "게시글 관심 목록 저장")
-    @PostMapping("/board/bookmark/save")
-    public ResponseEntity<String> save(@RequestParam(value = "boardId") Long boardId)  {
+    @PostMapping("/save/{boardId}")
+    public ResponseEntity<String> save(@PathVariable Long boardId)  {
         return ResponseEntity.ok(boardBookmarkService.saveLike(boardId));
     }
 
     @Operation(description = "게시글 관심 목록 삭제")
-    @DeleteMapping("/board/bookmark/delete")
-    public ResponseEntity<String> delete(@RequestParam(value = "boardId") Long boardId) {
+    @DeleteMapping("/delete/{boardId}")
+    public ResponseEntity<String> delete(@PathVariable Long boardId) {
         return ResponseEntity.ok(boardBookmarkService.deleteLike(boardId));
     }
 }

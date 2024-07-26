@@ -1,10 +1,9 @@
 package com.alldriver.alldriver.user.repository;
 
 
-import com.alldriver.alldriver.common.emun.Role;
+import com.alldriver.alldriver.common.enums.Role;
 import com.alldriver.alldriver.user.domain.User;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

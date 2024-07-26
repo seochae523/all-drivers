@@ -1,14 +1,12 @@
 package com.alldriver.alldriver.user.service.impl;
 
 import com.alldriver.alldriver.common.exception.CustomException;
-import com.alldriver.alldriver.common.emun.ErrorCode;
+import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.user.domain.SmsSession;
-import com.alldriver.alldriver.user.dto.request.PhoneNumberCheckRequestDto;
 import com.alldriver.alldriver.user.dto.request.SmsSendRequestDto;
 import com.alldriver.alldriver.user.dto.request.SmsVerifyRequestDto;
 import com.alldriver.alldriver.user.dto.response.SmsVerifyResponseDto;
 import com.alldriver.alldriver.user.repository.SmsRepository;
-import com.alldriver.alldriver.user.repository.UserRepository;
 import com.alldriver.alldriver.user.service.SmsService;
 import lombok.RequiredArgsConstructor;
 
