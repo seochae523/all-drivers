@@ -84,6 +84,7 @@ jobs:
         --build-arg SMS_SECRET_KEY="${{env.SMS_SECRET_KEY}}" \
         --build-arg SMS_PHONE_NUMBER="${{env.SMS_PHONE_NUMBER}}" \
         --build-arg SMS_DOMAIN="${{env.SMS_DOMAIN}}" \
+        
         -t ${{ secrets.DOCKERHUB_USERNAME }}/all-driver .
         
     # 4. DockerHub 로그인
@@ -111,10 +112,14 @@ jobs:
       # 2. 기존의 컨테이너를 중지시킵니다
       - name: docker stop container
         run: sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
+
+      # 2-1. 카프카 실행  
+      - name: run kafka
+        run: sudo docker-compose up -d
         
       # 3. 최신 이미지를 컨테이너화하여 실행시킵니다
       - name: docker run new container
-        run: sudo docker run -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/all-driver 
+        run: sudo docker run -d -p 8080:8080 --network ubuntu_default ${{ secrets.DOCKERHUB_USERNAME }}/all-driver 
 
       # 4. 미사용 이미지를 정리합니다
       - name: delete old docker image
