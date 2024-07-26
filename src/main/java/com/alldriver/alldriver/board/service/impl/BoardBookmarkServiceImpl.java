@@ -1,11 +1,11 @@
 package com.alldriver.alldriver.board.service.impl;
 
 import com.alldriver.alldriver.board.domain.Board;
-import com.alldriver.alldriver.board.domain.Bookmark;
+import com.alldriver.alldriver.board.domain.BoardBookmark;
 import com.alldriver.alldriver.board.repository.BoardRepository;
-import com.alldriver.alldriver.board.repository.BookmarkRepository;
+import com.alldriver.alldriver.board.repository.BoardBookmarkRepository;
 import com.alldriver.alldriver.board.service.BoardBookmarkService;
-import com.alldriver.alldriver.common.emun.ErrorCode;
+import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.util.JwtUtils;
 import com.alldriver.alldriver.user.domain.User;
@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @Slf4j
 @Transactional
 public class BoardBookmarkServiceImpl implements BoardBookmarkService {
-    private final BookmarkRepository bookmarkRepository;
+    private final BoardBookmarkRepository boardBookmarkRepository;
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     @Override
@@ -32,15 +32,20 @@ public class BoardBookmarkServiceImpl implements BoardBookmarkService {
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
         User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_USER));
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
-        Bookmark bookmark = Bookmark.builder()
+        boardBookmarkRepository.findByBoardIdAndUserId(boardId, userId)
+                .ifPresent(x -> {
+                    throw new CustomException(ErrorCode.DUPLICATED_BOOKMARK);
+                });
+
+        BoardBookmark boardBookmark = BoardBookmark.builder()
                 .board(board)
                 .user(user)
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        bookmarkRepository.save(bookmark);
+        boardBookmarkRepository.save(boardBookmark);
 
         return "관심 목록 저장 완료.";
     }
@@ -49,10 +54,10 @@ public class BoardBookmarkServiceImpl implements BoardBookmarkService {
     public String deleteLike(Long boardId) {
         String userId = JwtUtils.getUserId();
 
-        Bookmark bookmark = bookmarkRepository.findByBoardIdAndUserId(boardId, userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.LIKE_NOT_FOUND));
+        BoardBookmark boardBookmark = boardBookmarkRepository.findByBoardIdAndUserId(boardId, userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOOKMARK_NOT_FOUND));
 
-        bookmarkRepository.delete(bookmark);
+        boardBookmarkRepository.delete(boardBookmark);
 
         return "관심 목록 삭제 완료.";
     }

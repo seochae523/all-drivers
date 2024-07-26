@@ -25,6 +25,9 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name="category", columnDefinition = "varchar", length = 100, nullable = false)
+    private String category;
+
     @Column(name="content", columnDefinition = "TEXT", nullable = false)
     private String content;
 
@@ -106,5 +109,6 @@ public class Board {
         this.companyLocation = boardUpdateRequestDto.getCompanyLocation();
         this.startAt = boardUpdateRequestDto.getStartAt();
         this.endAt = boardUpdateRequestDto.getEndAt();
+        this.category = boardUpdateRequestDto.getCategory();
     }
 }

@@ -16,6 +16,7 @@ public class BoardUpdateRequestDto {
     @Schema(description = "업데이트 할 게시판 id ", example = "2")
     private Long id;
     private String content;
+    private String category;
     private String userId;
     private String title;
     private String payType;

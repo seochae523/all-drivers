@@ -27,7 +27,7 @@ class UserCarRepositoryTest {
 
     @BeforeEach
     void init(){
-        List<CarImage> carImageList = new ArrayList<>();
+
 
         CarImage testUrl1 = CarImage.builder()
                 .url("testUrl1")
@@ -41,17 +41,16 @@ class UserCarRepositoryTest {
                 .url("testUrl3")
                 .build();
 
-        carImageList.add(testUrl1);
-        carImageList.add(testUrl2);
-        carImageList.add(testUrl3);
+
 
         UserCar userCar = UserCar.builder()
                 .category("testCar")
                 .weight("testWeight")
                 .carNumber("testCarNumber")
-                .carImage(carImageList)
                 .build();
-
+        userCar.addCarImage(testUrl1);
+        userCar.addCarImage(testUrl2);
+        userCar.addCarImage(testUrl3);
         userCarRepository.save(userCar);
     }
 

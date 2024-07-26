@@ -16,14 +16,14 @@ import java.util.Optional;
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
     // 공통된 기본 쿼리
-    String BASE_QUERY = "select distinct b.id as boardId, b.title as title, b.content as content, b.company_location as companyLocation, b.created_at as createdAt, " +
+    String BASE_QUERY = "select distinct b.id as boardId, b.title as title, b.category as category, b.content as content, b.company_location as companyLocation, b.created_at as createdAt, " +
             "        b.start_at as startAt, b.end_at as endAt, b.pay_type as payType, b.payment as payment, b.recruit_type as recruitType, " +
             "        ml.category as mainLocation, " +
             "        group_concat(distinct c.category) as carCategory, " +
             "        group_concat(distinct j.category) as jobCategory, " +
             "        group_concat(distinct sl.category) as locationCategory, " +
             "        u.user_id as userId, u.nickname as userNickname, " +
-            "        (select count(*) from bookmark b1 where b1.board_id=b.id) as bookmarkCount, " +
+            "        (select count(*) from board_bookmark b1 where b1.board_id=b.id) as bookmarkCount, " +
             "        case when bm.user_id is not null then true else false end as bookmarked "+
             "    from board b " +
             "    left join user u on u.id=b.user_id " +
@@ -35,11 +35,11 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "    left join location_board lb on b.id=lb.board_id " +
             "    left join sub_location sl on sl.id=lb.location_id " +
             "    left join main_location ml on ml.id=sl.main_location_id " +
-            "    left join bookmark bm on bm.board_id=b.id and bm.user_id = (select id from user u1 where u1.user_id=:userId) "+
+            "    left join board_bookmark bm on bm.board_id=b.id and bm.user_id = (select id from user u1 where u1.user_id=:userId) "+
             "    where b.deleted=false ";
 
     // 정렬 쿼리
-    String SORT_QUERY = "group by b.id, b.title, b.content, b.company_location, b.created_at, b.start_at, b.end_at, b.pay_type, b.payment, b.recruit_type, u.user_id, u.nickname, ml.category, bookmarked " +
+    String SORT_QUERY = "group by b.id, b.title, b.category, b.content, b.company_location, b.created_at, b.start_at, b.end_at, b.pay_type, b.payment, b.recruit_type, u.user_id, u.nickname, ml.category, bookmarked " +
                         "order by bookmarked desc, b.created_at desc ";
     // 전체 검색
     @Query(value = BASE_QUERY +
@@ -95,10 +95,10 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<BoardFindVo> search(@Param("limit") int limit, @Param("offset") int offset, @Param("keyword") String keyword, @Param("userId") String userId);
 
     @Query(value = BASE_QUERY +
-            "and (COALESCE(:carIds) is null or c.id in (:carIds) ) " +
-            "and (COALESCE(:jobIds) is null or j.id in (:jobIds) ) " +
-            "and (COALESCE(:locationIds) is null or sl.id in (:locationIds) ) " +
-            "and (COALESCE(:mainLocationId) is null or ml.id=:mainLocationId )  " +
+            "and :carIds is null or c.id in (:carIds) " +
+            "and :jobIds is null or j.id in (:jobIds) " +
+            "and :locationIds is null or sl.id in (:locationIds) " +
+            "and :mainLocationId is null or ml.id=:mainLocationId " +
             SORT_QUERY +
             "limit :limit offset :offset", nativeQuery = true)
     List<BoardFindVo> findByComplexParameters(@Param("limit") int limit, @Param("offset") int offset, @Param("carIds") List<Long> carIds, @Param("jobIds") List<Long> jobIds, @Param("locationIds") List<Long> LocationIds, @Param("mainLocationId") Long mainLocationId, @Param("userId") String userId);

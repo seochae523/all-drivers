@@ -1,6 +1,7 @@
 //package com.alldriver.alldriver.common.configuration.kafka;
 //
 //
+//import com.alldriver.alldriver.chat.dto.KafkaChatDto;
 //import com.google.common.collect.ImmutableMap;
 //import org.apache.kafka.clients.consumer.ConsumerConfig;
 //import org.apache.kafka.common.serialization.StringSerializer;
@@ -12,8 +13,6 @@
 //import org.springframework.kafka.core.KafkaTemplate;
 //import org.springframework.kafka.core.ProducerFactory;
 //import org.springframework.kafka.support.serializer.JsonSerializer;
-//import sejongZoo.sejongZoo.chat.dto.KafkaChatDto;
-//import sejongZoo.sejongZoo.chat.dto.response.ChatSaveResponseDto;
 //
 //
 //import javax.management.Notification;
