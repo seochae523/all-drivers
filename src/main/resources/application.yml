@@ -1,4 +1,14 @@
 spring:
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: chat-group
+      auto-offset-reset: earliest
+    template:
+      default-topic: chat-messages
   data:
     rest:
       default-page-size: 10
@@ -53,16 +63,7 @@ cloud:
       secretKey: ${DYNAMODB_SECRET_KEY}
 
 
-kafka:
-  bootstrap-servers: kafka:9092
-  producer:
-    key-serializer: org.apache.kafka.common.serialization.StringSerializer
-    value-serializer: org.apache.kafka.common.serialization.StringSerializer
-  consumer:
-    group-id: chat-group
-    auto-offset-reset: earliest
-  template:
-    default-topic: chat-messages
+
 
 
 firebase:
