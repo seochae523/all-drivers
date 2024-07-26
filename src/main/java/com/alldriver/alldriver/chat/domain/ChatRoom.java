@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import com.alldriver.alldriver.board.domain.Board;
 import com.alldriver.alldriver.user.domain.User;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -22,26 +24,26 @@ import java.util.Date;
 public class ChatRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="room_id")
-    private Long roomId;
+    @Column(name="id")
+    private Long id;
 
+    @Column(name="title", columnDefinition = "varchar", length = 50, nullable = false)
+    private String title;
 
     @Column(name="created_at", nullable = false)
-    private Date createdAt;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
 
     @ManyToOne
-    @JoinColumn(name = "publisher_id", nullable = false)
-    private User publisher;
+    @JoinColumn(name = "creator_id", nullable = false)
+    private User creator;
 
 
     @ManyToOne
-    @JoinColumn(name = "subscriber_id", nullable = false)
-    private User subscriber;
+    @JoinColumn(name = "participant_id")
+    private User participant;
 
-    @ManyToOne
-    @JoinColumn(name = "board_id", nullable = false)
-    private Board board;
 
     @Column(name="deleted", nullable = false)
     @ColumnDefault("false")

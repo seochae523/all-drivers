@@ -12,9 +12,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class ChatRoomSaveResponseDto {
     private Long id;
-    private String publisher;
-    private String subscriber;
-    private String boardTitle;
+    private String title;
+    private String creator;
     private Date createdAt;
-    private Boolean isCreated;
+
 }

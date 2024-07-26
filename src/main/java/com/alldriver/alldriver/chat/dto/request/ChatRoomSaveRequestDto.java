@@ -12,14 +12,6 @@ import lombok.NoArgsConstructor;
 public class ChatRoomSaveRequestDto {
     @NotBlank(message = "Chat Room Publisher Not Found.")
     @Schema(description = "방 생성자", example = "ex")
-    private String publisher;
+    private String userId;
 
-    @NotBlank(message = "Chat Room Subscriber Not Found.")
-    @Schema(description = "방 참여자", example = "ex")
-    private String subscriber;
-
-    @NotNull(message = "Board Id Not Found.")
-    @PositiveOrZero(message = "Board Id Must Be Positive Or Zero Value.")
-    @Schema(description = "게시판 id", example = "1")
-    private Long boardId;
 }
