@@ -84,7 +84,6 @@ jobs:
         --build-arg SMS_SECRET_KEY="${{env.SMS_SECRET_KEY}}" \
         --build-arg SMS_PHONE_NUMBER="${{env.SMS_PHONE_NUMBER}}" \
         --build-arg SMS_DOMAIN="${{env.SMS_DOMAIN}}" \
-        
         -t ${{ secrets.DOCKERHUB_USERNAME }}/all-driver .
         
     # 4. DockerHub 로그인
