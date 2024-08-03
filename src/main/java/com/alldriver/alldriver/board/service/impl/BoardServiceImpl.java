@@ -102,7 +102,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public String update(List<MultipartFile> images, BoardUpdateRequestDto boardUpdateRequestDto) throws IOException {
+    public BoardUpdateResponseDto update(List<MultipartFile> images, BoardUpdateRequestDto boardUpdateRequestDto) throws IOException {
         Board board = boardRepository.findById(boardUpdateRequestDto.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND, " 게시글 id = " + boardUpdateRequestDto.getId()));
 
@@ -195,7 +195,7 @@ public class BoardServiceImpl implements BoardService {
 
             }
         }
-        boardRepository.save(board);
+        Board save = boardRepository.save(board);
 
         if(imageIds!=null) {
             for (Long imageId : imageIds) {
@@ -221,11 +221,15 @@ public class BoardServiceImpl implements BoardService {
         }
 
 
-        return "게시글 업데이트 완료.";
+        return BoardUpdateResponseDto.builder()
+                .id(save.getId())
+                .title(save.getTitle())
+                .content(save.getContent())
+                .build();
     }
 
     @Override
-    public String delete(Long id) {
+    public BoardDeleteResponseDto delete(Long id) {
         String userId = JwtUtils.getUserId();
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
@@ -233,9 +237,11 @@ public class BoardServiceImpl implements BoardService {
         if(!board.getUser().getUserId().equals(userId)) throw new CustomException(ErrorCode.INVALID_USER);
 
         board.setDeleted(true);
-        boardRepository.save(board);
+        Board save = boardRepository.save(board);
 
-        return "게시글 삭제 완료.";
+        return BoardDeleteResponseDto.builder()
+                .id(save.getId())
+                .build();
     }
 
 

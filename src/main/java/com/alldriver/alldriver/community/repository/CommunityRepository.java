@@ -1,6 +1,6 @@
 package com.alldriver.alldriver.community.repository;
 
-import com.alldriver.alldriver.board.vo.BoardFindVo;
+
 import com.alldriver.alldriver.community.domain.Community;
 import com.alldriver.alldriver.community.vo.CommunityFindVo;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -195,7 +195,7 @@ class UserValidationServiceTest {
         CustomException customException = assertThrows(CustomException.class, () -> userValidationService.checkPhoneNumber(phoneNumberCheckRequestDto));
         // then
         assertThat(customException.getErrorCode()).isEqualTo(ErrorCode.INVALID_PARAMETER);
-        assertThat(customException.getMessage()).isEqualTo(ErrorCode.INVALID_PARAMETER.getMessage()+" Type Must Be 0 Or 1.");
+        assertThat(customException.getMessage()).isEqualTo(ErrorCode.INVALID_PARAMETER.getMessage()+" type 파라미터는 0 또는 1이어야 합니다.");
     }
 
     private PhoneNumberCheckRequestDto setUpPhoneNumberCheckRequest(String phoneNumber, Integer type){

@@ -2,7 +2,6 @@ package com.alldriver.alldriver.user.dto.request;
 
 import com.alldriver.alldriver.user.domain.UserCar;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 

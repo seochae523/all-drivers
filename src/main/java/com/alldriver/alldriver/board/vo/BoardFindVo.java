@@ -2,7 +2,7 @@ package com.alldriver.alldriver.board.vo;
 
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
+
 
 public interface BoardFindVo {
     Long getBoardId();

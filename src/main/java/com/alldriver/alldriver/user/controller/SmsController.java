@@ -1,6 +1,5 @@
 package com.alldriver.alldriver.user.controller;
 
-import com.alldriver.alldriver.user.dto.request.PhoneNumberCheckRequestDto;
 import com.alldriver.alldriver.user.dto.request.SmsSendRequestDto;
 import com.alldriver.alldriver.user.dto.request.SmsVerifyRequestDto;
 import com.alldriver.alldriver.user.dto.response.SmsVerifyResponseDto;
@@ -9,9 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

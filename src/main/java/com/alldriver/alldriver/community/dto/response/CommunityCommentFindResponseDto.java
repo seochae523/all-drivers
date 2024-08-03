@@ -8,9 +8,7 @@ import java.util.List;
 
 @Builder
 @Getter
-@Setter
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class CommunityCommentFindResponseDto {
     private Long id;
     private String content;

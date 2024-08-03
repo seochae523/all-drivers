@@ -7,7 +7,10 @@ import com.alldriver.alldriver.community.domain.Community;
 import com.alldriver.alldriver.community.domain.CommunityComment;
 import com.alldriver.alldriver.community.dto.request.CommunityCommentSaveRequestDto;
 import com.alldriver.alldriver.community.dto.request.CommunityCommentUpdateRequestDto;
+import com.alldriver.alldriver.community.dto.response.CommunityCommentDeleteResponseDto;
 import com.alldriver.alldriver.community.dto.response.CommunityCommentFindResponseDto;
+import com.alldriver.alldriver.community.dto.response.CommunityCommentSaveResponseDto;
+import com.alldriver.alldriver.community.dto.response.CommunityCommentUpdateResponseDto;
 import com.alldriver.alldriver.community.repository.CommunityCommentRepository;
 import com.alldriver.alldriver.community.repository.CommunityRepository;
 import com.alldriver.alldriver.community.service.CommunityCommentService;
@@ -34,59 +37,76 @@ public class CommunityCommentServiceImpl implements CommunityCommentService {
     private final CommunityCommentRepository communityCommentRepository;
 
     @Override
-    public String save(CommunityCommentSaveRequestDto communityCommentSaveRequestDto) {
+    public CommunityCommentSaveResponseDto save(CommunityCommentSaveRequestDto communityCommentSaveRequestDto) {
         Long communityId = communityCommentSaveRequestDto.getCommunityId();
         String userId = JwtUtils.getUserId();
         Long parentId = communityCommentSaveRequestDto.getParentId();
+
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
         Community community = communityRepository.findById(communityId)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMUNITY_NOT_FOUND));
 
+        CommunityComment save;
 
 
         if(parentId == null) {
             CommunityComment entity = communityCommentSaveRequestDto.toEntity(user, community);
-            communityCommentRepository.save(entity);
+            save = communityCommentRepository.save(entity);
         }
+
         else{
             CommunityComment communityComment = communityCommentRepository
                     .findById(parentId).orElseThrow(() -> new CustomException(ErrorCode.COMMUNITY_COMMENT_NOT_FOUND));
+
             if(communityComment.getCommunity().getId().equals(communityId)) {
                 CommunityComment entity = communityCommentSaveRequestDto.toEntity(user, community, communityComment);
-                communityCommentRepository.save(entity);
+                save = communityCommentRepository.save(entity);
             }
+
             else{
-                throw new CustomException(ErrorCode.INVALID_COMMENT, " 커뮤니티와 댓글이 일치하지 않습니다.");
+                throw new CustomException(ErrorCode.INVALID_COMMENT, " 커뮤니티가 일치하지 않습니다.");
             }
+
         }
 
-        return "댓글 작성 완료.";
+        return CommunityCommentSaveResponseDto.builder()
+                .id(save.getId())
+                .content(save.getContent())
+                .communityId(community.getId())
+                .build();
     }
 
 
 
     @Override
-    public String delete(Long id) {
+    public CommunityCommentDeleteResponseDto delete(Long id) {
         CommunityComment communityComment = communityCommentRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMUNITY_COMMENT_NOT_FOUND));
         communityComment.setDeleted(true);
-        communityCommentRepository.save(communityComment);
 
-        return "댓글 삭제 완료.";
+        CommunityComment save = communityCommentRepository.save(communityComment);
+
+        return CommunityCommentDeleteResponseDto.builder()
+                .id(save.getId())
+                .build();
     }
 
     @Override
-    public String update(CommunityCommentUpdateRequestDto communityCommentUpdateRequestDto) {
+    public CommunityCommentUpdateResponseDto update(CommunityCommentUpdateRequestDto communityCommentUpdateRequestDto) {
         Long id = communityCommentUpdateRequestDto.getId();
 
         CommunityComment communityComment = communityCommentRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMUNITY_COMMENT_NOT_FOUND));
 
         communityComment.updateComment(communityCommentUpdateRequestDto);
-        communityCommentRepository.save(communityComment);
-        return "댓글 수정 완료.";
+        CommunityComment save = communityCommentRepository.save(communityComment);
+
+        return CommunityCommentUpdateResponseDto.builder()
+                .id(save.getId())
+                .content(save.getContent())
+                .build();
     }
 
     @Override

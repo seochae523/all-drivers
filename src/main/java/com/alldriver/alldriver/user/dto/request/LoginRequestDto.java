@@ -2,7 +2,6 @@ package com.alldriver.alldriver.user.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -17,5 +16,9 @@ public class LoginRequestDto {
     @Schema(description = "비밀번호", example = "example")
     @NotBlank(message = "User Password Not Found.")
     private String password;
+
+    @Schema(description = "fcm 토큰", example = "example")
+    @NotBlank(message = "User Fcm Token Not Found.")
+    private String fcmToken;
 
 }

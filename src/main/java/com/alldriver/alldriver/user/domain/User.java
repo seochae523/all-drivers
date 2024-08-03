@@ -65,6 +65,8 @@ public class User implements UserDetails {
     @Builder.Default
     private Set<UserCar> userCar = new HashSet<>();
 
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private FcmToken fcmToken;
 
     public void setRole(Role role){
         if(this.role == null) {
@@ -82,6 +84,11 @@ public class User implements UserDetails {
     public void addLicense(License license){
         this.license.add(license);
         license.setUser(this);
+    }
+
+    public void addFcmToken(FcmToken fcmToken){
+        this.fcmToken = fcmToken;
+        fcmToken.setUser(this);
     }
     public void updateUserInfo(UserUpdateRequestDto updateRequestDto){
         this.userId = updateRequestDto.getUserId();

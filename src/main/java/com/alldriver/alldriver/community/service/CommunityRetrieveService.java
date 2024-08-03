@@ -1,6 +1,5 @@
 package com.alldriver.alldriver.community.service;
 
-import com.alldriver.alldriver.community.dto.response.CommunityCommentFindResponseDto;
 import com.alldriver.alldriver.community.dto.response.CommunityFindResponseDto;
 
 import java.util.List;

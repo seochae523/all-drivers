@@ -2,6 +2,8 @@ package com.alldriver.alldriver.board.service.impl;
 
 import com.alldriver.alldriver.board.domain.Board;
 import com.alldriver.alldriver.board.domain.BoardBookmark;
+import com.alldriver.alldriver.board.dto.response.BoardBookmarkDeleteResponseDto;
+import com.alldriver.alldriver.board.dto.response.BoardBookmarkSaveResponseDto;
 import com.alldriver.alldriver.board.repository.BoardRepository;
 import com.alldriver.alldriver.board.repository.BoardBookmarkRepository;
 import com.alldriver.alldriver.board.service.BoardBookmarkService;
@@ -26,7 +28,7 @@ public class BoardBookmarkServiceImpl implements BoardBookmarkService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     @Override
-    public String saveLike(Long boardId) {
+    public BoardBookmarkSaveResponseDto saveLike(Long boardId) {
         String userId = JwtUtils.getUserId();
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
@@ -45,13 +47,17 @@ public class BoardBookmarkServiceImpl implements BoardBookmarkService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        boardBookmarkRepository.save(boardBookmark);
+        BoardBookmark save = boardBookmarkRepository.save(boardBookmark);
 
-        return "관심 목록 저장 완료.";
+        return BoardBookmarkSaveResponseDto.builder()
+                .boardId(board.getId())
+                .userId(user.getUserId())
+                .bookmarkId(save.getId())
+                .build();
     }
 
     @Override
-    public String deleteLike(Long boardId) {
+    public BoardBookmarkDeleteResponseDto deleteLike(Long boardId) {
         String userId = JwtUtils.getUserId();
 
         BoardBookmark boardBookmark = boardBookmarkRepository.findByBoardIdAndUserId(boardId, userId)
@@ -59,6 +65,8 @@ public class BoardBookmarkServiceImpl implements BoardBookmarkService {
 
         boardBookmarkRepository.delete(boardBookmark);
 
-        return "관심 목록 삭제 완료.";
+        return BoardBookmarkDeleteResponseDto.builder()
+                .bookmarkId(boardBookmark.getId())
+                .build();
     }
 }
