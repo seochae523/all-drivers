@@ -3,11 +3,15 @@ package com.alldriver.alldriver.community.dto.request;
 import com.alldriver.alldriver.board.domain.SubLocation;
 import com.alldriver.alldriver.community.domain.Community;
 import com.alldriver.alldriver.user.domain.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Builder
+@AllArgsConstructor
 public class CommunitySaveRequestDto {
     private String title;
     private String content;

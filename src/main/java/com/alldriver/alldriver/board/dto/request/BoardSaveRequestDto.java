@@ -1,17 +1,8 @@
 package com.alldriver.alldriver.board.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.web.multipart.MultipartFile;
 import com.alldriver.alldriver.board.domain.Board;
-import com.alldriver.alldriver.board.domain.BoardImage;
 import com.alldriver.alldriver.user.domain.User;
 
 import java.time.LocalDateTime;

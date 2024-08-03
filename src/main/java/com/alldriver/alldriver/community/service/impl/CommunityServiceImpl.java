@@ -8,9 +8,10 @@ import com.alldriver.alldriver.common.util.JwtUtils;
 import com.alldriver.alldriver.community.domain.Community;
 import com.alldriver.alldriver.community.dto.request.CommunitySaveRequestDto;
 import com.alldriver.alldriver.community.dto.request.CommunityUpdateRequestDto;
+import com.alldriver.alldriver.community.dto.response.CommunityDeleteResponseDto;
 import com.alldriver.alldriver.community.dto.response.CommunitySaveResponseDto;
+import com.alldriver.alldriver.community.dto.response.CommunityUpdateResponseDto;
 import com.alldriver.alldriver.community.repository.CommunityRepository;
-import com.alldriver.alldriver.community.service.CommunityRetrieveService;
 import com.alldriver.alldriver.community.service.CommunityService;
 import com.alldriver.alldriver.user.domain.User;
 import com.alldriver.alldriver.user.repository.UserRepository;
@@ -54,24 +55,32 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public String update(CommunityUpdateRequestDto communityUpdateRequestDto) {
+    public CommunityUpdateResponseDto update(CommunityUpdateRequestDto communityUpdateRequestDto) {
         Long id = communityUpdateRequestDto.getId();
         Community community = communityRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMUNITY_NOT_FOUND));
 
         community.update(communityUpdateRequestDto);
-        communityRepository.save(community);
-        return "커뮤니티 업데이트 완료.";
+
+        Community save = communityRepository.save(community);
+
+        return CommunityUpdateResponseDto.builder()
+                .id(save.getId())
+                .title(save.getTitle())
+                .content(save.getContent())
+                .build();
     }
 
     @Override
-    public String delete(Long communityId) {
+    public CommunityDeleteResponseDto delete(Long communityId) {
         Community community = communityRepository.findById(communityId)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMUNITY_NOT_FOUND));
 
         community.setDeleted(true);
-        communityRepository.save(community);
+        Community save = communityRepository.save(community);
 
-        return "커뮤니티 삭제 완료.";
+        return CommunityDeleteResponseDto.builder()
+                .id(save.getId())
+                .build();
     }
 }

@@ -2,9 +2,7 @@ package com.alldriver.alldriver.community.controller;
 
 import com.alldriver.alldriver.community.dto.request.CommunityCommentSaveRequestDto;
 import com.alldriver.alldriver.community.dto.request.CommunityCommentUpdateRequestDto;
-import com.alldriver.alldriver.community.dto.request.CommunitySaveRequestDto;
-import com.alldriver.alldriver.community.dto.response.CommunityCommentFindResponseDto;
-import com.alldriver.alldriver.community.dto.response.CommunitySaveResponseDto;
+import com.alldriver.alldriver.community.dto.response.*;
 import com.alldriver.alldriver.community.service.CommunityCommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,16 +21,16 @@ public class CommunityCommentController {
 
     @PostMapping("/save")
     @Operation(description = "communityId = 커뮤니티 id, parentId = 답글 작성시 부모 댓글의 id. - 답글이 아닌 댓글은 없어도 됩니다.")
-    public ResponseEntity<String> save(@RequestBody CommunityCommentSaveRequestDto communitySaveRequestDto){
+    public ResponseEntity<CommunityCommentSaveResponseDto> save(@RequestBody CommunityCommentSaveRequestDto communitySaveRequestDto){
         return ResponseEntity.ok(communityCommentService.save(communitySaveRequestDto));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<String> update(@RequestBody CommunityCommentUpdateRequestDto communityCommentUpdateRequestDto){
+    public ResponseEntity<CommunityCommentUpdateResponseDto> update(@RequestBody CommunityCommentUpdateRequestDto communityCommentUpdateRequestDto){
         return ResponseEntity.ok(communityCommentService.update(communityCommentUpdateRequestDto));
     }
     @DeleteMapping("/delete/{commentId}")
-    public ResponseEntity<String> delete(@PathVariable Long commentId){
+    public ResponseEntity<CommunityCommentDeleteResponseDto> delete(@PathVariable Long commentId){
         return ResponseEntity.ok(communityCommentService.delete(commentId));
     }
 

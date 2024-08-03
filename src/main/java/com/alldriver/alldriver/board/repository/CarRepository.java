@@ -1,7 +1,6 @@
 package com.alldriver.alldriver.board.repository;
 
 import com.alldriver.alldriver.board.domain.Car;
-import com.alldriver.alldriver.board.domain.Job;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

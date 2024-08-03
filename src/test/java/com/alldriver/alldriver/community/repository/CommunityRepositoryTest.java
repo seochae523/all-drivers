@@ -51,7 +51,6 @@ class CommunityRepositoryTest {
 
         for(int i = 1; i< 11; i++) {
             Community community = Community.builder()
-                    .id((long) i)
                     .title("test" + i)
                     .content("test content" + i)
                     .deleted(false)
@@ -74,6 +73,24 @@ class CommunityRepositoryTest {
         List<CommunityFindVo> all = communityRepository.findAll(10, 0, userId);
         // then
         assertThat(all).hasSize(10);
+    }
+
+    @Test
+    @DisplayName("저장")
+    void save(){
+        // given
+        Community community = Community.builder()
+                .title("tesTitle")
+                .content("testContent")
+                .deleted(false)
+                .build();
+        // when
+        Community save = communityRepository.save(community);
+
+        // then
+        assertThat(save).isInstanceOf(Community.class);
+        assertThat(save.getTitle()).isEqualTo(community.getTitle());
+        assertThat(save.getContent()).isEqualTo(community.getContent());
     }
 
     @Test

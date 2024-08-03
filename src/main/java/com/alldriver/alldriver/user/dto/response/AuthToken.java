@@ -1,4 +1,4 @@
-package com.alldriver.alldriver.common.token.dto;
+package com.alldriver.alldriver.user.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
