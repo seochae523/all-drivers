@@ -1,10 +1,7 @@
 package com.alldriver.alldriver.user.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
@@ -22,5 +19,10 @@ public class FcmToken {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @Setter
     private User user;
+
+    public void updateToken(String token){
+        this.token = token;
+    }
 }

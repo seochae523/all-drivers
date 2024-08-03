@@ -68,6 +68,7 @@ cloud:
 
 firebase:
   url: ${FCM_APP_URL}
+  file-name: ${FCM_FILE_NAME}
 
 
 open-api:

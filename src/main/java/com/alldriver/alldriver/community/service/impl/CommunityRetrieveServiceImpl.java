@@ -1,10 +1,7 @@
 package com.alldriver.alldriver.community.service.impl;
 
 import com.alldriver.alldriver.common.util.JwtUtils;
-import com.alldriver.alldriver.community.domain.CommunityComment;
-import com.alldriver.alldriver.community.dto.response.CommunityCommentFindResponseDto;
 import com.alldriver.alldriver.community.dto.response.CommunityFindResponseDto;
-import com.alldriver.alldriver.community.repository.CommunityCommentRepository;
 import com.alldriver.alldriver.community.repository.CommunityRepository;
 import com.alldriver.alldriver.community.service.CommunityRetrieveService;
 import com.alldriver.alldriver.community.vo.CommunityFindVo;
@@ -15,9 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)

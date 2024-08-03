@@ -4,7 +4,7 @@ import com.alldriver.alldriver.common.enums.Role;
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.util.JwtUtils;
-import com.alldriver.alldriver.common.token.dto.AuthToken;
+import com.alldriver.alldriver.user.dto.response.AuthToken;
 import com.alldriver.alldriver.user.domain.User;
 import com.alldriver.alldriver.user.dto.request.ChangePasswordRequestDto;
 import com.alldriver.alldriver.user.dto.request.LoginRequestDto;

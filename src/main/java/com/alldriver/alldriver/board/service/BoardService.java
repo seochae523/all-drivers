@@ -11,8 +11,8 @@ import java.util.List;
 public interface BoardService {
 
     BoardSaveResponseDto save(List<MultipartFile> multipartFile, BoardSaveRequestDto boardSaveRequestDto) throws IOException;
-    String update(List<MultipartFile> images, BoardUpdateRequestDto boardUpdateRequestDto) throws IOException;
-    String delete(Long id);
+    BoardUpdateResponseDto update(List<MultipartFile> images, BoardUpdateRequestDto boardUpdateRequestDto) throws IOException;
+    BoardDeleteResponseDto delete(Long id);
 
 
 

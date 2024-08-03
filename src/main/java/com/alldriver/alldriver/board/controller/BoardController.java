@@ -2,15 +2,11 @@ package com.alldriver.alldriver.board.controller;
 
 import com.alldriver.alldriver.board.dto.request.BoardUpdateRequestDto;
 import com.alldriver.alldriver.board.dto.response.*;
-import com.alldriver.alldriver.board.service.BoardCategoryRetrieveService;
-import com.alldriver.alldriver.board.service.BoardRetrieveService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,13 +40,13 @@ public class BoardController {
             @Parameter(name="images", description = "추가 할 이미지"),
             @Parameter(name="request", description = "게시글에 필요한 리퀘스트", required = true)
     })
-    public ResponseEntity<String> update(@RequestPart(value = "images", required = false) List<MultipartFile> multipartFile,
+    public ResponseEntity<BoardUpdateResponseDto> update(@RequestPart(value = "images", required = false) List<MultipartFile> multipartFile,
                                                      @RequestPart(value = "request", required = false) BoardUpdateRequestDto boardUpdateRequestDto) throws IOException {
         return ResponseEntity.ok(boardService.update(multipartFile, boardUpdateRequestDto));
     }
     @Operation(description = "게시글 삭제")
     @DeleteMapping("/delete/{boardId}")
-    public ResponseEntity<String> delete(@PathVariable Long boardId){
+    public ResponseEntity<BoardDeleteResponseDto> delete(@PathVariable Long boardId){
         return ResponseEntity.ok(boardService.delete(boardId));
     }
 }

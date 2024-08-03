@@ -4,7 +4,6 @@ import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.user.dto.request.PhoneNumberCheckRequestDto;
 import com.alldriver.alldriver.user.repository.LicenseRepository;
-import com.alldriver.alldriver.user.repository.UserCarRepository;
 import com.alldriver.alldriver.user.repository.UserRepository;
 import com.alldriver.alldriver.user.service.UserValidationService;
 import lombok.RequiredArgsConstructor;
