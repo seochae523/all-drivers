@@ -5,7 +5,7 @@ package com.alldriver.alldriver.common.util;
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.exception.JwtException;
-import com.alldriver.alldriver.common.token.dto.AuthToken;
+import com.alldriver.alldriver.user.dto.response.AuthToken;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

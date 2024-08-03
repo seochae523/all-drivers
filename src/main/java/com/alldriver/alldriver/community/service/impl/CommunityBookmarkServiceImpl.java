@@ -5,6 +5,8 @@ import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.util.JwtUtils;
 import com.alldriver.alldriver.community.domain.Community;
 import com.alldriver.alldriver.community.domain.CommunityBookmark;
+import com.alldriver.alldriver.community.dto.response.CommunityBookmarkDeleteResponseDto;
+import com.alldriver.alldriver.community.dto.response.CommunityBookmarkSaveResponseDto;
 import com.alldriver.alldriver.community.repository.CommunityBookmarkRepository;
 import com.alldriver.alldriver.community.repository.CommunityRepository;
 import com.alldriver.alldriver.community.service.CommunityBookmarkService;
@@ -26,7 +28,7 @@ public class CommunityBookmarkServiceImpl implements CommunityBookmarkService {
 
 
     @Override
-    public String save(Long communityId) {
+    public CommunityBookmarkSaveResponseDto save(Long communityId) {
         String userId = JwtUtils.getUserId();
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
@@ -44,18 +46,25 @@ public class CommunityBookmarkServiceImpl implements CommunityBookmarkService {
                 .user(user)
                 .build();
 
-        communityBookmarkRepository.save(communityBookmark);
+        CommunityBookmark save = communityBookmarkRepository.save(communityBookmark);
 
-        return "커뮤니티 좋아요 완료.";
+        return CommunityBookmarkSaveResponseDto.builder()
+                .bookmarkId(save.getId())
+                .communityId(community.getId())
+                .userId(user.getUserId())
+                .build();
     }
 
     @Override
-    public String delete(Long communityId) {
+    public CommunityBookmarkDeleteResponseDto delete(Long communityId) {
         String userId = JwtUtils.getUserId();
         CommunityBookmark communityBookmark = communityBookmarkRepository.findByCommunityIdAndUserId(communityId, userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.BOOKMARK_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMUNITY_BOOKMARK_NOT_FOUND));
 
         communityBookmarkRepository.delete(communityBookmark);
-        return "좋아요 삭제 완료.";
+
+        return CommunityBookmarkDeleteResponseDto.builder()
+                .id(communityBookmark.getId())
+                .build();
     }
 }

@@ -2,7 +2,7 @@ package com.alldriver.alldriver.user.controller;
 
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.enums.ErrorCode;
-import com.alldriver.alldriver.common.token.dto.AuthToken;
+import com.alldriver.alldriver.user.dto.response.AuthToken;
 import com.alldriver.alldriver.user.dto.request.*;
 import com.alldriver.alldriver.user.dto.response.ChangePasswordResponseDto;
 import com.alldriver.alldriver.user.dto.response.LoginResponseDto;
@@ -318,6 +318,7 @@ public class UserControllerTest {
                 .password("1234")
                 .phoneNumber("01012345678")
                 .nickname("testNick")
+                .fcmToken("testFcm")
                 .build();
     }
     private OwnerSignUpRequestDto setUpOwner(){
@@ -328,6 +329,7 @@ public class UserControllerTest {
                 .nickname("test")
                 .password("1234")
                 .license("testLicense")
+                .fcmToken("testFcm")
                 .build();
     }
     private CarOwnerSignUpRequestDto setUpCarOwner(){
@@ -338,6 +340,7 @@ public class UserControllerTest {
                 .nickname("test")
                 .password("1234")
                 .carInformation(new CarInformationRequestDto())
+                .fcmToken("testFcm")
                 .build();
     }
     private SignUpResponseDto setUpSignUpResponse(){

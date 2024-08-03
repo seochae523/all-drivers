@@ -1,5 +1,7 @@
 package com.alldriver.alldriver.board.controller;
 
+import com.alldriver.alldriver.board.dto.response.BoardBookmarkDeleteResponseDto;
+import com.alldriver.alldriver.board.dto.response.BoardBookmarkSaveResponseDto;
 import com.alldriver.alldriver.board.service.BoardBookmarkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,13 +19,13 @@ public class BoardBookmarkController {
 
     @Operation(description = "게시글 관심 목록 저장")
     @PostMapping("/save/{boardId}")
-    public ResponseEntity<String> save(@PathVariable Long boardId)  {
+    public ResponseEntity<BoardBookmarkSaveResponseDto> save(@PathVariable Long boardId)  {
         return ResponseEntity.ok(boardBookmarkService.saveLike(boardId));
     }
 
     @Operation(description = "게시글 관심 목록 삭제")
     @DeleteMapping("/delete/{boardId}")
-    public ResponseEntity<String> delete(@PathVariable Long boardId) {
+    public ResponseEntity<BoardBookmarkDeleteResponseDto> delete(@PathVariable Long boardId) {
         return ResponseEntity.ok(boardBookmarkService.deleteLike(boardId));
     }
 }

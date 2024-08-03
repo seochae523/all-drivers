@@ -24,7 +24,8 @@ public enum ErrorCode {
     DUPLICATED_CAR_NUMBER(HttpStatus.CONFLICT, "AEU-015", "중복된 차량 번호입니다."),
     DUPLICATED_LICENSE_NUMBER(HttpStatus.CONFLICT, "AEU-016", "중복된 사업자 번호입니다."),
     INVALID_USER(HttpStatus.BAD_REQUEST, "AEU-017", "유효하지 않은 사용자입니다."),
-
+    FCM_TOKEN_NOT_FOUNT(HttpStatus.BAD_REQUEST, "AEU-018", "Firebase 메세지 토큰이 존재하지 않습니다."),
+    FCM_SEND_FAIL(HttpStatus.BAD_REQUEST, "AEU-018", "Firebase 메시지 전송에 실패 했습니다."),
     INCORRECT_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "AET-001", "잘못된 리프레시 토큰입니다."),
     INVALID_AUTH_TOKEN(HttpStatus.UNAUTHORIZED, "AET-002", "유효하지 않은 인증 토큰입니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "AET-003", "유효하지 않은 리프레시 토큰입니다."),

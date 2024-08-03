@@ -1,7 +1,7 @@
 package com.alldriver.alldriver.user.dto.request;
 
 import com.alldriver.alldriver.user.domain.User;
-import com.alldriver.alldriver.user.domain.UserCar;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -10,9 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
 
 @Getter
 @NoArgsConstructor
@@ -41,6 +39,10 @@ public class CarOwnerSignUpRequestDto {
 
     @Schema(description = "차 정보")
     private CarInformationRequestDto carInformation;
+
+    @Schema(description = "fcm 토큰", example = "example")
+    @NotBlank(message = "User Fcm Token Not Found.")
+    private String fcmToken;
 
     public User toEntity(){
         return User.builder()

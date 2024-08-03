@@ -4,7 +4,7 @@ import com.alldriver.alldriver.common.enums.Role;
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.util.JwtUtils;
-import com.alldriver.alldriver.common.token.dto.AuthToken;
+import com.alldriver.alldriver.user.dto.response.AuthToken;
 import com.alldriver.alldriver.common.util.S3Utils;
 import com.alldriver.alldriver.user.domain.*;
 import com.alldriver.alldriver.user.dto.request.*;
@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
         String userId = loginRequestDto.getUserId();
         String password = loginRequestDto.getPassword();
-
+        FcmToken fcmToken = FcmToken.builder().token(loginRequestDto.getFcmToken()).build();
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, password);
         // 자격 증명 확인
         Authentication authenticate = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
@@ -54,8 +54,16 @@ public class UserServiceImpl implements UserService {
         // user
         User user = (User) authenticate.getPrincipal();
         AuthToken authToken = JwtUtils.generateToken(userId, roles);
-
+        FcmToken find = user.getFcmToken();
+        if(find!=null){
+            find.updateToken(loginRequestDto.getFcmToken());
+        }
+        else{
+            user.addFcmToken(fcmToken);
+        }
         user.setRefreshToken(authToken.getRefreshToken());
+
+
         userRepository.save(user);
 
         return LoginResponseDto.builder()
@@ -77,7 +85,9 @@ public class UserServiceImpl implements UserService {
         User user = userSignUpRequestDto.toEntity();
         user.hashPassword(passwordEncoder);
         user.setRole(Role.USER);
+        FcmToken fcmToken = FcmToken.builder().token(userSignUpRequestDto.getFcmToken()).build();
 
+        user.addFcmToken(fcmToken);
         User save = userRepository.save(user);
 
         return SignUpResponseDto.builder()
@@ -108,7 +118,9 @@ public class UserServiceImpl implements UserService {
 
             user.addLicense(license);
         }
+        FcmToken fcmToken = FcmToken.builder().token(ownerSignUpRequestDto.getFcmToken()).build();
 
+        user.addFcmToken(fcmToken);
 
         User save = userRepository.save(user);
 
@@ -131,6 +143,9 @@ public class UserServiceImpl implements UserService {
         user.setRole(Role.CAR_OWNER);
         user.addUserCar(userCar);
 
+        FcmToken fcmToken = FcmToken.builder().token(carOwnerSignUpRequestDto.getFcmToken()).build();
+
+        user.addFcmToken(fcmToken);
         User save = userRepository.save(user);
 
         for (MultipartFile image : images) {

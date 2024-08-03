@@ -3,7 +3,6 @@ package com.alldriver.alldriver.user.dto.request;
 import com.alldriver.alldriver.user.domain.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -33,6 +32,9 @@ public class UserSignUpRequestDto {
     @NotBlank(message = "User Phone Number Not Found.")
     private String phoneNumber;
 
+    @Schema(description = "fcm 토큰", example = "example")
+    @NotBlank(message = "User Fcm Token Not Found.")
+    private String fcmToken;
 
     public User toEntity(){
         return User.builder()
