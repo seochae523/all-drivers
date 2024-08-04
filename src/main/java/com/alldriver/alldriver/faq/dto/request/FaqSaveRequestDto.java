@@ -1,5 +1,6 @@
 package com.alldriver.alldriver.faq.dto.request;
 
+import com.alldriver.alldriver.common.enums.ValidationError;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -11,20 +12,17 @@ import java.util.Date;
 @Getter
 @NoArgsConstructor
 public class FaqSaveRequestDto {
-    @NotBlank(message = "Faq Title Not Found.")
-    @Schema(description = "자주 묻는 질문 제목", example = "example")
+    @NotBlank(message = ValidationError.Message.TITLE_NOT_FOUND)
     private String title;
 
-    @NotBlank(message = "Faq context Not Found.")
-    @Schema(description = "자주 묻는 질문 내용", example = "example")
-    private String context;
-
+    @NotBlank(message = ValidationError.Message.CONTENT_NOT_FOUND)
+    private String content;
 
 
     public Faq toEntity(Date createdAt){
         return Faq.builder()
                 .title(title)
-                .context(context)
+                .content(content)
                 .createdAt(createdAt)
                 .build();
     }
