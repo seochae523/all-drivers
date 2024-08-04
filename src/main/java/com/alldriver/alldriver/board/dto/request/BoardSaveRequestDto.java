@@ -1,6 +1,9 @@
 package com.alldriver.alldriver.board.dto.request;
 
+import com.alldriver.alldriver.common.enums.ValidationError;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import com.alldriver.alldriver.board.domain.Board;
 import com.alldriver.alldriver.user.domain.User;
@@ -15,35 +18,44 @@ import java.util.*;
 @NoArgsConstructor
 @Builder
 public class BoardSaveRequestDto {
-    @Schema(description = "내용", example = "이 편지는 1970년 영국으로부터 시작되어...")
+    @NotBlank(message = ValidationError.Message.CONTENT_NOT_FOUND)
     private String content;
-    @Schema(description = "취급 물류 카테고리", example = "example")
-    private String category;
-    @Schema(description = "제목", example = "행운의 편지")
-    private String title;
-    @Schema(description = "작성자 아이디", example = "example")
-    private String userId;
-    @Schema(description = "급여 형태", example = "주급")
-    private String payType;
-    @Schema(description = "급여", example = "2999999")
-    private Integer payment;
-    @Schema(description = "시작 일자")
-    private Date startAt;
-    @Schema(description = "종료 일자")
-    private Date endAt;
-    @Schema(description = "고용 형태", example = "계약직")
-    private String recruitType;
-    @Schema(description = "회사 주소", example = "example")
-    private String companyLocation;
-    @Schema(description = "메인 지역", example = "서울")
-    private Long mainLocationId;
-    @Schema(description = "일할 지역", example = "[1, 3]")
-    private List<Long> subLocations;
-    @Schema(description = "차종", example = "[1, 2]")
-    private List<Long> car;
-    @Schema(description = "업종", example = "[1, 2]")
-    private List<Long> job;
 
+    @NotBlank(message = ValidationError.Message.CATEGORY_NOT_FOUND)
+    private String category;
+
+    @NotBlank(message = ValidationError.Message.TITLE_NOT_FOUND)
+    private String title;
+
+    @NotBlank(message = ValidationError.Message.PAY_TYPE_NOT_FOUND)
+    private String payType;
+
+    @NotNull(message = ValidationError.Message.PAYMENT_NOT_FOUND)
+    private Integer payment;
+
+    @NotNull(message = ValidationError.Message.START_AT_NOT_FOUND)
+    private Date startAt;
+
+    @NotNull(message = ValidationError.Message.END_AT_NOT_FOUND)
+    private Date endAt;
+
+    @NotBlank(message = ValidationError.Message.RECRUIT_TYPE_NOT_FOUND)
+    private String recruitType;
+
+    @NotBlank(message = ValidationError.Message.COMPANY_LOCATION_NOT_FOUND)
+    private String companyLocation;
+
+    @NotNull(message = ValidationError.Message.MAIN_LOCATION_ID_NOT_FOUND)
+    private Long mainLocationId;
+
+    @NotNull(message = ValidationError.Message.SUB_LOCATION_ID_NOT_FOUND)
+    private List<Long> subLocations;
+
+    @NotNull(message = ValidationError.Message.CAR_ID_NOT_FOUND)
+    private List<Long> car;
+
+    @NotNull(message = ValidationError.Message.JOB_ID_NOT_FOUND)
+    private List<Long> job;
 
     public Board toEntity(User user){
         return Board.builder()

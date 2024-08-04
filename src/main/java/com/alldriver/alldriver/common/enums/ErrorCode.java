@@ -17,7 +17,7 @@ public enum ErrorCode {
     LICENSE_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEU-008", "사업자 등록증이 존재하지 않습니다."),
     PASSWORD_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEU-009", "비밀번호가 존재하지 않습니다."),
     PHONE_NUMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEU-010", "전화번호가 존재하지 않습니다."),
-    SMS_AUTH_CODE_EXPIRED(HttpStatus.REQUEST_TIMEOUT, "AEU-011", "문자 인증 시간이 만료되었습니다."),
+    SMS_AUTH_CODE_EXPIRED(HttpStatus.REQUEST_TIMEOUT, "AEU-011", "문자 인증 시간이 만료 되었습니다."),
     SMS_AUTH_CODE_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEU-012", "문자 인증 번호가 존재하지 않습니다."),
     USER_NAME_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEU-013", "사용자의 이름이 존재하지 않습니다."),
     NICKNAME_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEU-014", "사용자의 별명이 존재하지 않습니다."),
@@ -32,25 +32,27 @@ public enum ErrorCode {
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "AET-004", "리프레시 토큰을 찾을 수 없습니다."),
     AUTH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AET-005", "인증 토큰이 만료되었습니다."),
 
-    BOARD_ID_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-001", "게시글 아이디를 찾을 수 없습니다."),
-    BOARD_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-002", "게시글을 찾을 수 없습니다."),
-    CONTENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-003", "내용을 찾을 수 없습니다."),
-    IMAGE_ID_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-004", "이미지 아이디를 찾을 수 없습니다."),
-    IMAGE_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-005", "이미지를 찾을 수 없습니다."),
-    MAIN_LOCATION_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-006", "주 지역을 찾을 수 없습니다."),
-    SUB_LOCATION_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-007", "상세 지역을 찾을 수 없습니다."),
-    CAR_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-008", "차량을 찾을 수 없습니다."),
-    JOB_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-009", "직업을 찾을 수 없습니다."),
+    BOARD_ID_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-001", "게시글 id가 존재하지 않습니다."),
+    BOARD_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-002", "게시글이 존재하지 않습니다."),
+    CONTENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-003", "내용이 존재하지 않습니다."),
+    IMAGE_ID_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-004", "이미지 id가 존재하지 않습니다."),
+    IMAGE_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-005", "이미지가 존재하지 않습니다."),
+    MAIN_LOCATION_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-006", "메인 지역이 존재하지 않습니다."),
+    SUB_LOCATION_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-007", "세부 지역이 존재하지 않습니다."),
+    CAR_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-008", "차량이 존재하지 않습니다."),
+    JOB_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-009", "직종이 존재하지 않습니다."),
 
 
-    COMMUNITY_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEC-001", "커뮤니티를 찾을 수 없습니다."),
-    COMMUNITY_COMMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEC-002", "커뮤니티 댓글을 찾을 수 없습니다."),
+    COMMUNITY_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEC-001", "커뮤니티가 존재하지 않습니다."),
+    COMMUNITY_COMMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEC-002", "커뮤니티 댓글이 존재하지 않습니다."),
     INVALID_COMMENT(HttpStatus.BAD_REQUEST, "AEC-003", "유효하지 않은 댓글입니다."),
-    COMMUNITY_BOOKMARK_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEC-004", "커뮤니티 좋아요를 찾을 수 없습니다."),
-    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "AEP-001", "유효하지 않은 매개변수입니다."),
+    COMMUNITY_BOOKMARK_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEC-004", "커뮤니티 좋아요가 존재하지 않습니다."),
 
-    BOOKMARK_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEL-001", "좋아요를 찾을 수 없습니다."),
-    DUPLICATED_BOOKMARK(HttpStatus.BAD_REQUEST, "AEL-002", "중복된 좋아요 입니다.");
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "AEP-001", "유효하지 않은 매개변수입니다."),
+    PARAMETER_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEP-002", ""),
+
+    BOOKMARK_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEL-001", "즐겨찾기가 존재하지 않습니다."),
+    DUPLICATED_BOOKMARK(HttpStatus.BAD_REQUEST, "AEL-002", "중복된 즐겨찾기 입니다.");
 
     private final HttpStatus status;
     private final String code;
