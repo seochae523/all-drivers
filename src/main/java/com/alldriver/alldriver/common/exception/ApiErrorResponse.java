@@ -14,6 +14,9 @@ public class ApiErrorResponse {
         this.code = errorCode.getCode();
         // custom message가 null -> custom exception 던질때 기본형 이면 그냥 메시지 만 던짐
         this.message = errorCode.getMessage() + (customMessage != null ? " " + customMessage : "");
+        if(errorCode.equals(ErrorCode.PARAMETER_NOT_FOUND)){
+            this.message = customMessage;
+        }
     }
 
 

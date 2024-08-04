@@ -5,8 +5,10 @@ import com.alldriver.alldriver.board.dto.response.JobFindResponseDto;
 import com.alldriver.alldriver.board.dto.response.MainLocationFindResponseDto;
 import com.alldriver.alldriver.board.dto.response.SubLocationFindResponseDto;
 import com.alldriver.alldriver.board.service.BoardCategoryRetrieveService;
+import com.alldriver.alldriver.common.enums.ValidationError;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,7 +48,8 @@ public class BoardCategoryRetrieveController {
 
     @GetMapping("/subLocations/{mainLocationId}")
     @Parameter(name = "mainLocationId", description = "시 (main location) id")
-    public ResponseEntity<List<SubLocationFindResponseDto>> findSubLocationsByMainLocationId(@PathVariable Long mainLocationId){
+    public ResponseEntity<List<SubLocationFindResponseDto>> findSubLocationsByMainLocationId(@PathVariable
+                                                                                                 @NotNull(message = ValidationError.Message.MAIN_LOCATION_ID_NOT_FOUND) Long mainLocationId){
         return ResponseEntity.ok(boardCategoryRetrieveService.findSubLocationsByMainLocation(mainLocationId));
     }
 

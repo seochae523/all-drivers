@@ -1,5 +1,6 @@
 package com.alldriver.alldriver.user.dto.request;
 
+import com.alldriver.alldriver.common.enums.ValidationError;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -10,11 +11,11 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 public class UserUpdateRequestDto {
-    @Schema(description = "아이디", example = "example")
-    @NotBlank(message = "User Name Not Found.")
+
+    @NotBlank(message = ValidationError.Message.USER_ID_NOT_FOUND)
     private String userId;
 
-    @Schema(description = "별명", example = "example")
-    @NotBlank(message = "User Nickname Not Found.")
+
+    @NotBlank(message = ValidationError.Message.NICKNAME_NOT_FOUND)
     private String nickname;
 }

@@ -1,5 +1,6 @@
 package com.alldriver.alldriver.user.dto.request;
 
+import com.alldriver.alldriver.common.enums.ValidationError;
 import com.alldriver.alldriver.user.domain.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -12,28 +13,26 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class UserSignUpRequestDto {
-    @Schema(description = "이름", example = "example")
-    @NotBlank(message = "User Name Not Found.")
+
+    @NotBlank(message = ValidationError.Message.NAME_NOT_FOUND)
     private String name;
 
-    @Schema(description = "아이디", example = "example")
-    @NotBlank(message = "User Id Not Found.")
+
+    @NotBlank(message = ValidationError.Message.USER_ID_NOT_FOUND)
     private String userId;
 
-    @Schema(description = "비번", example = "example")
-    @NotBlank(message = "User Password Not Found.")
+    @NotBlank(message = ValidationError.Message.PASSWORD_NOT_FOUND)
     private String password;
 
-    @Schema(description = "별명", example = "example")
-    @NotBlank(message = "User Nickname Not Found.")
+    @NotBlank(message = ValidationError.Message.PASSWORD_NOT_FOUND)
     private String nickname;
 
-	@Schema(description = "전화번호", example = "01012345678")
-    @NotBlank(message = "User Phone Number Not Found.")
+
+    @NotBlank(message = ValidationError.Message.PHONE_NUMBER_NOT_FOUND)
     private String phoneNumber;
 
-    @Schema(description = "fcm 토큰", example = "example")
-    @NotBlank(message = "User Fcm Token Not Found.")
+
+    @NotBlank(message = ValidationError.Message.FCM_TOKEN_NOT_FOUND)
     private String fcmToken;
 
     public User toEntity(){

@@ -1,5 +1,6 @@
 package com.alldriver.alldriver.user.dto.request;
 
+import com.alldriver.alldriver.common.enums.ValidationError;
 import com.alldriver.alldriver.user.domain.UserCar;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -11,16 +12,13 @@ import lombok.*;
 @AllArgsConstructor
 @Setter
 public class CarInformationRequestDto {
-    @Schema(description = "차 번호")
-    @NotBlank(message = "Car Number Not Found.")
+    @NotBlank(message = ValidationError.Message.CAR_NUMBER_NOT_FOUND)
     private String carNumber;
 
-    @Schema(description = "차종")
-    @NotBlank(message = "Car Category Not Found.")
+    @NotBlank(message = ValidationError.Message.CATEGORY_NOT_FOUND)
     private String category;
 
-    @Schema(description = "차 무게")
-    @NotBlank(message = "Car Weight Not Found.")
+    @NotBlank(message = ValidationError.Message.CAR_WEIGHT_NOT_FOUND)
     private String weight;
 
     public UserCar toEntity(){
@@ -28,7 +26,6 @@ public class CarInformationRequestDto {
                 .carNumber(carNumber)
                 .category(category)
                 .weight(weight)
-
                 .build();
     }
 }

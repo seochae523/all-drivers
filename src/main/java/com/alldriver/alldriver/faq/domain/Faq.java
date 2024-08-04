@@ -20,7 +20,7 @@ public class Faq {
     private String title;
 
     @DynamoDBAttribute
-    private String context;
+    private String content;
 
     @DynamoDBRangeKey(attributeName = "created_at")
     @DynamoDBAttribute

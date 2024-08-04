@@ -43,7 +43,7 @@ public class FcmServiceImpl implements FcmService {
     }
 
     private Message makeMessage(FcmSendRequestDto fcmSendRequestDto, String token){
-        String body = fcmSendRequestDto.getBody();
+        String body = fcmSendRequestDto.getContent();
         String title = fcmSendRequestDto.getTitle();
 
         Notification notification = Notification.builder()

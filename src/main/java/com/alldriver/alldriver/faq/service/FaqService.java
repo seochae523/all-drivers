@@ -14,6 +14,7 @@ import com.alldriver.alldriver.faq.dto.request.FaqSaveRequestDto;
 import com.alldriver.alldriver.faq.dto.request.FaqUpdateRequestDto;
 
 import com.alldriver.alldriver.faq.dto.response.FaqFindResponseDto;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.Date;
@@ -56,14 +57,14 @@ public class FaqService {
 
 
     public String updateFaq(FaqUpdateRequestDto faqUpdateRequestDto){
-        String context = faqUpdateRequestDto.getContext();
+        String content = faqUpdateRequestDto.getContent();
         String title = faqUpdateRequestDto.getTitle();
         String id = faqUpdateRequestDto.getId();
         Date createdAt = faqUpdateRequestDto.getCreatedAt();
 
         Faq load = dynamoDBMapper.load(Faq.class, id, createdAt);
 
-        load.setContext(context);
+        load.setContent(content);
         load.setTitle(title);
 
         dynamoDBMapper.save(load);

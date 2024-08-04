@@ -26,7 +26,8 @@ public class RefreshController {
     private final RefreshService refreshService;
     @Operation(description = "access token 만료시 refresh token을 이용하여 재발급")
     @PostMapping
-    public ResponseEntity<AuthToken> refresh(@RequestBody @Valid RefreshRequestDto refreshRequestDto) throws ParseException {
+    public ResponseEntity<AuthToken> refresh(@RequestBody
+                                             @Valid RefreshRequestDto refreshRequestDto) throws ParseException {
         return ResponseEntity.ok(refreshService.refresh(refreshRequestDto));
     }
 }
