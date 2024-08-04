@@ -43,7 +43,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public BoardSaveResponseDto save(List<MultipartFile> images, BoardSaveRequestDto boardSaveRequestDto) throws IOException {
-        String userId = boardSaveRequestDto.getUserId();
+        String userId = JwtUtils.getUserId();
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
@@ -80,6 +80,7 @@ public class BoardServiceImpl implements BoardService {
             board.addLocationBoard(locationBoard);
         }
         Board save = boardRepository.save(board);
+
         if(images != null) {
             for (MultipartFile image : images) {
                 String url = s3Utils.uploadFile(image);
@@ -106,7 +107,7 @@ public class BoardServiceImpl implements BoardService {
         Board board = boardRepository.findById(boardUpdateRequestDto.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND, " 게시글 id = " + boardUpdateRequestDto.getId()));
 
-        String userId = boardUpdateRequestDto.getUserId();
+        String userId = JwtUtils.getUserId();
         if(!board.getUser().getUserId().equals(userId)) throw new CustomException(ErrorCode.INVALID_USER, " 게시글 작성자와 수정자가 일치하지 않습니다. 작성자 아이디 = " + board.getUser().getUserId() + " 수정자 아이디 = " + userId);
 
         List<JobUpdateRequestDto> jobInfos = boardUpdateRequestDto.getJobInfos();

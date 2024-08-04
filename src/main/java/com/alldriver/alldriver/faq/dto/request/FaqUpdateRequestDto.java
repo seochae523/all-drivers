@@ -1,5 +1,6 @@
 package com.alldriver.alldriver.faq.dto.request;
 
+import com.alldriver.alldriver.common.enums.ValidationError;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,19 +12,15 @@ import java.util.Date;
 @Getter
 @NoArgsConstructor
 public class FaqUpdateRequestDto {
-    @NotBlank(message = "Faq Id Not Found.")
-    @Schema(description = "자주 묻는 질문 id", example = "1")
+    @NotBlank(message = ValidationError.Message.FAQ_ID_NOT_FOUND)
     private String id;
 
-    @NotBlank(message = "Faq Title Not Found.")
-    @Schema(description = "자주 묻는 질문 제목", example = "example")
+    @NotBlank(message = ValidationError.Message.TITLE_NOT_FOUND)
     private String title;
 
-    @NotBlank(message = "Faq context Not Found.")
-    @Schema(description = "자주 묻는 질문 내용", example = "example")
-    private String context;
+    @NotBlank(message = ValidationError.Message.CONTENT_NOT_FOUND)
+    private String content;
 
-    @NotNull(message = "Faq Created At Not Found.")
-    @Schema(description = "자주 묻는 질문 생성일")
+    @NotNull(message = ValidationError.Message.CREATED_AT_NOT_FOUND)
     private Date createdAt;
 }

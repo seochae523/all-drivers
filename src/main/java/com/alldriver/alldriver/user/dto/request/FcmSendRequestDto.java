@@ -1,6 +1,8 @@
 package com.alldriver.alldriver.user.dto.request;
 
+import com.alldriver.alldriver.common.enums.ValidationError;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,9 +11,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 public class FcmSendRequestDto {
-    @Schema(description = "알림 제목", example = "something title")
+    @NotBlank(message = ValidationError.Message.TITLE_NOT_FOUND)
     private String title;
 
-    @Schema(description = "알림 내용", example = "something content")
-    private String body;
+    @NotBlank(message = ValidationError.Message.CONTENT_NOT_FOUND)
+    private String content;
 }
