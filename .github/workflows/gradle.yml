@@ -23,6 +23,7 @@ jobs:
       JWT_SECRET: ${{secrets.JWT_SECRET}}
       CLOUD_FRONT_URL: ${{secrets.CLOUD_FRONT_URL}}
       FCM_APP_URL: ${{secrets.FCM_APP_URL}}
+      FCM_FILE_NAME: ${{secrets.FCM_FILE_NAME}}
       S3_URL: ${{secrets.S3_URL}}
       S3_BUCKET_NAME: ${{secrets.S3_BUCKET_NAME}}
       S3_ACCESS_KEY: ${{secrets.S3_ACCESS_KEY}}
@@ -50,7 +51,7 @@ jobs:
     # 1-1. application.yml 세팅
     - name: Set JSON
       run: |
-        echo "${{ secrets.FCM_PRIVATE_KEY }}" > src/main/resources/fcm-private-key.json
+        echo "${{ secrets.FCM_PRIVATE_KEY }}" > src/main/resources/"${{env.FCM_FILE_NAME}}"
     # 2. Spring Boot 애플리케이션 빌드
     - name: Build with Gradle
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
