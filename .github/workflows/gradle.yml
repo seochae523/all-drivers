@@ -73,6 +73,7 @@ jobs:
         --build-arg DYNAMODB_SECRET_KEY="${{env.DYNAMODB_SECRET_KEY}}" \
         --build-arg S3_BUCKET_NAME="${{env.S3_BUCKET_NAME}}" \
         --build-arg FCM_APP_URL="${{env.FCM_APP_URL}}" \
+        --build-arg FCM_FILE_NAME="${{env.FCM_FILE_NAME}}" \
         --build-arg S3_ACCESS_KEY="${{env.S3_ACCESS_KEY}}" \
         --build-arg S3_SECRET_KEY="${{env.S3_SECRET_KEY}}" \
         --build-arg S3_URL="${{env.S3_URL}}" \
