@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -40,11 +41,11 @@ public class CommunityRetrieveServiceImpl implements CommunityRetrieveService {
     }
 
     @Override
-    public List<CommunityFindResponseDto> findBySubLocationId(Integer page, Long subLocationId) {
+    public List<CommunityFindResponseDto> findBySubLocationId(Integer page, List<Long> subLocationIds) {
         String userId = JwtUtils.getUserId();
         Integer offset = page * pageSize;
 
-        return getCommunityFindResponseDto(communityRepository.findBySubLocation(pageSize, offset, userId, subLocationId));
+        return getCommunityFindResponseDto(communityRepository.findBySubLocation(pageSize, offset, userId, subLocationIds));
     }
 
 
@@ -53,20 +54,24 @@ public class CommunityRetrieveServiceImpl implements CommunityRetrieveService {
     private List<CommunityFindResponseDto> getCommunityFindResponseDto(List<CommunityFindVo> communityFindVos){
         List<CommunityFindResponseDto> result = new ArrayList<>();
         for (CommunityFindVo communityFindVo : communityFindVos) {
-            CommunityFindResponseDto build = CommunityFindResponseDto.builder().id(communityFindVo.getId())
+            CommunityFindResponseDto communityFindResponseDto = CommunityFindResponseDto.builder().id(communityFindVo.getId())
                     .bookmarkCount(communityFindVo.getBookmarkCount())
                     .title(communityFindVo.getTitle())
                     .content(communityFindVo.getContent())
-                    .location(communityFindVo.getLocationCategory())
                     .bookmarked(communityFindVo.getBookmarked())
                     .createdAt(communityFindVo.getCreatedAt())
                     .userId(communityFindVo.getUserId())
                     .nickname(communityFindVo.getNickname())
                     .build();
 
-            result.add(build);
+            if(communityFindVo.getLocationCategory() !=null) {
+                String[] split = communityFindVo.getLocationCategory().split(",");
+                communityFindResponseDto.getLocationCategories().addAll(Arrays.stream(split).toList());
+            }
 
+            result.add(communityFindResponseDto);
         }
+
         return result;
     }
 }

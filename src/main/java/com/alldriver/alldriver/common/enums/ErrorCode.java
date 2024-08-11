@@ -52,7 +52,9 @@ public enum ErrorCode {
     PARAMETER_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEP-002", ""),
 
     BOOKMARK_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEL-001", "즐겨찾기가 존재하지 않습니다."),
-    DUPLICATED_BOOKMARK(HttpStatus.BAD_REQUEST, "AEL-002", "중복된 즐겨찾기 입니다.");
+    DUPLICATED_BOOKMARK(HttpStatus.BAD_REQUEST, "AEL-002", "중복된 즐겨찾기 입니다."),
+
+    CHAT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "AECR-001", "채팅 방이 존재하지 않습니다.");
 
     private final HttpStatus status;
     private final String code;

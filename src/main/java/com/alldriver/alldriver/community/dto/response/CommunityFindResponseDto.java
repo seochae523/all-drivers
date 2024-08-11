@@ -4,6 +4,8 @@ package com.alldriver.alldriver.community.dto.response;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Builder
@@ -19,6 +21,7 @@ public class CommunityFindResponseDto {
     private Integer bookmarked;
     private LocalDateTime createdAt;
     private String userId;
-    private String location;
+    @Builder.Default
+    private List<String> locationCategories = new ArrayList<>();
     private String nickname;
 }
