@@ -12,7 +12,8 @@ import java.util.List;
 
 @Repository
 public interface CommunityRepository extends JpaRepository<Community, Long> {
-    String BASE_QUERY = "select c.id as id, c.title as title, c.content as content, c.created_at as createdAt, s.category as locationCategory, " +
+    String BASE_QUERY = "select c.id as id, c.title as title, c.content as content, c.created_at as createdAt, " +
+            "group_concat(distinct s.category) as locationCategory, " +
             "(select count(*) from community_bookmark cb1 where cb1.community_id=c.id) as bookmarkCount, " +
             "u.nickname as nickname, " +
             "u.user_id as userId, " +
@@ -20,10 +21,11 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
             "from community as c " +
             "left join community_bookmark cb on cb.community_id=c.id and cb.user_id = (select id from user u1 where u1.user_id=:userId) " +
             "left join user u on u.id=c.user_id " +
-            "left join sub_location s on s.id=c.location_id "+
+            "left join community_location cs on cs.community_id=c.id "+
+            "left join sub_location s on s.id=cs.location_id " +
             "where c.deleted=false ";
 
-    String SORT_QUERY = "group by c.id, c.title, c.content, c.created_at, s.category, u.nickname, bookmarked " +
+    String SORT_QUERY = "group by c.id, c.title, c.content, c.created_at, u.nickname, bookmarked " +
             "order by bookmarked desc, createdAt desc ";
 
     @Query(value = BASE_QUERY +
@@ -38,8 +40,8 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
     List<CommunityFindVo> findByUserId(@Param("limit") int limit, @Param("offset") int offset, @Param("userId") String userId);
 
     @Query(value = BASE_QUERY +
-            "and s.id=:subLocationId " +
+            "and s.id in :subLocationIds " +
             SORT_QUERY +
             "limit :limit offset :offset", nativeQuery = true)
-    List<CommunityFindVo> findBySubLocation(@Param("limit") int limit, @Param("offset") int offset, @Param("userId") String userId, @Param("subLocationId") Long subLocationId);
+    List<CommunityFindVo> findBySubLocation(@Param("limit") int limit, @Param("offset") int offset, @Param("userId") String userId, @Param("subLocationIds") List<Long> subLocationIds);
 }

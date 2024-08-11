@@ -2,6 +2,7 @@
 //
 //
 //import com.alldriver.alldriver.chat.dto.KafkaChatDto;
+//import com.alldriver.alldriver.common.enums.KafkaConst;
 //import com.google.common.collect.ImmutableMap;
 //import org.apache.kafka.clients.consumer.ConsumerConfig;
 //import org.apache.kafka.common.serialization.StringSerializer;
@@ -22,10 +23,7 @@
 //@Configuration
 //public class ProducerConfig {
 //
-//    @Value("${spring.kafka.bootstrap-servers}")
-//    private String kafkaServer;
-//    @Value("${spring.kafka.consumer.group-id}")
-//    private String kafkaConsumerGroupId;
+//
 //
 //    // Kafka ProducerFactory를 생성하는 Bean 메서드
 //    @Bean
@@ -37,10 +35,10 @@
 //    @Bean
 //    public Map<String, Object> chatProducerConfigurations() {
 //        return ImmutableMap.<String, Object>builder()
-//                .put(org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServer)
+//                .put(org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaConst.Value.BOOTSTRAP_SERVER)
 //                .put(org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class)
 //                .put(org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class)
-//                .put(ConsumerConfig.GROUP_ID_CONFIG, kafkaConsumerGroupId)
+//                .put(ConsumerConfig.GROUP_ID_CONFIG, KafkaConst.Value.GROUP_ID)
 //                .build();
 //    }
 //
@@ -59,7 +57,7 @@
 //    @Bean
 //    public Map<String, Object> notificationProducerConfigurations() {
 //        return ImmutableMap.<String, Object>builder()
-//                .put(org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServer)
+//                .put(org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaConst.Value.BOOTSTRAP_SERVER)
 //                .put(org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class)
 //                .put(org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class)
 //                .build();

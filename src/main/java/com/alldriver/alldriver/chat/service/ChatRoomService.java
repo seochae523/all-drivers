@@ -12,6 +12,6 @@ public interface ChatRoomService {
 
     ChatRoomSaveResponseDto createRoom(ChatRoomSaveRequestDto chatRoomSaveRequestDto);
     String participateChatRoom(Long roomId);
-    void delete(Long roomId);
+    String delete(Long roomId);
     List<ChatRoomFindResponseDto> findByUserId(String userId);
 }

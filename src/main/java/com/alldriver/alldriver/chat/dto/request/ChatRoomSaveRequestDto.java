@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ChatRoomSaveRequestDto {
-    @NotBlank(message = "Chat Room Publisher Not Found.")
-    @Schema(description = "방 생성자", example = "ex")
-    private String userId;
+    @NotBlank(message = "채팅방 제목이 존재하지 않습니다.")
+    @Schema(description = "방 제목", example = "ex")
+    private String title;
 
 }
