@@ -37,8 +37,8 @@ public class CommunityRetrieveController {
     public ResponseEntity<List<CommunityFindResponseDto>> findBySubLocationId(@RequestParam(value = "page", defaultValue = "0")
                                                                               @NotNull(message = ValidationError.Message.PAGE_NOT_FOUND) Integer page,
                                                                               @RequestParam(value = "subLocationId")
-                                                                              @NotNull(message = ValidationError.Message.SUB_LOCATION_ID_NOT_FOUND) Long subLocationId){
-        return ResponseEntity.ok(communityRetrieveService.findBySubLocationId(page, subLocationId));
+                                                                              @NotNull(message = ValidationError.Message.SUB_LOCATION_ID_NOT_FOUND) List<Long> subLocationIds){
+        return ResponseEntity.ok(communityRetrieveService.findBySubLocationId(page, subLocationIds));
     }
 
 

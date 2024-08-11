@@ -1,5 +1,6 @@
 //package com.alldriver.alldriver.chat.service.impl;
 //
+//import com.alldriver.alldriver.common.enums.KafkaConst;
 //import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 //import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 //import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
@@ -22,7 +23,7 @@
 //import com.alldriver.alldriver.chat.dto.response.ChatFindResponseDto;
 //import com.alldriver.alldriver.chat.dto.response.ChatSaveResponseDto;
 //import com.alldriver.alldriver.chat.service.ChatService;
-//import com.alldriver.alldriver.common.util.KafkaConst;
+//
 //
 //import java.util.Date;
 //import java.util.List;
@@ -51,7 +52,7 @@
 //
 //        KafkaChatDto kafkaChatDto = new KafkaChatDto(chatSaveRequestDto, createdAt);
 //        this.createChatTableIfNotExists();
-//        this.send(KafkaConst.TOPIC, kafkaChatDto);
+//        this.send(KafkaConst.Value.TOPIC, kafkaChatDto);
 //        this.saveChat(chatSaveRequestDto);
 //
 //        return ChatSaveResponseDto.builder()
@@ -96,7 +97,7 @@
 //        kafkaTemplate.send(topic, kafkaChatDto);
 //    }
 //
-//    @KafkaListener(topics = KafkaConst.TOPIC, groupId = "${spring.kafka.consumer.group-id}", containerFactory = "kafkaChatContainerFactory")
+//    @KafkaListener(topics = KafkaConst.Value.TOPIC, groupId = KafkaConst.Value.GROUP_ID, containerFactory = "kafkaChatContainerFactory")
 //    public void consume(KafkaChatDto kafkaChatDto) {
 //        template.convertAndSend("/sub/" + kafkaChatDto.getRoomId(), kafkaChatDto);
 //    }

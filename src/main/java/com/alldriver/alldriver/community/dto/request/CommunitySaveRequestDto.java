@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -21,12 +22,12 @@ public class CommunitySaveRequestDto {
     @NotBlank(message = ValidationError.Message.CONTENT_NOT_FOUND)
     private String content;
     @NotNull(message = ValidationError.Message.SUB_LOCATION_ID_NOT_FOUND)
-    private Long subLocationId;
-    public Community toEntity(SubLocation subLocation, User user){
+    private List<Long> subLocationIds;
+    public Community toEntity( User user){
         return Community.builder()
                 .title(title)
                 .content(content)
-                .subLocation(subLocation)
+
                 .user(user)
                 .createdAt(LocalDateTime.now())
                 .deleted(false)

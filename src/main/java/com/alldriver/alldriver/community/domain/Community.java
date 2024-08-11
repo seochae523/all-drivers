@@ -12,6 +12,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "community")
@@ -50,9 +51,9 @@ public class Community {
     @OneToMany(mappedBy = "community", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<CommunityBookmark> communityBookmarks;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id")
-    private SubLocation subLocation;
+    @OneToMany(mappedBy = "community", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<CommunityLocation> communityLocations;
+
 
     public void update(CommunityUpdateRequestDto communityUpdateRequestDto){
         this.title = communityUpdateRequestDto.getTitle();
@@ -62,5 +63,11 @@ public class Community {
 
     public void setDeleted(Boolean deleted){
         this.deleted = deleted;
+    }
+
+    public void addSubLocation(CommunityLocation communityLocation){
+        if(communityLocations==null) communityLocations = new HashSet<>();
+        this.communityLocations.add(communityLocation);
+        communityLocation.setCommunity(this);
     }
 }

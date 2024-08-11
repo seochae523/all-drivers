@@ -1,4 +1,5 @@
 //package com.alldriver.alldriver.common.configuration.kafka;
+//import com.alldriver.alldriver.common.enums.KafkaConst;
 //import com.google.common.collect.ImmutableMap;
 //import org.apache.kafka.clients.consumer.ConsumerConfig;
 //import org.apache.kafka.common.serialization.StringDeserializer;
@@ -21,12 +22,6 @@
 //@Configuration
 //public class ListenerConfig {
 //
-//    @Value("${spring.kafka.bootstrap-servers}")
-//    private String kafkaServer;
-//
-//    @Value("${spring.kafka.consumer.group-id}")
-//    private String kafkaConsumerGroupId;
-//
 //    @Bean
 //    ConcurrentKafkaListenerContainerFactory<String, KafkaChatDto> kafkaChatContainerFactory() {
 //        ConcurrentKafkaListenerContainerFactory<String, KafkaChatDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
@@ -47,11 +42,11 @@
 //
 //        Map<String, Object> consumerConfigurations =
 //                ImmutableMap.<String, Object>builder()
-//                        .put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServer)
+//                        .put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaConst.Value.BOOTSTRAP_SERVER)
 //                        .put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class)
 //                        .put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializer)
 //                        .put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest")
-//                        .put(ConsumerConfig.GROUP_ID_CONFIG, kafkaConsumerGroupId)
+//                        .put(ConsumerConfig.GROUP_ID_CONFIG, KafkaConst.Value.GROUP_ID)
 //                        .build();
 //
 //        return new DefaultKafkaConsumerFactory<>(consumerConfigurations, new StringDeserializer(), deserializer);
@@ -75,8 +70,8 @@
 //
 //        Map<String, Object> consumerConfigurations =
 //                ImmutableMap.<String, Object>builder()
-//                        .put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServer)
-//                        .put(ConsumerConfig.GROUP_ID_CONFIG, kafkaConsumerGroupId)
+//                        .put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaConst.Value.BOOTSTRAP_SERVER)
+//                        .put(ConsumerConfig.GROUP_ID_CONFIG, KafkaConst.Value.GROUP_ID)
 //                        .put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class)
 //                        .put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializer)
 //                        .put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest")

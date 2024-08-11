@@ -6,6 +6,7 @@ import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.util.JwtUtils;
 import com.alldriver.alldriver.community.domain.Community;
+import com.alldriver.alldriver.community.domain.CommunityLocation;
 import com.alldriver.alldriver.community.dto.request.CommunitySaveRequestDto;
 import com.alldriver.alldriver.community.dto.request.CommunityUpdateRequestDto;
 import com.alldriver.alldriver.community.dto.response.CommunityDeleteResponseDto;
@@ -20,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -32,18 +35,23 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public CommunitySaveResponseDto save(CommunitySaveRequestDto communitySaveRequestDto) {
-        Long subLocationId = communitySaveRequestDto.getSubLocationId();
+        List<Long> subLocationIds = communitySaveRequestDto.getSubLocationIds();
         String userId = JwtUtils.getUserId();
 
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND, " 사용자 아이디 = " + userId));
 
-        SubLocation subLocation = subLocationRepository.findById(subLocationId)
-                .orElseThrow(() -> new CustomException(ErrorCode.SUB_LOCATION_NOT_FOUND));
+        List<SubLocation> subLocations = subLocationRepository.findByIds(subLocationIds);
+        Community community = communitySaveRequestDto.toEntity(user);
+        for (SubLocation subLocation : subLocations) {
+            CommunityLocation communityLocation = CommunityLocation.builder()
+                    .subLocation(subLocation)
+                    .build();
 
-        Community entity = communitySaveRequestDto.toEntity(subLocation, user);
+            community.addSubLocation(communityLocation);
+        }
 
-        Community save = communityRepository.save(entity);
+        Community save = communityRepository.save(community);
 
 
         return CommunitySaveResponseDto.builder()
