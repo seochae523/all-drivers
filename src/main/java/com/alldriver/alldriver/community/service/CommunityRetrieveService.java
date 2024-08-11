@@ -9,7 +9,7 @@ public interface CommunityRetrieveService {
 
     List<CommunityFindResponseDto> findByUserId(Integer page);
 
-    List<CommunityFindResponseDto> findBySubLocationId(Integer page, Long subLocationId);
+    List<CommunityFindResponseDto> findBySubLocationId(Integer page, List<Long> subLocationIds);
 
 
 }

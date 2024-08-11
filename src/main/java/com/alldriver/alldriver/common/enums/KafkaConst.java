@@ -1,11 +1,19 @@
-package com.alldriver.alldriver.common.util;
-
-import org.springframework.beans.factory.annotation.Value;
+package com.alldriver.alldriver.common.enums;
 
 
-public class KafkaConst {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-    @Value("${spring.kafka.consumer.group-id}")
-    public static String GROUP_ID;
-    public static final String TOPIC = "chat-messages";
+@Getter
+@AllArgsConstructor
+public enum KafkaConst {
+    GROUP_ID,
+    TOPIC,
+    BOOTSTRAP_SERVER;
+
+    public static class Value{
+        public static final String GROUP_ID = "chat-group";
+        public static final String TOPIC = "chat-messages";
+        public static final String BOOTSTRAP_SERVER = "kafka:9092";
+    }
 }

@@ -3,6 +3,7 @@ package com.alldriver.alldriver.chat.dto.response;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -14,6 +15,6 @@ public class ChatRoomSaveResponseDto {
     private Long id;
     private String title;
     private String creator;
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
 }

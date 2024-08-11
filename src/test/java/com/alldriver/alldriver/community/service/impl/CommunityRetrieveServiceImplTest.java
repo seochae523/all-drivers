@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -84,7 +85,8 @@ class CommunityRetrieveServiceImplTest {
         CommunityFindVo communityFindVo = mock(CommunityFindVo.class);
         try (MockedStatic<JwtUtils> jwtUtils =mockStatic(JwtUtils.class)){
             String userId = JwtUtils.getUserId();
-            Long subLocationId = 1L;
+            List<Long> subLocationId = new ArrayList<>();
+            subLocationId.add(1L);
             when(communityRepository.findBySubLocation(pageSize, offset, userId, subLocationId)).thenReturn(Collections.singletonList(communityFindVo));
 
             // when
