@@ -1,6 +1,7 @@
 package com.alldriver.alldriver.chat.service.impl;
 
 import com.alldriver.alldriver.common.enums.KafkaConst;
+import com.alldriver.alldriver.common.util.JwtUtils;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
@@ -45,15 +46,17 @@ public class ChatServiceImpl implements ChatService{
     }
     @Override
     public ChatSaveResponseDto chat(ChatSaveRequestDto chatSaveRequestDto) {
+        String sender = JwtUtils.getUserId();
         String message = chatSaveRequestDto.getMessage();
         Long roomId = chatSaveRequestDto.getRoomId();
-        String sender = chatSaveRequestDto.getSender();
+
         Date createdAt = new Date();
 
-        KafkaChatDto kafkaChatDto = new KafkaChatDto(chatSaveRequestDto, createdAt);
-        this.createChatTableIfNotExists();
+        KafkaChatDto kafkaChatDto = new KafkaChatDto(chatSaveRequestDto, createdAt, sender);
+
         this.send(KafkaConst.Value.TOPIC, kafkaChatDto);
-        this.saveChat(chatSaveRequestDto);
+
+        this.saveChat(roomId, message, sender, createdAt);
 
         return ChatSaveResponseDto.builder()
                 .roomId(roomId)
@@ -68,6 +71,7 @@ public class ChatServiceImpl implements ChatService{
         DynamoDBQueryExpression<Chat> objectDynamoDBQueryExpression = new DynamoDBQueryExpression<Chat>()
                 .withKeyConditionExpression("id = :id")
                 .withExpressionAttributeValues(ImmutableMap.of(":id", new AttributeValue().withN(roomId.toString())));
+
         PaginatedQueryList<Chat> query = dynamoDBMapper.query(Chat.class, objectDynamoDBQueryExpression);
 
         return query.stream()
@@ -103,11 +107,9 @@ public class ChatServiceImpl implements ChatService{
     }
 
     @Async
-    public void saveChat(ChatSaveRequestDto chatSaveRequestDto){
-        String message = chatSaveRequestDto.getMessage();
-        Long roomId = chatSaveRequestDto.getRoomId();
-        String sender = chatSaveRequestDto.getSender();
-        Date createdAt = new Date();
+    public void saveChat(Long roomId, String message, String sender, Date createdAt){
+        this.createChatTableIfNotExists();
+
 
         Chat chat = Chat.builder()
                 .id(roomId)
