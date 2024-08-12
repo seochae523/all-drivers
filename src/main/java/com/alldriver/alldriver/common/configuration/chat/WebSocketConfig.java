@@ -16,19 +16,19 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Slf4j
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final StompHandler stompHandler;
-
+    private final StompErrorHandler stompErrorHandler;
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws/chat").setAllowedOriginPatterns("*")
                 .withSockJS();
         registry.addEndpoint("/ws/chat").setAllowedOriginPatterns("*");
+        registry.setErrorHandler(stompErrorHandler);
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        //registry.enableSimpleBroker("/sub");
-        // kafka 사용을 위해 치환
         registry.setApplicationDestinationPrefixes("/pub");
+
     }
 
     @Override

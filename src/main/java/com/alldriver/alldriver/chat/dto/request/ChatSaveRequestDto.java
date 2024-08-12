@@ -15,10 +15,6 @@ public class ChatSaveRequestDto {
     @Schema(description = "채팅 방 번호", example = "1")
     private Long roomId;
 
-    @NotBlank(message = "Chat Sender Not Found.")
-    @Schema(description = "작성자", example = "admin")
-    private String sender;
-
     @NotBlank(message = "Chat Message Not Found.")
     @Schema(description = "채팅 메시지", example = "hello world!")
     private String message;
