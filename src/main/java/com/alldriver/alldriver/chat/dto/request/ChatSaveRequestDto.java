@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ChatSaveRequestDto {
-    @NotNull(message = "Chat Room Id Not Found.")
-    @PositiveOrZero(message = "Chat Room Id Must Be Positive Or Zero Value.")
-    @Schema(description = "채팅 방 번호", example = "1")
+
+    @NotNull(message = "패팅 방 id가 존재하지 않습니다.")
     private Long roomId;
 
-    @NotBlank(message = "Chat Message Not Found.")
-    @Schema(description = "채팅 메시지", example = "hello world!")
+    @NotBlank(message = "채팅 메시지가 존재하지 않습니다.")
     private String message;
 
+    @NotBlank(message = "메시지 발송자가 존재하지 않습니다.")
+    private String sender;
 }

@@ -46,7 +46,7 @@ public class ChatServiceImpl implements ChatService{
     }
     @Override
     public ChatSaveResponseDto chat(ChatSaveRequestDto chatSaveRequestDto) {
-        String sender = JwtUtils.getUserId();
+        String sender = chatSaveRequestDto.getSender();
         String message = chatSaveRequestDto.getMessage();
         Long roomId = chatSaveRequestDto.getRoomId();
 
