@@ -106,7 +106,7 @@ public class ChatServiceImpl implements ChatService{
         template.convertAndSend("/sub/" + kafkaChatDto.getRoomId(), kafkaChatDto);
     }
 
-    @Async
+
     public void saveChat(Long roomId, String message, String sender, Date createdAt){
         this.createChatTableIfNotExists();
 
