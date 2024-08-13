@@ -19,7 +19,7 @@ public class KafkaChatDto {
     public KafkaChatDto(ChatSaveRequestDto chatSaveRequestDto, Date createdAt, String sender){
         this.roomId = chatSaveRequestDto.getRoomId();
         this.message = chatSaveRequestDto.getMessage();
-        this.sender =sender;
+        this.sender = sender;
         this.createdAt = createdAt;
     }
 }
