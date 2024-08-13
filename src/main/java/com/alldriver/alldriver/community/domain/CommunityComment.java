@@ -63,13 +63,14 @@ public class CommunityComment {
         this.content = communityCommentUpdateRequestDto.getContent();
         this.modified = true;
     }
-    public CommunityCommentFindResponseDto convert(){
+    public CommunityCommentFindResponseDto convert(String nickname){
         if(this.deleted) {
             return CommunityCommentFindResponseDto.builder()
                     .id(this.id)
                     .content("삭제된 댓글 입니다.")
                     .modified(this.modified)
                     .createdAt(this.createdAt)
+                    .nickname(nickname)
                     .build();
         }
         else{
@@ -78,6 +79,7 @@ public class CommunityComment {
                     .content(this.content)
                     .modified(this.modified)
                     .createdAt(this.createdAt)
+                    .nickname(nickname)
                     .build();
         }
     }
