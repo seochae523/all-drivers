@@ -14,6 +14,7 @@ public class CommunityCommentFindResponseDto {
     private String content;
     private Boolean modified;
     private LocalDateTime createdAt;
+    private String nickname;
     @Builder.Default
     private List<CommunityCommentFindResponseDto> children = new ArrayList<>();
 }
