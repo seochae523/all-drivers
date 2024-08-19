@@ -12,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatRoomSaveResponseDto {
-    private Long id;
+    private Long roomId;
     private String title;
     private String creator;
     private LocalDateTime createdAt;

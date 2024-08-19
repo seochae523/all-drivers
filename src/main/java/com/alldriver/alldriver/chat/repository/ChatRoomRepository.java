@@ -12,8 +12,7 @@ import java.util.List;
 
 @Repository
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
-    @Query("select r from ChatRoom r left join fetch r.creator p left join fetch r.participant s " +
-            "where (s.userId=:userId or p.userId=:userId) and r.deleted=false")
+    @Query("select r from ChatRoom r left join fetch ChatRoomParticipant crp left join fetch User u where u.userId=:userId and r.deleted=false")
     List<ChatRoom> findByUserId(@Param("userId") String userId);
 
 
