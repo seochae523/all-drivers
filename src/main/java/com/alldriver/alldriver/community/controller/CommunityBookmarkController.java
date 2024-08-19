@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class CommunityBookmarkController {
     private final CommunityBookmarkService communityBookmarkService;
 
-    @PostMapping("/save/{communityId}")
+    @PutMapping("/save/{communityId}")
     public ResponseEntity<CommunityBookmarkSaveResponseDto> save(@PathVariable
                                                                  @NotNull(message = ValidationError.Message.COMMUNITY_ID_NOT_FOUND) Long communityId){
         return ResponseEntity.ok(communityBookmarkService.save(communityId));
