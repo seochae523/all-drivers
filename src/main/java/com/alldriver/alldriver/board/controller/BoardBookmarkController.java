@@ -22,7 +22,7 @@ public class BoardBookmarkController {
     private final BoardBookmarkService boardBookmarkService;
 
     @Operation(description = "게시글 관심 목록 저장")
-    @PostMapping("/save/{boardId}")
+    @PutMapping("/save/{boardId}")
     public ResponseEntity<BoardBookmarkSaveResponseDto> save(@PathVariable
                                                              @NotNull(message = ValidationError.Message.BOARD_ID_NOT_FOUND) Long boardId)  {
         return ResponseEntity.ok(boardBookmarkService.saveLike(boardId));
