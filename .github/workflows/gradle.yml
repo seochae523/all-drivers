@@ -115,8 +115,8 @@ jobs:
         run: sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
 
       # 2-1. 카프카 실행  
-      - name: run kafka
-        run: sudo docker-compose up -d
+      # - name: run kafka
+      #   run: sudo docker-compose up -d
         
       # 3. 최신 이미지를 컨테이너화하여 실행시킵니다
       - name: docker run new container
