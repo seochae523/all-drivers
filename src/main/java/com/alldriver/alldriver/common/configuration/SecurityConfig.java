@@ -41,7 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/owner/**").hasAnyRole("OWNER", "ADMIN")
 
                         .requestMatchers( "/find-nickname", "/login", "/sign-up/**", "/swagger-ui/**", "/v3/api-docs/**", "/check/**",
-                                         "/change-forget-password", "/refresh","/ws/chat", "/sms/**" , "/verify/**").permitAll()
+                                         "/change-forget-password", "/refresh","/ws/chat", "/sms/**" , "/verify/**", "/actuator/**").permitAll()
                  )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .addFilterBefore(new JwtFilter(customUserDetailService), UsernamePasswordAuthenticationFilter.class)

@@ -12,6 +12,10 @@ spring:
   data:
     rest:
       default-page-size: 10
+#    elasticsearch:
+#      repositories:
+#        enabled: true
+#      url: ${ELASTIC_SEARCH_URL}
   main:
     allow-bean-definition-overriding: true
   # 데이터 소스 설정
