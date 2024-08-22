@@ -29,6 +29,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.mysql:mysql-connector-j'
 
+	// es
+//	implementation 'org.springframework.data:spring-data-elasticsearch'
+
 	//webSocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
@@ -64,6 +67,9 @@ dependencies {
 	//slack
 	implementation 'com.github.maricn:logback-slack-appender:1.4.0'
 
+	// monitoring
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'

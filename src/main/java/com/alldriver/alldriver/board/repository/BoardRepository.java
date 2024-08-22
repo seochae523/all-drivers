@@ -20,7 +20,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "        group_concat(distinct j.category) as jobCategory, " +
             "        group_concat(distinct sl.category) as locationCategory, " +
             "        u.user_id as userId, u.nickname as userNickname, " +
-            "        (select count(*) from board_bookmark b1 where b1.board_id=b.id) as bookmarkCount, " +
+            "        (select count(*) from board_bookmark b1 where b1.board_id=b.id and b.deleted=false) as bookmarkCount, " +
             "        case when bm.user_id is not null then true else false end as bookmarked "+
             "    from board b " +
             "    left join user u on u.id=b.user_id " +
@@ -92,10 +92,10 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<BoardFindVo> search(@Param("limit") int limit, @Param("offset") int offset, @Param("keyword") String keyword, @Param("userId") String userId);
 
     @Query(value = BASE_QUERY +
-            "and :carIds is null or c.id in (:carIds) " +
-            "and :jobIds is null or j.id in (:jobIds) " +
-            "and :locationIds is null or sl.id in (:locationIds) " +
-            "and :mainLocationId is null or ml.id=:mainLocationId " +
+            "and (case when concat(:carIds) is null then true else c.id in (:carIds) end) " +
+            "and (case when concat(:jobIds) is null then true else j.id in (:jobIds) end) " +
+            "and (case when concat(:locationIds) is null then true else sl.id in (:locationIds) end) " +
+            "and (case when (:mainLocationId) is null then true else ml.id = :mainLocationId end) " +
             SORT_QUERY +
             "limit :limit offset :offset", nativeQuery = true)
     List<BoardFindVo> findByComplexParameters(@Param("limit") int limit, @Param("offset") int offset, @Param("carIds") List<Long> carIds, @Param("jobIds") List<Long> jobIds, @Param("locationIds") List<Long> LocationIds, @Param("mainLocationId") Long mainLocationId, @Param("userId") String userId);
