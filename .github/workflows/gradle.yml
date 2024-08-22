@@ -112,15 +112,12 @@ jobs:
      
       # 2. 기존의 컨테이너를 중지시킵니다
       - name: docker stop container
-        run: sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
+        run: sudo docker compose down
 
-      # 2-1. 카프카 실행  
-      # - name: run kafka
-      #   run: sudo docker-compose up -d
         
       # 3. 최신 이미지를 컨테이너화하여 실행시킵니다
       - name: docker run new container
-        run: sudo docker run -d -p 8080:8080 --network ubuntu_default ${{ secrets.DOCKERHUB_USERNAME }}/all-driver 
+        run: sudo docker compose up -d
 
       # 4. 미사용 이미지를 정리합니다
       - name: delete old docker image
