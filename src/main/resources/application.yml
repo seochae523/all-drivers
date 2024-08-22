@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: all-driver
   kafka:
     bootstrap-servers: kafka:9092
     producer:
@@ -12,10 +14,7 @@ spring:
   data:
     rest:
       default-page-size: 10
-#    elasticsearch:
-#      repositories:
-#        enabled: true
-#      url: ${ELASTIC_SEARCH_URL}
+
   main:
     allow-bean-definition-overriding: true
   # 데이터 소스 설정
@@ -69,7 +68,6 @@ cloud:
 
 
 
-
 firebase:
   url: ${FCM_APP_URL}
   file-name: ${FCM_FILE_NAME}
@@ -85,3 +83,12 @@ sms:
   secret-key : ${SMS_SECRET_KEY}
   domain: ${SMS_DOMAIN}
   phone-number: ${SMS_PHONE_NUMBER}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health, info
+  metrics:
+    tags:
+      application: ${spring.application.name}
