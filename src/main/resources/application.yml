@@ -1,6 +1,6 @@
 spring:
   application:
-    name: all-driver
+    name: all-drivers
   kafka:
     bootstrap-servers: kafka:9092
     producer:
