@@ -61,7 +61,7 @@ public class Board {
     private Boolean deleted;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name="USER_ID", nullable = false)
+    @JoinColumn(name="user_id", nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY ,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
