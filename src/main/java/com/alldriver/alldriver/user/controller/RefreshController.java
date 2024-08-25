@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "토큰 리프레쉬 관련 api")
 public class RefreshController {
     private final RefreshService refreshService;
-    @Operation(description = "access token 만료시 refresh token을 이용하여 재발급")
+    @Operation(summary = "access token 만료시 refresh token을 이용하여 재발급")
     @PostMapping
     public ResponseEntity<AuthToken> refresh(@RequestBody
                                              @Valid RefreshRequestDto refreshRequestDto) throws ParseException {
