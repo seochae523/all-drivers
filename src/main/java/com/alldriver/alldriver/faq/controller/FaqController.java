@@ -27,26 +27,25 @@ public class FaqController {
     private final FaqService faqService;
 
     @GetMapping("/user/faq/all")
-    @Operation(description = "자주 묻는 질문 조회")
+    @Operation(summary = "자주 묻는 질문 조회")
     public ResponseEntity<List<FaqFindResponseDto>> findAll(){
         return ResponseEntity.ok(faqService.findAll());
     }
 
     @PostMapping("/admin/faq/save")
-    @Operation(description = "자주 묻는 질문 저장")
+    @Operation(summary = "자주 묻는 질문 저장")
     public ResponseEntity<String> save(@RequestBody @Valid FaqSaveRequestDto faqSaveRequestDto){
         return ResponseEntity.ok(faqService.saveFaq(faqSaveRequestDto));
     }
     @PutMapping("/admin/faq/update")
-    @Operation(description = "자주 묻는 질문 업데이트")
+    @Operation(summary = "자주 묻는 질문 업데이트")
     public ResponseEntity<String> update(@RequestBody @Valid FaqUpdateRequestDto faqUpdateRequestDto){
         return ResponseEntity.ok(faqService.updateFaq(faqUpdateRequestDto));
     }
 
     @DeleteMapping("/admin/faq/delete")
-    @Operation(description = "자주 묻는 질문 삭제")
-    public ResponseEntity<String> delete(@NotNull(message = "Faq Id Not Found.")
-                                                           @RequestParam(value = "id", required = false) String id,
+    @Operation(summary = "자주 묻는 질문 삭제", description = "createdAt은 yyyy-MM-dd'T'HH:mm:ss.SSSXXX 형태로 삽입")
+    public ResponseEntity<String> delete(@NotNull(message = "Faq Id Not Found.") @RequestParam(value = "id", required = false) String id,
                                                        @NotNull(message = "Faq Created At Not Found.")
                                                        @RequestParam(value = "createdAt", required = false)
                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date createdAt) throws ParseException {
