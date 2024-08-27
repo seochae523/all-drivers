@@ -47,6 +47,9 @@ public class BoardUpdateRequestDto {
     @NotNull(message = ValidationError.Message.END_AT_NOT_FOUND)
     private Date endAt;
 
+    @NotNull(message = ValidationError.Message.MAIN_LOCATION_ID_NOT_FOUND)
+    private Long mainLocationId;
+
     @Schema(description = "업데이트 할 차종 : type = 삭제 원한다면 -1 추가하고 싶으면 0 / id = 추가 할 차종 id. type이 -1일때는 아무 값이나 넣으세요")
     private List<CarUpdateRequestDto> carInfos;
     @Schema(description = "업데이트 할 직종 : type = 삭제 원한다면 -1 추가하고 싶으면 0 / id = 추가 할 직종 id. type이 -1일때는 아무 값이나 넣으세요")

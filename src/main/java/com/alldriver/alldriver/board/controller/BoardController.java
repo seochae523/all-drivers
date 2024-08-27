@@ -47,7 +47,7 @@ public class BoardController {
     @Operation(summary = "게시글 업데이트", description = "게시글을 form-data 타입을 통해 업데이트" +
             "</br> images :: multipart/form-data로 전송" +
             "</br> request :: application/json으로 전송" +
-            "</br> carInfos, jobInfos, locationInfos :: type = 삭제 원한다면 -1 추가하고 싶으면 0 / id = 추가 할 차종 id. type이 -1일때는 아무 값이나 넣으세요")
+            "</br> carInfos, jobInfos, locationInfos :: type = 삭제 원한다면 -1 추가하고 싶으면 0 / id = 추가할 id. type이 -1일때는 아무 값이나 넣으세요")
     @Parameters({
             @Parameter(name="images", description = "추가 할 이미지"),
             @Parameter(name="request", description = "게시글에 필요한 리퀘스트", required = true)
