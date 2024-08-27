@@ -114,7 +114,7 @@ public class BoardServiceImpl implements BoardService {
         List<CarUpdateRequestDto> carInfos = boardUpdateRequestDto.getCarInfos();
         List<LocationUpdateRequestDto> locationInfos = boardUpdateRequestDto.getLocationInfos();
         List<Long> imageIds = boardUpdateRequestDto.getImageIds();
-
+        Long mainLocationId = boardUpdateRequestDto.getMainLocationId();
         Long boardId = board.getId();
 
 
@@ -177,7 +177,9 @@ public class BoardServiceImpl implements BoardService {
             for (LocationUpdateRequestDto locationInfo : locationInfos) {
                 SubLocation subLocation = subLocationRepository.findById(locationInfo.id())
                         .orElseThrow(() -> new CustomException(ErrorCode.SUB_LOCATION_NOT_FOUND, " 상세 지역 Id = " + locationInfo.id()));
+                MainLocation mainLocation = subLocation.getMainLocation();
                 Long subLocationId = subLocation.getId();
+                if(!mainLocation.getId().equals(mainLocationId)) throw new CustomException(ErrorCode.INVALID_LOCATION_ID, " 수정할 메인 지역 id = " + mainLocationId + " 수정할 세부 지역에 귀속된 메인 지역 id = " + mainLocation.getId());
 
                 if (locationInfo.type() == 0) {
                     LocationBoard locationBoard = LocationBoard.builder()

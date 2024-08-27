@@ -41,7 +41,7 @@ public enum ErrorCode {
     SUB_LOCATION_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-007", "세부 지역이 존재하지 않습니다."),
     CAR_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-008", "차량이 존재하지 않습니다."),
     JOB_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-009", "직종이 존재하지 않습니다."),
-
+    INVALID_LOCATION_ID(HttpStatus.BAD_REQUEST, "AEB-010", "메인 지역 id와 세부 지역에 귀속된 메인 지역의 id가 일치하지 않습니다."),
 
     COMMUNITY_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEC-001", "커뮤니티가 존재하지 않습니다."),
     COMMUNITY_COMMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEC-002", "커뮤니티 댓글이 존재하지 않습니다."),
