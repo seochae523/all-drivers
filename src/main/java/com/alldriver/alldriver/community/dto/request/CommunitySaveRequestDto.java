@@ -27,7 +27,6 @@ public class CommunitySaveRequestDto {
         return Community.builder()
                 .title(title)
                 .content(content)
-
                 .user(user)
                 .createdAt(LocalDateTime.now())
                 .deleted(false)
