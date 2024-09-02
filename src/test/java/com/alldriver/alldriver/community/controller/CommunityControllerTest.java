@@ -161,7 +161,7 @@ class CommunityControllerTest {
         return CommunitySaveRequestDto.builder()
                 .title("test")
                 .content("test")
-                .subLocationId(1L)
+
                 .build();
     }
 

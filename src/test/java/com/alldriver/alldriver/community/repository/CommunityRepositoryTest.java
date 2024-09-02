@@ -16,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +57,7 @@ class CommunityRepositoryTest {
                     .deleted(false)
                     .createdAt(LocalDateTime.now())
                     .user(save)
-                    .subLocation(subLocation)
+
                     .build();
 
             communityRepository.save(community);
@@ -116,11 +117,12 @@ class CommunityRepositoryTest {
     @DisplayName("지역에 따른 조회 - 지역 존재")
     void findBySubLocation() {
         //given
-        Long id = 1L;
+        List<Long> ids = new ArrayList<>();
+        ids.add(1L);
         String userId ="test";
 
         //when
-        List<CommunityFindVo> bySubLocation = communityRepository.findBySubLocation(10, 0, userId, id);
+        List<CommunityFindVo> bySubLocation = communityRepository.findBySubLocation(10, 0, userId, ids);
         //then
         assertThat(bySubLocation).hasSize(10);
     }
@@ -128,11 +130,12 @@ class CommunityRepositoryTest {
     @DisplayName("지역에 따른 조회 - 지역 미존재")
     void findBySubLocationIfNotExist() {
         //given
-        Long id = 2L;
+        List<Long> ids = new ArrayList<>();
+        ids.add(2L);
         String userId ="test";
 
         //when
-        List<CommunityFindVo> bySubLocation = communityRepository.findBySubLocation(10, 0, userId, id);
+        List<CommunityFindVo> bySubLocation = communityRepository.findBySubLocation(10, 0, userId, ids);
         //then
         assertThat(bySubLocation).isEmpty();
     }

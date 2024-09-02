@@ -32,6 +32,9 @@ dependencies {
 	// es
 //	implementation 'org.springframework.data:spring-data-elasticsearch'
 
+	//model mapper
+	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.9'
+
 	//webSocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 

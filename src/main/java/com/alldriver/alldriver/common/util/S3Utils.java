@@ -1,5 +1,7 @@
 package com.alldriver.alldriver.common.util;
 
+import com.alldriver.alldriver.common.enums.ErrorCode;
+import com.alldriver.alldriver.common.exception.CustomException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,8 @@ public class S3Utils {
     private String cloudFrontUrl;
 
     public String uploadFile(MultipartFile multipartFile) throws IOException {
+        if(multipartFile == null) throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
+
         String originalFilename = UUID.randomUUID() + multipartFile.getOriginalFilename();
         ObjectMetadata metadata = new ObjectMetadata();
 

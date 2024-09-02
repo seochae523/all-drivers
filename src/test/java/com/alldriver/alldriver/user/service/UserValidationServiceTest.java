@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.net.URISyntaxException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -78,7 +79,7 @@ class UserValidationServiceTest {
     }
     @Test
     @DisplayName("중복 사업자 번호 탐지 - 중복 없을 때")
-    void checkUnDuplicatedLicense() {
+    void checkUnDuplicatedLicense() throws URISyntaxException {
         // given
         when(licenseRepository.findByLicenseNumber(any())).thenReturn(Optional.empty());
         // when

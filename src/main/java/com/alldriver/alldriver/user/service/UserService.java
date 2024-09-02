@@ -5,6 +5,7 @@ import com.alldriver.alldriver.user.dto.response.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 public interface UserService {
@@ -16,6 +17,5 @@ public interface UserService {
     UserUpdateResponseDto update(UserUpdateRequestDto userUpdateRequestDto);
     ChangePasswordResponseDto changePassword(ChangePasswordRequestDto changePasswordRequestDto);
     String signOut();
-
-    String upgradeUser(List<MultipartFile> images, UserUpgradeRequestDto userUpgradeRequestDto) throws IOException;
+    String upgradeUser(MultipartFile carImage, MultipartFile license, UserUpgradeRequestDto userUpgradeRequestDto) throws IOException;
 }

@@ -17,7 +17,7 @@ public class UserUpgradeRequestDto{
 
     private String licenseNumber;
 
-    private String carNumber;
+    private CompanyInformationRequestDto companyInfo;
 
     private CarInformationRequestDto carInfo;
 

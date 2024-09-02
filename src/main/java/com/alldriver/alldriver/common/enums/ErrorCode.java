@@ -26,12 +26,13 @@ public enum ErrorCode {
     INVALID_USER(HttpStatus.BAD_REQUEST, "AEU-017", "유효하지 않은 사용자입니다."),
     FCM_TOKEN_NOT_FOUNT(HttpStatus.BAD_REQUEST, "AEU-018", "Firebase 메세지 토큰이 존재하지 않습니다."),
     FCM_SEND_FAIL(HttpStatus.BAD_REQUEST, "AEU-018", "Firebase 메시지 전송에 실패 했습니다."),
+
     INCORRECT_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "AET-001", "잘못된 리프레시 토큰입니다."),
     INVALID_AUTH_TOKEN(HttpStatus.UNAUTHORIZED, "AET-002", "유효하지 않은 인증 토큰입니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "AET-003", "유효하지 않은 리프레시 토큰입니다."),
-    REFRESH_TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "AET-004", "리프레시 토큰을 찾을 수 없습니다."),
+    REFRESH_TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "AET-004", "리프레시 토큰을 존재하지 없습니다."),
     AUTH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AET-005", "인증 토큰이 만료되었습니다."),
-
+    ACCESS_TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "AET-006", "액세스 토큰이 존재하지 않습니다."),
     BOARD_ID_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-001", "게시글 id가 존재하지 않습니다."),
     BOARD_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-002", "게시글이 존재하지 않습니다."),
     CONTENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEB-003", "내용이 존재하지 않습니다."),
@@ -54,7 +55,9 @@ public enum ErrorCode {
     BOOKMARK_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEL-001", "즐겨찾기가 존재하지 않습니다."),
     DUPLICATED_BOOKMARK(HttpStatus.BAD_REQUEST, "AEL-002", "중복된 즐겨찾기 입니다."),
 
-    CHAT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "AECR-001", "채팅 방이 존재하지 않습니다.");
+    CHAT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "AECR-001", "채팅 방이 존재하지 않습니다."),
+
+    ACCESS_DINY(HttpStatus.UNAUTHORIZED, "AEA-001", "접근이 거부 되었습니다.");
 
     private final HttpStatus status;
     private final String code;

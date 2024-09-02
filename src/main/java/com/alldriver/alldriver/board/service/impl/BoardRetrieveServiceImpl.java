@@ -127,6 +127,7 @@ public class BoardRetrieveServiceImpl implements BoardRetrieveService {
 
         for (BoardFindVo boardFindVo : findVoList) {
             Long boardId = boardFindVo.getBoardId();
+
             BoardFindResponseDto boardDto = boardMap.computeIfAbsent(boardId, id -> {
                 BoardFindResponseDto dto = new BoardFindResponseDto();
                 dto.setId(boardFindVo.getBoardId());

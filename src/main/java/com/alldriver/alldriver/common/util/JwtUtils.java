@@ -7,6 +7,7 @@ import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.exception.JwtException;
 import com.alldriver.alldriver.user.dto.response.AuthToken;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -95,6 +96,9 @@ public class JwtUtils {
             throw new JwtException(ErrorCode.INVALID_AUTH_TOKEN);
         } catch (IllegalArgumentException e) {
             log.info("JWT token compact of handler are invalid.");
+            throw new JwtException(ErrorCode.INVALID_AUTH_TOKEN);
+        } catch (SignatureException e){
+            log.info("JWT signature does not match locally computed signature.");
             throw new JwtException(ErrorCode.INVALID_AUTH_TOKEN);
         }
     }

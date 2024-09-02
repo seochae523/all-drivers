@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -84,7 +85,10 @@ public class UserServiceImpl implements UserService {
     public SignUpResponseDto signUpUser(UserSignUpRequestDto userSignUpRequestDto) {
         User user = userSignUpRequestDto.toEntity();
         user.hashPassword(passwordEncoder);
+
         user.setRole(Role.USER);
+        user.setRole(Role.TEMP_JOB_SEEKER);
+
         FcmToken fcmToken = FcmToken.builder().token(userSignUpRequestDto.getFcmToken()).build();
 
         user.addFcmToken(fcmToken);
@@ -105,20 +109,25 @@ public class UserServiceImpl implements UserService {
     public SignUpResponseDto signUpOwner(OwnerSignUpRequestDto ownerSignUpRequestDto, List<MultipartFile> images) throws IOException {
         User user = ownerSignUpRequestDto.toEntity();
         user.hashPassword(passwordEncoder);
+
         user.setRole(Role.USER);
-        user.setRole(Role.OWNER);
+        user.setRole(Role.TEMP_RECRUITER);
 
         for (MultipartFile image : images) {
             String url = s3Utils.uploadFile(image);
 
-            License license = License.builder()
+            CompanyInformation companyInformation = CompanyInformation.builder()
                     .licenseNumber(ownerSignUpRequestDto.getLicense())
-                    .url(url)
+                    .image(url)
+                    .companyLocation(ownerSignUpRequestDto.getCompanyLocation())
+                    .startAt(ownerSignUpRequestDto.getStartedAt())
                     .build();
 
-            user.addLicense(license);
+            user.addCompanyInformation(companyInformation);
         }
-        FcmToken fcmToken = FcmToken.builder().token(ownerSignUpRequestDto.getFcmToken()).build();
+        FcmToken fcmToken = FcmToken.builder()
+                .token(ownerSignUpRequestDto.getFcmToken())
+                .build();
 
         user.addFcmToken(fcmToken);
 
@@ -133,31 +142,34 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SignUpResponseDto signUpCarOwner(CarOwnerSignUpRequestDto carOwnerSignUpRequestDto, List<MultipartFile> images) throws IOException {
-        CarInformationRequestDto carInformation = carOwnerSignUpRequestDto.getCarInformation();
-
+        Integer type = carOwnerSignUpRequestDto.getType();
         User user = carOwnerSignUpRequestDto.toEntity();
-        UserCar userCar = carInformation.toEntity();
 
         user.hashPassword(passwordEncoder);
-        user.setRole(Role.USER);
-        user.setRole(Role.CAR_OWNER);
-        user.addUserCar(userCar);
 
-        FcmToken fcmToken = FcmToken.builder().token(carOwnerSignUpRequestDto.getFcmToken()).build();
+        user.setRole(Role.USER);
+
+        if (type == 0) user.setRole(Role.TEMP_JOB_SEEKER);
+        else if (type == 1) user.setRole(Role.TEMP_RECRUITER);
+        else throw new CustomException(ErrorCode.INVALID_PARAMETER, "타입은 0 또는 1이어야 합니다.");
+
+        FcmToken fcmToken = FcmToken.builder()
+                .token(carOwnerSignUpRequestDto.getFcmToken())
+                .build();
 
         user.addFcmToken(fcmToken);
-        User save = userRepository.save(user);
 
         for (MultipartFile image : images) {
             String url = s3Utils.uploadFile(image);
 
-            CarImage carImage = CarImage.builder()
-                    .userCar(userCar)
-                    .url(url)
+            UserCarInformation userCarInformation = UserCarInformation.builder()
+                    .image(url)
                     .build();
 
-            userCar.addCarImage(carImage);
+            user.addUserCarInformation(userCarInformation);
         }
+
+        User save = userRepository.save(user);
 
         return SignUpResponseDto.builder()
                 .userId(save.getUserId())
@@ -227,55 +239,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String upgradeUser(List<MultipartFile> images, UserUpgradeRequestDto userUpgradeRequestDto) throws IOException {
+    public String upgradeUser(MultipartFile carImage, MultipartFile license, UserUpgradeRequestDto userUpgradeRequestDto) throws IOException {
         Integer type = userUpgradeRequestDto.getType();
         String userId = JwtUtils.getUserId();
 
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND, " 사용자 아아디 = " + userId));
 
-        // type == 0 : user -> car owner
+        // type == 0 : user -> car owner (구직자)
         if(type == 0){
-            // 차량 정보는 단건만 저장
-            CarInformationRequestDto carInfo = userUpgradeRequestDto.getCarInfo();
-            UserCar userCar = carInfo.toEntity();
+            String carImageUrl = s3Utils.uploadFile(carImage);
 
-            user.setRole(Role.CAR_OWNER);
-            user.addUserCar(userCar);
+            UserCarInformation userCarInformation = UserCarInformation.builder()
+                    .image(carImageUrl)
+                    .build();
 
-            userRepository.save(user);
-            for (MultipartFile image : images) {
-                String url = s3Utils.uploadFile(image);
-
-                CarImage carImage = CarImage.builder()
-                        .userCar(userCar)
-                        .url(url)
-                        .build();
-
-                userCar.addCarImage(carImage);
-            }
-
+            user.addUserCarInformation(userCarInformation);
         }
 
-        // type == 1 user -> owner
-        else if(type == 1){
-            user.setRole(Role.OWNER);
+        // car owner 구직자 -> 구인자
+        else if(type==1){
+            user.removeJobSeeker();
+            user.setRole(Role.TEMP_RECRUITER);
 
-            for(MultipartFile image : images) {
-                String url = s3Utils.uploadFile(image);
+            CompanyInformationRequestDto companyInfo = userUpgradeRequestDto.getCompanyInfo();
+            String licenseImageUrl = s3Utils.uploadFile(license);
 
-                License license = License.builder()
-                        .licenseNumber(userUpgradeRequestDto.getLicenseNumber())
-                        .url(url)
-                        .build();
-
-                user.addLicense(license);
-            }
-            userRepository.save(user);
+            user.addCompanyInformation(companyInfo.toEntity(licenseImageUrl));
         }
+
         else{
-            throw new CustomException(ErrorCode.INVALID_PARAMETER, " type 파라미터는 0 또는 1이어야 합니다.");
+            throw new CustomException(ErrorCode.INVALID_PARAMETER, " type 파라미터는 0 또는 1 이어야 합니다.");
         }
+        userRepository.save(user);
 
         return "유저 업그레이드 완료.";
     }

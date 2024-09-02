@@ -37,9 +37,11 @@ public class CarOwnerSignUpRequestDto {
     @NotBlank(message = ValidationError.Message.FCM_TOKEN_NOT_FOUND)
     private String fcmToken;
 
-    @NotNull(message = ValidationError.Message.CAR_INFORMATION_NOT_FOUND)
-    private CarInformationRequestDto carInformation;
+    @NotNull(message = ValidationError.Message.TYPE_NOT_FOUND)
+    private Integer type;
 
+    @NotNull(message = ValidationError.Message.CAR_ID_NOT_FOUND)
+    private Long carId;
 
     public User toEntity(){
         return User.builder()
