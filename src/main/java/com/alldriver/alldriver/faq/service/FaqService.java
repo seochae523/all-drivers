@@ -26,13 +26,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FaqService {
     private final DynamoDBMapper dynamoDBMapper;
-    private final AmazonDynamoDB amazonDynamoDB;
-
-    private void createFAQTableIfNotExists() {
-        CreateTableRequest createTableRequest = dynamoDBMapper.generateCreateTableRequest(Faq.class)
-                .withProvisionedThroughput(new ProvisionedThroughput(1L, 1L));
-        TableUtils.createTableIfNotExists(amazonDynamoDB, createTableRequest);
-    }
 
     public List<FaqFindResponseDto> findAll(){
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
@@ -43,41 +36,6 @@ public class FaqService {
                 .collect(Collectors.toList());
 
         return dtoList;
-    }
-
-
-    public String saveFaq(FaqSaveRequestDto faqSaveRequestDto) {
-        this.createFAQTableIfNotExists();
-
-        Date createdAt = new Date();
-        dynamoDBMapper.save(faqSaveRequestDto.toEntity(createdAt));
-
-        return "자주 묻는 질문 저장 완료.";
-    }
-
-
-    public String updateFaq(FaqUpdateRequestDto faqUpdateRequestDto){
-        String content = faqUpdateRequestDto.getContent();
-        String title = faqUpdateRequestDto.getTitle();
-        String id = faqUpdateRequestDto.getId();
-        Date createdAt = faqUpdateRequestDto.getCreatedAt();
-
-        Faq load = dynamoDBMapper.load(Faq.class, id, createdAt);
-
-        load.setContent(content);
-        load.setTitle(title);
-
-        dynamoDBMapper.save(load);
-
-        return "자주 묻는 질문 업데이트 완료.";
-    }
-
-    public String deleteFaq(String id, Date createdAt) {
-        Faq load = dynamoDBMapper.load(Faq.class, id, createdAt);
-
-        dynamoDBMapper.delete(load);
-
-        return "자주 묻는 질문 삭제 완료.";
     }
 
 }

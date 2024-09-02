@@ -5,12 +5,14 @@ import com.alldriver.alldriver.common.enums.ValidationError;
 import com.alldriver.alldriver.user.domain.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 
 @Getter
@@ -42,6 +44,13 @@ public class OwnerSignUpRequestDto {
 
     @NotBlank(message = ValidationError.Message.FCM_TOKEN_NOT_FOUND)
     private String fcmToken;
+
+    @NotBlank(message = ValidationError.Message.COMPANY_LOCATION_NOT_FOUND)
+    private String companyLocation;
+
+    @NotNull(message = ValidationError.Message.START_AT_NOT_FOUND)
+    private Date startedAt;
+
     public User toEntity(){
         return User.builder()
                 .userId(userId)

@@ -101,7 +101,6 @@ class CommunityRetrieveControllerTest {
                     .nickname("test")
                     .createdAt(LocalDateTime.now())
                     .userId("test")
-                    .location("test")
                     .bookmarked(0)
                     .bookmarkCount(i)
                     .build();

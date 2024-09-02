@@ -20,37 +20,16 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping
+@RequestMapping("/user")
 @Validated
 @Tag(name ="자주 묻는 질문 관련 api")
 public class FaqController {
     private final FaqService faqService;
 
-    @GetMapping("/user/faq/all")
+    @GetMapping("/faq/all")
     @Operation(summary = "자주 묻는 질문 조회")
     public ResponseEntity<List<FaqFindResponseDto>> findAll(){
         return ResponseEntity.ok(faqService.findAll());
     }
-
-    @PostMapping("/admin/faq/save")
-    @Operation(summary = "자주 묻는 질문 저장")
-    public ResponseEntity<String> save(@RequestBody @Valid FaqSaveRequestDto faqSaveRequestDto){
-        return ResponseEntity.ok(faqService.saveFaq(faqSaveRequestDto));
-    }
-    @PutMapping("/admin/faq/update")
-    @Operation(summary = "자주 묻는 질문 업데이트")
-    public ResponseEntity<String> update(@RequestBody @Valid FaqUpdateRequestDto faqUpdateRequestDto){
-        return ResponseEntity.ok(faqService.updateFaq(faqUpdateRequestDto));
-    }
-
-    @DeleteMapping("/admin/faq/delete")
-    @Operation(summary = "자주 묻는 질문 삭제", description = "createdAt은 yyyy-MM-dd'T'HH:mm:ss.SSSXXX 형태로 삽입")
-    public ResponseEntity<String> delete(@NotNull(message = "Faq Id Not Found.") @RequestParam(value = "id", required = false) String id,
-                                                       @NotNull(message = "Faq Created At Not Found.")
-                                                       @RequestParam(value = "createdAt", required = false)
-                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date createdAt) throws ParseException {
-        return ResponseEntity.ok(faqService.deleteFaq(id, createdAt));
-    }
-
 }
 

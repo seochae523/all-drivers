@@ -1,7 +1,9 @@
 package com.alldriver.alldriver.common.configuration;
 
 import com.alldriver.alldriver.common.enums.ErrorCode;
+import com.alldriver.alldriver.common.exception.ApiErrorResponse;
 import com.alldriver.alldriver.common.exception.JwtException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,28 +23,17 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         }
         catch (JwtException ex){
+            log.error("Error = [{}]", ex.getMessage());
             ErrorCode errorCode = ex.getErrorCode();
-            if(errorCode.equals(ErrorCode.INVALID_AUTH_TOKEN)){
-                setResponse(response, ErrorCode.INVALID_AUTH_TOKEN);
-            }
-            else if(errorCode.equals(ErrorCode.AUTH_TOKEN_EXPIRED)){
-                setResponse(response, ErrorCode.AUTH_TOKEN_EXPIRED);
-            }
-            else if(errorCode.equals(ErrorCode.INCORRECT_REFRESH_TOKEN)){
-                setResponse(response, ErrorCode.INCORRECT_REFRESH_TOKEN);
-            }
-            else if(errorCode.equals(ErrorCode.INVALID_REFRESH_TOKEN)){
-                setResponse(response, ErrorCode.INVALID_REFRESH_TOKEN);
-            }
-            else{
-                setResponse(response, ErrorCode.REFRESH_TOKEN_NOT_FOUND);
-            }
+            setResponse(response, errorCode);
+
         }
     }
 
     private void setResponse(HttpServletResponse response, ErrorCode errorCode) throws RuntimeException, IOException {
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(errorCode, null);
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(errorCode.getStatus().value());
-        response.getWriter().print(errorCode.getMessage());
+        response.getWriter().print(new ObjectMapper().writeValueAsString(apiErrorResponse));
     }
 }
