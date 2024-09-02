@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user/board")
+@RequestMapping("/recruit/board")
 @Tag(name = "게시글 관련 api")
 @Validated
 public class BoardController {

@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URISyntaxException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/check")
@@ -28,9 +30,9 @@ public class UserValidationController {
     }
 
     @GetMapping("/license")
-    @Operation(summary = "사업자 등록 번호 중복 검사")
+    @Operation(summary = "사업자 등록 번호 중복 및 유효성 검사")
     public ResponseEntity<Boolean> checkLicense(@RequestParam(name = "license")
-                                                @NotBlank(message = ValidationError.Message.BUSINESS_NUMBER_NOT_FOUND) String license){
+                                                @NotBlank(message = ValidationError.Message.BUSINESS_NUMBER_NOT_FOUND) String license) throws URISyntaxException {
         return ResponseEntity.ok(userValidationService.checkLicense(license));
     }
     @GetMapping("/nickname")
@@ -46,10 +48,5 @@ public class UserValidationController {
                                                     @Valid PhoneNumberCheckRequestDto phoneNumberCheckRequestDto){
         return ResponseEntity.ok(userValidationService.checkPhoneNumber(phoneNumberCheckRequestDto));
     }
-    @GetMapping("/carNumber")
-    @Operation(summary = "차량 번호 중복 검사")
-    public ResponseEntity<Boolean> checkCarNumber(@RequestParam(value = "carNumber")
-                                                  @NotBlank(message = ValidationError.Message.CAR_NUMBER_NOT_FOUND) String carNumber){
-        return ResponseEntity.ok(userValidationService.checkCarNumber(carNumber));
-    }
+
 }

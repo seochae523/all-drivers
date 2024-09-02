@@ -339,7 +339,6 @@ public class UserControllerTest {
                 .phoneNumber("01012345678")
                 .nickname("test")
                 .password("1234")
-                .carInformation(new CarInformationRequestDto())
                 .fcmToken("testFcm")
                 .build();
     }

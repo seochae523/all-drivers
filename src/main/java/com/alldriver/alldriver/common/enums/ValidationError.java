@@ -40,13 +40,14 @@ public enum ValidationError {
     CAR_WEIGHT_NOT_FOUND,
     CAR_INFORMATION_NOT_FOUND,
     TYPE_NOT_FOUND,
-    KEYWORD_NOT_FOUND;
+    KEYWORD_NOT_FOUND,
+    LICENSE_NUMBER_NOT_FOUND;
 
     public static class Message{
         public static final String KEYWORD_NOT_FOUND = "키워드가 존재하지 않습니다.";
         public static final String PAGE_NOT_FOUND = "페이지가 존재하지 않습니다.";
         public static final String TYPE_NOT_FOUND = "타입이 존재하지 않습니다.";
-        public static final String CAR_INFORMATION_NOT_FOUND = "차량 정보가 존재하지 않습니다.";
+
         public static final String CAR_WEIGHT_NOT_FOUND="차량 무게가 존재하지 않습니다.";
         public static final String FAQ_ID_NOT_FOUND="Faq id가 존재하지 않습니다.";
         public static final String COMMENT_ID_NOT_FOUND="댓글 id가 존재하지 않습니다.";
@@ -78,5 +79,6 @@ public enum ValidationError {
         public static final String REFRESH_TOKEN_NOT_FOUND = "리프레시 토큰이 존재하지 않습니다.";
         public static final String AUTH_CODE_NOT_FOUND = "인증 번호가 존재하지 않습니다.";
         public static final String BOARD_ID_NOT_FOUND = "게시글 id가 존재하지 않습니다.";
+        public static final String LICENSE_NUMBER_NOT_FOUND = "사업자 등록 번호가 존재하지 않습니다.";
     }
 }

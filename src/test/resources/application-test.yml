@@ -2,11 +2,9 @@ spring:
   data:
     rest:
       default-page-size: 10
-  config:
-    activate:
-      on-profile: test
+
   datasource:
-    url: jdbc:h2:~/test;DB_CLOSE_DELAY=-1;NON_KEYWORDS=USER;DATABASE_TO_UPPER=FALSE;MODE=MYSQL
+    url: jdbc:h2:~/test;DB_CLOSE_DELAY=-1;NON_KEYWORDS=USER;MODE=MySQL;DATABASE_TO_UPPER=FALSE;
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -20,15 +18,15 @@ spring:
         globally_quoted_identifiers: true
     show-sql: true
     generate-ddl: true
-    database-platform: org.hibernate.dialect.H2Dialect
+
   jwt:
     header: Authorization
     secret: dGVzdEpXVFNFQ1JFQVR3aHlJdGRpZG50YXBwbHllZD8=
 
 open-api:
   license:
-    base-url: ${LICENSE_BASE_URL}
-    api-key: ${LICENSE_API_KEY}
+    base-url: https://api.odcloud.kr/api/nts-businessman/v1
+    api-key: 0JJ8zyeHN59%2BMUbn%2BcTMsf8mcxsHOTl02s4uFsFxeCc0BzEvevuZS04uECqUw3U0vv9R8RITr37fcVa4g4NFyw%3D%3D
 
 
 cloud:

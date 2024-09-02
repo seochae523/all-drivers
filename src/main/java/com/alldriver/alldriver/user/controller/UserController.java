@@ -49,7 +49,8 @@ public class UserController {
     }
     @PostMapping("/sign-up/car-owner")
     @Operation(summary = "차주 회원가입", description =  "images :: multipart/form-data로 전송" +
-            "</br> request :: application/json으로 전송")
+            "</br> request :: application/json으로 전송" +
+            "</br> type :: 0 = 구직 회원, 1 = 구인 회원")
     public ResponseEntity<SignUpResponseDto> signUpCarOwner(@RequestPart(value = "request")
                                                             @Valid CarOwnerSignUpRequestDto carOwnerSignUpRequestDto,
                                                             @RequestPart(value = "images") List<MultipartFile> images) throws IOException {
@@ -87,10 +88,11 @@ public class UserController {
     }
     @PutMapping("/user/upgrade")
     @Operation(summary = "회원 권한 상승", description = "type : 상승 할 권한 [type = 0 - 일반 유저에서 차주로 권한 업그레이드 이때는 차량 이미지 3장 필요, type = 1 - 일반 유저에서 화주로 권한 업그레이드 이때는 사진 1장만 필요]")
-    public ResponseEntity<String> upgradeUser(@RequestPart(value = "images") List<MultipartFile> images,
+    public ResponseEntity<String> upgradeUser(@RequestPart(value = "license_image") MultipartFile licenseImage,
+                                              @RequestPart(value = "car_image") MultipartFile carImage,
                                               @RequestPart(value = "request")
                                               @Valid UserUpgradeRequestDto userUpgradeRequestDto) throws IOException {
-        return ResponseEntity.ok(userService.upgradeUser(images, userUpgradeRequestDto));
+        return ResponseEntity.ok(userService.upgradeUser(carImage, licenseImage, userUpgradeRequestDto));
     }
     @DeleteMapping("/user/sign-out")
     @Operation(summary = "회원 탈퇴")
