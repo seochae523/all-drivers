@@ -1,10 +1,13 @@
 package com.alldriver.alldriver.common.configuration;
 
 
+import com.alldriver.alldriver.common.enums.ErrorCode;
+import com.alldriver.alldriver.common.exception.JwtException;
 import com.alldriver.alldriver.common.util.JwtUtils;
 
 import com.alldriver.alldriver.user.service.CustomUserDetailService;
 import io.jsonwebtoken.Claims;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,9 +45,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 Authentication authentication = this.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-            else{
-
-            }
 
         filterChain.doFilter(request, response);
     }
@@ -57,7 +57,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
         };
         // jwt 인증 미 실시 토큰
-
         String path = request.getRequestURI();
         return Arrays.stream(excludePath).anyMatch(path::startsWith);
     }

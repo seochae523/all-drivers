@@ -2,14 +2,25 @@ package com.alldriver.alldriver.user.service.impl;
 
 import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.exception.CustomException;
+import com.alldriver.alldriver.common.util.LicenseNumberValidator;
 import com.alldriver.alldriver.user.dto.request.PhoneNumberCheckRequestDto;
 import com.alldriver.alldriver.user.repository.LicenseRepository;
 import com.alldriver.alldriver.user.repository.UserRepository;
 import com.alldriver.alldriver.user.service.UserValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -18,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserValidationServiceImpl implements UserValidationService {
     private final UserRepository userRepository;
     private final LicenseRepository licenseRepository;
+    private final LicenseNumberValidator licenseNumberValidator;
 
     @Override
     public Boolean checkNickname(String nickname) {
@@ -56,28 +68,22 @@ public class UserValidationServiceImpl implements UserValidationService {
         }
 
         else{
-            throw new CustomException(ErrorCode.INVALID_PARAMETER, " type 파라미터는 0 또는 1이어야 합니다.");
+            throw new CustomException(ErrorCode.INVALID_PARAMETER, " type 파라미터는 0 ~ 2어야 합니다.");
         }
         return true;
     }
 
     @Override
-    public Boolean checkLicense(String licenseNumber) {
+    public Boolean checkLicense(String licenseNumber) throws URISyntaxException {
         licenseRepository.findByLicenseNumber(licenseNumber)
                 .ifPresent(x ->{
                     throw new CustomException(ErrorCode.DUPLICATED_LICENSE_NUMBER, " 사업자 등록 번호 = " + licenseNumber);
                 });
-        return true;
+
+        return licenseNumberValidator.validateLicense(licenseNumber);
     }
 
-    @Override
-    public Boolean checkCarNumber(String carNumber) {
-        userRepository.findByCarNumber(carNumber)
-                .ifPresent(x ->{
-                    throw new CustomException(ErrorCode.DUPLICATED_CAR_NUMBER, " 차량 번호 = " + carNumber);
-                });
-        return true;
-    }
+
 
     @Override
     public Boolean checkDuplicatedAccount(String userId){
@@ -87,4 +93,6 @@ public class UserValidationServiceImpl implements UserValidationService {
                 });
         return true;
     }
+
+
 }

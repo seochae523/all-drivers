@@ -167,7 +167,7 @@ class CommunityServiceImplTest {
     }
     private CommunitySaveRequestDto setUpRequestDto(){
         return CommunitySaveRequestDto.builder()
-                .subLocationId(1L)
+
                 .content("title")
                 .title("title")
                 .build();
@@ -201,7 +201,7 @@ class CommunityServiceImplTest {
                 .content("content")
                 .deleted(false)
                 .user(new User())
-                .subLocation(new SubLocation())
+
                 .build();
     }
     private CommunityUpdateRequestDto setUpUpdateRequestDto(){
@@ -219,7 +219,7 @@ class CommunityServiceImplTest {
                 .content("modified")
                 .deleted(false)
                 .user(new User())
-                .subLocation(new SubLocation())
+
                 .build();
     }
     private Community setUpDeletedCommunity(){
@@ -230,7 +230,7 @@ class CommunityServiceImplTest {
                 .content("modified")
                 .deleted(true)
                 .user(new User())
-                .subLocation(new SubLocation())
+
                 .build();
     }
 }

@@ -47,6 +47,7 @@ public class User implements UserDetails {
 
     @Column(name="nickname", columnDefinition = "varchar", length = 20, nullable = false)
     private String nickname;
+
     @Column(name = "refresh_token", columnDefinition = "text")
     private String refreshToken;
 
@@ -54,19 +55,21 @@ public class User implements UserDetails {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Column(name="role", columnDefinition = "varchar", length = 30, nullable = false)
+    @Column(name="role", columnDefinition = "varchar", length = 100, nullable = false)
     private String role;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Builder.Default
-    private Set<License> license = new HashSet<>();
+    private Set<CompanyInformation> companyInformation = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Builder.Default
-    private Set<UserCar> userCar = new HashSet<>();
+    private Set<UserCarInformation> userCarInformation = new HashSet<>();
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private FcmToken fcmToken;
+
+
 
     public void setRole(Role role){
         if(this.role == null) {
@@ -77,13 +80,27 @@ public class User implements UserDetails {
             this.role += role.getValue();
         }
     }
-    public void addUserCar(UserCar userCar){
-        this.userCar.add(userCar);
-        userCar.setUser(this);
+
+
+    public void removeJobSeeker(){
+        if(role.contains("ROLE_JOB_SEEKER,")){
+            role = role.replace("ROLE_JOB_SEEKER,", "");
+        }
+        else if(role.contains(",ROLE_JOB_SEEKER")){
+            role = role.replace(",ROLE_JOB_SEEKER", "");
+        }
     }
-    public void addLicense(License license){
-        this.license.add(license);
-        license.setUser(this);
+
+    public void grantUser() {
+        role = role.replace("TEMP_", "");
+    }
+    public void addUserCarInformation(UserCarInformation userCarInformation){
+        this.userCarInformation.add(userCarInformation);
+        userCarInformation.setUser(this);
+    }
+    public void addCompanyInformation(CompanyInformation companyInformation){
+        this.companyInformation.add(companyInformation);
+        companyInformation.setUser(this);
     }
 
     public void addFcmToken(FcmToken fcmToken){
@@ -105,9 +122,11 @@ public class User implements UserDetails {
         this.password = passwordEncoder.encode(this.password);
         return this;
     }
+
     public void updatePassword(String password){
         this.password = password;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();

@@ -8,8 +8,10 @@ import lombok.Getter;
 public enum Role {
     USER("ROLE_USER"),
     ADMIN("ROLE_ADMIN"),
-    OWNER("ROLE_OWNER"),
-    CAR_OWNER("ROLE_CAR_OWNER");
+    RECRUITER("ROLE_RECRUITER"),
+    JOB_SEEKER("ROLE_JOB_SEEKER"),
+    TEMP_RECRUITER("ROLE_TEMP_RECRUITER"),
+    TEMP_JOB_SEEKER("ROLE_TEMP_JOB_SEEKER");
 
     private final String value;
 }

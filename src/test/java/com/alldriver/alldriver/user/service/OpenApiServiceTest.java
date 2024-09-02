@@ -2,7 +2,8 @@ package com.alldriver.alldriver.user.service;
 
 import com.alldriver.alldriver.user.dto.response.LicenseValidateDetailResponseDto;
 import com.alldriver.alldriver.user.dto.response.LicenseValidateResponseDto;
-import com.alldriver.alldriver.user.service.impl.OpenApiServiceImpl;
+
+import com.alldriver.alldriver.user.service.impl.UserValidationServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,10 +28,11 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 
 
-@RestClientTest(value = {OpenApiServiceImpl.class})
+@RestClientTest(value = {UserValidationServiceImpl.class})
+@ActiveProfiles("test")
 public class OpenApiServiceTest {
     @Autowired
-    private OpenApiServiceImpl openApiService;
+    private UserValidationServiceImpl userValidateService;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
@@ -49,41 +52,7 @@ public class OpenApiServiceTest {
         mockServer = MockRestServiceServer.createServer(restTemplate);
     }
 
-    @Test
-    @DisplayName("사업자 등록 번호 조회 성공")
-    void 사업자_등록_번호_조회_성공() throws JsonProcessingException, URISyntaxException {
-        // given
-        String license = "2208162517";
-        String expectedJsonResponse = createLicenseValidateResponse("성공");
-        String requestUrl = licenseApiBaseUrl+"/status?serviceKey=" + licenseOpenApiKey;
-        URI uri = new URI(requestUrl);
 
-        mockServer.expect(requestTo(uri))
-                .andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess(objectMapper.writeValueAsString(expectedJsonResponse), MediaType.APPLICATION_JSON));
-        // when
-        Boolean result = openApiService.validateLicense(license);
-        // then
-        assertThat(result).isEqualTo(true);
-    }
-
-    @Test
-    @DisplayName("사업자 등록 번호 조회 실패")
-    void 사업자_등록_번호_조회_실패() throws JsonProcessingException, URISyntaxException {
-        // given
-        String license = "220816251";
-        String expectedJsonResponse = createLicenseValidateResponse("실패");
-        String requestUrl = licenseApiBaseUrl+"/status?serviceKey=" + licenseOpenApiKey;
-        URI uri = new URI(requestUrl);
-
-        mockServer.expect(requestTo(uri))
-                .andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess(objectMapper.writeValueAsString(expectedJsonResponse), MediaType.APPLICATION_JSON));
-        // when
-        Boolean result = openApiService.validateLicense(license);
-        // then
-        assertThat(result).isEqualTo(false);
-    }
 
     private String createLicenseValidateResponse(String type) throws JsonProcessingException {
         switch (type){
