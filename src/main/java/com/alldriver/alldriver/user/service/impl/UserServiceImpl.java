@@ -56,6 +56,7 @@ public class UserServiceImpl implements UserService {
         User user = (User) authenticate.getPrincipal();
         AuthToken authToken = JwtUtils.generateToken(userId, roles);
         FcmToken find = user.getFcmToken();
+
         if(find!=null){
             find.updateToken(loginRequestDto.getFcmToken());
         }
@@ -101,6 +102,34 @@ public class UserServiceImpl implements UserService {
                 .build();
 
     }
+
+    @Override
+    public LoginResponseDto signUpAdditionalSocialLoginInfo(SocialLoginSignUpRequestDto socialLoginSignUpRequestDto) {
+        String userId = socialLoginSignUpRequestDto.getUserId();
+
+        FcmToken fcmToken = FcmToken.builder()
+                .token(socialLoginSignUpRequestDto.getFcmToken())
+                .build();
+
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        user.addAdditionalSocialLoginInfo(socialLoginSignUpRequestDto);
+        user.addFcmToken(fcmToken);
+
+        User save = userRepository.save(user);
+
+        List<String> roles = List.of(user.getRole().split(","));
+        AuthToken authToken = JwtUtils.generateToken(userId, roles);
+
+        return LoginResponseDto.builder()
+                .authToken(authToken)
+                .nickname(save.getNickname())
+                .userId(save.getUserId())
+                .roles(roles)
+                .build();
+    }
+
     /**
      * TODO : 차주 회원가입시 차 사진 넣기 ㄱㄱ
      * and 화주는 사업자 등록증 입력하기

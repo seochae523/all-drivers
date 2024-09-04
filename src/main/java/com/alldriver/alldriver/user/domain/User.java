@@ -2,6 +2,7 @@ package com.alldriver.alldriver.user.domain;
 
 
 import com.alldriver.alldriver.common.enums.Role;
+import com.alldriver.alldriver.user.dto.request.SocialLoginSignUpRequestDto;
 import com.alldriver.alldriver.user.dto.request.UserUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -102,7 +103,10 @@ public class User implements UserDetails {
         this.companyInformation.add(companyInformation);
         companyInformation.setUser(this);
     }
+    public void addAdditionalSocialLoginInfo(SocialLoginSignUpRequestDto socialLoginSignUpRequestDto){
+        this.nickname = socialLoginSignUpRequestDto.getNickname();
 
+    }
     public void addFcmToken(FcmToken fcmToken){
         this.fcmToken = fcmToken;
         fcmToken.setUser(this);

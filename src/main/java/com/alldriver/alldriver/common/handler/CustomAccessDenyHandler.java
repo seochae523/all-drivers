@@ -1,6 +1,7 @@
-package com.alldriver.alldriver.common.exception;
+package com.alldriver.alldriver.common.handler;
 
 import com.alldriver.alldriver.common.enums.ErrorCode;
+import com.alldriver.alldriver.common.exception.ApiErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;

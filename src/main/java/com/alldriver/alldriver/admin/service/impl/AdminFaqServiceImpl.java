@@ -25,7 +25,6 @@ public class AdminFaqServiceImpl implements AdminFaqService {
     private final DynamoDBMapper dynamoDBMapper;
     private final AmazonDynamoDB amazonDynamoDB;
 
-
     private void createFAQTableIfNotExists() {
         CreateTableRequest createTableRequest = dynamoDBMapper.generateCreateTableRequest(Faq.class)
                 .withProvisionedThroughput(new ProvisionedThroughput(1L, 1L));

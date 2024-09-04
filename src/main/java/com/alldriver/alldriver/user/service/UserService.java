@@ -12,6 +12,7 @@ public interface UserService {
     LoginResponseDto login(LoginRequestDto loginRequestDto);
     String logout();
     SignUpResponseDto signUpUser(UserSignUpRequestDto userSignUpRequestDto);
+    LoginResponseDto signUpAdditionalSocialLoginInfo(SocialLoginSignUpRequestDto socialLoginSignUpRequestDto);
     SignUpResponseDto signUpOwner(OwnerSignUpRequestDto ownerSignUpRequestDto, List<MultipartFile> images) throws IOException;
     SignUpResponseDto signUpCarOwner(CarOwnerSignUpRequestDto carOwnerSignUpRequestDto, List<MultipartFile> image) throws IOException;
     UserUpdateResponseDto update(UserUpdateRequestDto userUpdateRequestDto);
