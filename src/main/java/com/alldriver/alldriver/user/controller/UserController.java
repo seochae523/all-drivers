@@ -31,7 +31,13 @@ public class UserController {
                                                   @Valid LoginRequestDto loginRequestDto){
         return ResponseEntity.ok(userService.login(loginRequestDto));
     }
-
+    @PostMapping("/sign-up/user/social")
+    @Operation(summary = "소셜 로그인 추가 정보 입력",
+            description = "소셜 로그인 수행 이후 추가적인 정보 입력을 위한 api입니다.")
+    public ResponseEntity<LoginResponseDto> signUpAdditionalSocialLoginInfo(@RequestBody
+                                                                                @Valid SocialLoginSignUpRequestDto socialLoginSignUpRequestDto){
+        return ResponseEntity.ok(userService.signUpAdditionalSocialLoginInfo(socialLoginSignUpRequestDto));
+    }
     @PostMapping("/sign-up/user")
     @Operation(summary = "일반 유저 회원가입")
     public ResponseEntity<SignUpResponseDto> signUpUser(@RequestBody
@@ -44,7 +50,6 @@ public class UserController {
     public ResponseEntity<SignUpResponseDto> signUpOwner(@RequestPart(value = "request")
                                                          @Valid OwnerSignUpRequestDto ownerSignUpRequestDto,
                                                          @RequestPart(value = "images") List<MultipartFile> images) throws IOException {
-
         return ResponseEntity.ok(userService.signUpOwner(ownerSignUpRequestDto, images));
     }
     @PostMapping("/sign-up/car-owner")

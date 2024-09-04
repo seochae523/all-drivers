@@ -13,10 +13,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class UserSignUpRequestDto {
-
     @NotBlank(message = ValidationError.Message.NAME_NOT_FOUND)
     private String name;
-
 
     @NotBlank(message = ValidationError.Message.USER_ID_NOT_FOUND)
     private String userId;
@@ -27,10 +25,8 @@ public class UserSignUpRequestDto {
     @NotBlank(message = ValidationError.Message.PASSWORD_NOT_FOUND)
     private String nickname;
 
-
     @NotBlank(message = ValidationError.Message.PHONE_NUMBER_NOT_FOUND)
     private String phoneNumber;
-
 
     @NotBlank(message = ValidationError.Message.FCM_TOKEN_NOT_FOUND)
     private String fcmToken;
