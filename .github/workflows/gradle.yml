@@ -39,6 +39,15 @@ jobs:
       SMS_SECRET_KEY: ${{secrets.SMS_SECRET_KEY}}
       SMS_DOMAIN: ${{secrets.SMS_DOMAIN}}
       SMS_PHONE_NUMBER: ${{secrets.SMS_PHONE_NUMBER}}
+      KAKAO_CLIENT_ID: ${{secrets.KAKAO_CLIENT_ID}}
+      KAKAO_CLIENT_SECRET: ${{secrets.KAKAO_CLIENT_SECRET}}
+      KAKAO_REDIRECT_URL: ${{secrets.KAKAO_REDIRECT_URL}}
+      NAVER_CLIENT_ID: ${{secrets.NAVER_CLIENT_ID}}
+      NAVER_CLIENT_SECRET: ${{secrets.NAVER_CLIENT_SECRET}}
+      NAVER_REDIRECT_URL: ${{secrets.NAVER_REDIRECT_URL}}
+      GOOGLE_CLIENT_ID: ${{secrets.GOOGLE_CLIENT_ID}}
+      GOOGLE_CLIENT_SECRET: ${{secrets.GOOGLE_CLIENT_SECRET}}
+      GOOGLE_REDIRECT_URL: ${{secrets.GOOGLE_REDIRECT_URL}}
       
     steps:
     - uses: actions/checkout@v3
@@ -86,6 +95,15 @@ jobs:
         --build-arg SMS_SECRET_KEY="${{env.SMS_SECRET_KEY}}" \
         --build-arg SMS_PHONE_NUMBER="${{env.SMS_PHONE_NUMBER}}" \
         --build-arg SMS_DOMAIN="${{env.SMS_DOMAIN}}" \
+        --build-arg KAKAO_CLIENT_ID=${{env.KAKAO_CLIENT_ID}} \
+        --build-arg KAKAO_CLIENT_SECRET=${{env.KAKAO_CLIENT_SECRET}} \
+        --build-arg KAKAO_REDIRECT_URL=${{env.KAKAO_REDIRECT_URL}} \
+        --build-arg NAVER_CLIENT_ID=${{env.NAVER_CLIENT_ID}} \
+        --build-arg NAVER_CLIENT_SECRET=${{env.NAVER_CLIENT_SECRET}} \
+        --build-arg NAVER_REDIRECT_URL=${{env.NAVER_REDIRECT_URL}} \
+        --build-arg GOOGLE_CLIENT_ID=${{env.GOOGLE_CLIENT_ID}} \
+        --build-arg GOOGLE_CLIENT_SECRET=${{env.GOOGLE_CLIENT_SECRET}} \
+        --build-arg GOOGLE_REDIRECT_URL=${{env.GOOGLE_REDIRECT_URL}}
         -t ${{ secrets.DOCKERHUB_USERNAME }}/all-driver .
         
     # 4. DockerHub 로그인
