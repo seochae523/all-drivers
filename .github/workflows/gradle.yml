@@ -1,0 +1,137 @@
+name: Java CI with Gradle
+
+# 동작 조건 설정 : main 브랜치에 push 혹은 pull request가 발생할 경우 동작한다.
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  # Spring Boot 애플리케이션을 빌드하여 도커허브에 푸시하는 과정
+  build-docker-image:
+    runs-on: ubuntu-latest
+    env: 
+      DB_HOST: ${{secrets.DB_HOST}}
+      DB_PORT: ${{secrets.DB_PORT}}
+      DB_SCHEMA: ${{secrets.DB_SCHEMA}}
+      DB_USERNAME: ${{secrets.DB_USERNAME}}
+      DB_PASSWORD: ${{secrets.DB_PASSWORD}}
+      JWT_SECRET: ${{secrets.JWT_SECRET}}
+      CLOUD_FRONT_URL: ${{secrets.CLOUD_FRONT_URL}}
+      FCM_APP_URL: ${{secrets.FCM_APP_URL}}
+      FCM_FILE_NAME: ${{secrets.FCM_FILE_NAME}}
+      S3_URL: ${{secrets.S3_URL}}
+      S3_BUCKET_NAME: ${{secrets.S3_BUCKET_NAME}}
+      S3_ACCESS_KEY: ${{secrets.S3_ACCESS_KEY}}
+      S3_SECRET_KEY: ${{secrets.S3_SECRET_KEY}}
+      DYNAMODB_ENDPOINT: ${{secrets.DYNAMODB_ENDPOINT}}
+      DYNAMODB_REGION: ${{secrets.DYNAMODB_REGION}}
+      DYNAMODB_ACCESS_KEY: ${{secrets.DYNAMODB_ACCESS_KEY}}
+      DYNAMODB_SECRET_KEY: ${{secrets.DYNAMODB_SECRET_KEY}}
+      WEB_HOOK_URL: ${{secrets.WEB_HOOK_URL}}
+      LICENSE_BASE_URL: ${{secrets.LICENSE_BASE_URL}}
+      LICENSE_API_KEY: ${{secrets.LICENSE_API_KEY}}
+      SMS_API_KEY: ${{secrets.SMS_API_KEY}}
+      SMS_SECRET_KEY: ${{secrets.SMS_SECRET_KEY}}
+      SMS_DOMAIN: ${{secrets.SMS_DOMAIN}}
+      SMS_PHONE_NUMBER: ${{secrets.SMS_PHONE_NUMBER}}
+      KAKAO_CLIENT_ID: ${{secrets.KAKAO_CLIENT_ID}}
+      KAKAO_CLIENT_SECRET: ${{secrets.KAKAO_CLIENT_SECRET}}
+      KAKAO_REDIRECT_URL: ${{secrets.KAKAO_REDIRECT_URL}}
+      NAVER_CLIENT_ID: ${{secrets.NAVER_CLIENT_ID}}
+      NAVER_CLIENT_SECRET: ${{secrets.NAVER_CLIENT_SECRET}}
+      NAVER_REDIRECT_URL: ${{secrets.NAVER_REDIRECT_URL}}
+      GOOGLE_CLIENT_ID: ${{secrets.GOOGLE_CLIENT_ID}}
+      GOOGLE_CLIENT_SECRET: ${{secrets.GOOGLE_CLIENT_SECRET}}
+      GOOGLE_REDIRECT_URL: ${{secrets.GOOGLE_REDIRECT_URL}}
+      
+    steps:
+    - uses: actions/checkout@v3
+    # 1. Java 17 세팅
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+    # 1-1. application.yml 세팅
+    - name: Set JSON
+      run: |
+        echo "${{ secrets.FCM_PRIVATE_KEY }}" | base64 -d > src/main/resources/"${{env.FCM_FILE_NAME}}"
+    # 2. Spring Boot 애플리케이션 빌드
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      with:
+        arguments: clean bootJar
+
+    # 3. Docker 이미지 빌드
+    - name: docker image build
+      run: |
+        docker build --build-arg DB_HOST="${{env.DB_HOST}}" \
+        --build-arg DB_PORT="${{env.DB_PORT}}" \
+        --build-arg DB_SCHEMA="${{env.DB_SCHEMA}}" \
+        --build-arg DB_USERNAME="${{env.DB_USERNAME}}" \
+        --build-arg DB_PASSWORD="${{env.DB_PASSWORD}}" \
+        --build-arg JWT_SECRET="${{env.JWT_SECRET}}" \
+        --build-arg DYNAMODB_ENDPOINT="${{env.DYNAMODB_ENDPOINT}}" \
+        --build-arg DYNAMODB_REGION="${{env.DYNAMODB_REGION}}" \
+        --build-arg DYNAMODB_ACCESS_KEY="${{env.DYNAMODB_ACCESS_KEY}}" \
+        --build-arg DYNAMODB_SECRET_KEY="${{env.DYNAMODB_SECRET_KEY}}" \
+        --build-arg S3_BUCKET_NAME="${{env.S3_BUCKET_NAME}}" \
+        --build-arg FCM_APP_URL="${{env.FCM_APP_URL}}" \
+        --build-arg FCM_FILE_NAME="${{env.FCM_FILE_NAME}}" \
+        --build-arg S3_ACCESS_KEY="${{env.S3_ACCESS_KEY}}" \
+        --build-arg S3_SECRET_KEY="${{env.S3_SECRET_KEY}}" \
+        --build-arg S3_URL="${{env.S3_URL}}" \
+        --build-arg WEB_HOOK_URL="${{env.WEB_HOOK_URL}}" \
+        --build-arg LICENSE_BASE_URL="${{env.LICENSE_BASE_URL}}" \
+        --build-arg LICENSE_API_KEY="${{env.LICENSE_API_KEY}}" \
+        --build-arg CLOUD_FRONT_URL="${{env.CLOUD_FRONT_URL}}" \
+        --build-arg WEB_HOOK_URL="${{env.WEB_HOOK_URL}}" \
+        --build-arg SMS_API_KEY="${{env.SMS_API_KEY}}" \
+        --build-arg SMS_SECRET_KEY="${{env.SMS_SECRET_KEY}}" \
+        --build-arg SMS_PHONE_NUMBER="${{env.SMS_PHONE_NUMBER}}" \
+        --build-arg SMS_DOMAIN="${{env.SMS_DOMAIN}}" \
+        --build-arg KAKAO_CLIENT_ID=${{env.KAKAO_CLIENT_ID}} \
+        --build-arg KAKAO_CLIENT_SECRET=${{env.KAKAO_CLIENT_SECRET}} \
+        --build-arg KAKAO_REDIRECT_URL=${{env.KAKAO_REDIRECT_URL}} \
+        --build-arg NAVER_CLIENT_ID=${{env.NAVER_CLIENT_ID}} \
+        --build-arg NAVER_CLIENT_SECRET=${{env.NAVER_CLIENT_SECRET}} \
+        --build-arg NAVER_REDIRECT_URL=${{env.NAVER_REDIRECT_URL}} \
+        --build-arg GOOGLE_CLIENT_ID=${{env.GOOGLE_CLIENT_ID}} \
+        --build-arg GOOGLE_CLIENT_SECRET=${{env.GOOGLE_CLIENT_SECRET}} \
+        --build-arg GOOGLE_REDIRECT_URL=${{env.GOOGLE_REDIRECT_URL}}
+        -t ${{ secrets.DOCKERHUB_USERNAME }}/all-driver .
+        
+    # 4. DockerHub 로그인
+    - name: docker login
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+    # 5. Docker Hub 이미지 푸시
+    - name: docker Hub push
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/all-driver
+ # 위 과정에서 푸시한 이미지를 ec2에서 풀받아서 실행시키는 과정
+ 
+  run-docker-image-on-ec2:
+    # build-docker-image (위)과정이 완료되어야 실행됩니다.
+    needs: build-docker-image
+    runs-on: self-hosted
+
+    steps:
+      # 1. 최신 이미지를 풀받습니다
+      - name: docker pull
+        run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/all-driver
+            
+      # 3. 최신 이미지를 컨테이너화하여 실행시킵니다
+      - name: docker run new container
+        run: sudo /home/ubuntu/deploy.sh
+
+      # 4. 미사용 이미지를 정리합니다
+      - name: delete old docker image
+        run: sudo docker system prune -f
