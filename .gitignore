@@ -40,5 +40,4 @@ application-local.yml
 application-prod.yml
 .DS_Store
 firebase_secret_key.json
-./src/test/resources/application.yml
-./src/test/resources/data.sql
+src/test/resources/
