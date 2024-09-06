@@ -4,6 +4,7 @@ import com.alldriver.alldriver.board.domain.SubLocation;
 import com.alldriver.alldriver.board.repository.SubLocationRepository;
 import com.alldriver.alldriver.common.enums.Role;
 import com.alldriver.alldriver.community.domain.Community;
+import com.alldriver.alldriver.community.domain.CommunityLocation;
 import com.alldriver.alldriver.community.vo.CommunityFindVo;
 import com.alldriver.alldriver.user.domain.User;
 import com.alldriver.alldriver.user.repository.UserRepository;
@@ -24,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
+
 class CommunityRepositoryTest {
 
     @Autowired
@@ -57,9 +58,9 @@ class CommunityRepositoryTest {
                     .deleted(false)
                     .createdAt(LocalDateTime.now())
                     .user(save)
-
                     .build();
-
+            CommunityLocation communityLocation = CommunityLocation.builder().subLocation(subLocation).community(community).build();
+            community.addSubLocation(communityLocation);
             communityRepository.save(community);
         }
     }

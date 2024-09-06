@@ -42,7 +42,7 @@ class CommunityBookmarkControllerTest {
         when(communityBookmarkService.save(any())).thenReturn(responseDto);
 
         // when, then
-        mockMvc.perform(post("/user/community/bookmark/save/1").with(csrf()))
+        mockMvc.perform(put("/user/community/bookmark/save/1").with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.communityId").value(1L))
                 .andExpect(jsonPath("$.bookmarkId").value(1L))
@@ -56,7 +56,7 @@ class CommunityBookmarkControllerTest {
         when(communityBookmarkService.save(any())).thenThrow(new CustomException(ErrorCode.COMMUNITY_NOT_FOUND));
 
         // when, then
-        mockMvc.perform(post("/user/community/bookmark/save/1").with(csrf()))
+        mockMvc.perform(put("/user/community/bookmark/save/1").with(csrf()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(ErrorCode.COMMUNITY_NOT_FOUND.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.COMMUNITY_NOT_FOUND.getMessage()));
@@ -68,7 +68,7 @@ class CommunityBookmarkControllerTest {
         when(communityBookmarkService.save(any())).thenThrow(new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
         // when, then
-        mockMvc.perform(post("/user/community/bookmark/save/1").with(csrf()))
+        mockMvc.perform(put("/user/community/bookmark/save/1").with(csrf()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(ErrorCode.ACCOUNT_NOT_FOUND.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.ACCOUNT_NOT_FOUND.getMessage()));
@@ -80,7 +80,7 @@ class CommunityBookmarkControllerTest {
         when(communityBookmarkService.save(any())).thenThrow(new CustomException(ErrorCode.DUPLICATED_BOOKMARK));
 
         // when, then
-        mockMvc.perform(post("/user/community/bookmark/save/1").with(csrf()))
+        mockMvc.perform(put("/user/community/bookmark/save/1").with(csrf()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(ErrorCode.DUPLICATED_BOOKMARK.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.DUPLICATED_BOOKMARK.getMessage()));

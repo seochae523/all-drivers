@@ -40,7 +40,7 @@ public class CommunityRetrieveController {
     @Operation(summary = "커뮤니티를 [지역 - 구 id]로 조회")
     public ResponseEntity<List<CommunityFindResponseDto>> findBySubLocationId(@RequestParam(value = "page", defaultValue = "0")
                                                                               @NotNull(message = ValidationError.Message.PAGE_NOT_FOUND) Integer page,
-                                                                              @RequestParam(value = "subLocationId")
+                                                                              @RequestParam(value = "subLocationId", required = false)
                                                                               @NotNull(message = ValidationError.Message.SUB_LOCATION_ID_NOT_FOUND) List<Long> subLocationIds){
         return ResponseEntity.ok(communityRetrieveService.findBySubLocationId(page, subLocationIds));
     }

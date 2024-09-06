@@ -1,11 +1,13 @@
 package com.alldriver.alldriver.board.service;
 
 import com.alldriver.alldriver.board.domain.Board;
+import com.alldriver.alldriver.board.domain.Car;
 import com.alldriver.alldriver.board.domain.MainLocation;
 import com.alldriver.alldriver.board.dto.request.BoardSaveRequestDto;
 import com.alldriver.alldriver.board.dto.response.BoardSaveResponseDto;
 import com.alldriver.alldriver.board.repository.*;
 import com.alldriver.alldriver.board.service.impl.BoardServiceImpl;
+import com.alldriver.alldriver.common.util.JwtUtils;
 import com.alldriver.alldriver.user.domain.User;
 import com.alldriver.alldriver.user.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -53,21 +56,24 @@ class BoardServiceTest {
     @DisplayName("게시판 저장")
     void save() throws IOException {
         // given
-        BoardSaveRequestDto boardSaveRequestDto = setUpBoardSaveRequestDto();
-        when(userRepository.findByUserId(any())).thenReturn(Optional.ofNullable(new User()));
-        when(mainLocationRepository.findById(1L)).thenReturn(Optional.ofNullable(new MainLocation()));
-        when(boardRepository.save(any())).thenReturn(boardSaveRequestDto.toEntity(new User()));
-        // when
-        BoardSaveResponseDto save = boardService.save(new ArrayList<>(), boardSaveRequestDto);
+        try (MockedStatic<JwtUtils> jwtUtils =mockStatic(JwtUtils.class)) {
+            BoardSaveRequestDto boardSaveRequestDto = setUpBoardSaveRequestDto();
+            when(userRepository.findByUserId(any())).thenReturn(Optional.ofNullable(new User()));
+            when(mainLocationRepository.findById(1L)).thenReturn(Optional.ofNullable(new MainLocation()));
+            when(boardRepository.save(any())).thenReturn(boardSaveRequestDto.toEntity(new User()));
+            // when
+            BoardSaveResponseDto save = boardService.save(new ArrayList<>(), boardSaveRequestDto);
 
-        // then
-        assertThat(save.getTitle()).isEqualTo(boardSaveRequestDto.getTitle());
-        assertThat(save.getContent()).isEqualTo(boardSaveRequestDto.getContent());
+            // then
+            assertThat(save.getTitle()).isEqualTo(boardSaveRequestDto.getTitle());
+            assertThat(save.getContent()).isEqualTo(boardSaveRequestDto.getContent());
+        }
     }
 
     @Test
     @DisplayName("게시판 업데이트")
     void update() {
+        Board board = setUpBoard();
 
     }
 
@@ -103,6 +109,7 @@ class BoardServiceTest {
                 .startAt(new Date())
                 .recruitType("testR")
                 .companyLocation("testCL")
+                .category("cat")
                 .deleted(false)
                 .carBoards(new HashSet<>())
                 .jobBoards(new HashSet<>())

@@ -1,5 +1,6 @@
 package com.alldriver.alldriver.community.controller;
 
+import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.community.dto.response.CommunityFindResponseDto;
 import com.alldriver.alldriver.community.service.impl.CommunityRetrieveServiceImpl;
 import com.alldriver.alldriver.community.service.impl.CommunityServiceImpl;
@@ -86,8 +87,9 @@ class CommunityRetrieveControllerTest {
 
         // when, then
         mockMvc.perform(get("/user/community/subLocation").with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(new ArrayList<>())));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(ErrorCode.PARAMETER_NOT_FOUND.getMessage()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.PARAMETER_NOT_FOUND.getCode()));
     }
 
     private List<CommunityFindResponseDto> setUpFindResponse(){

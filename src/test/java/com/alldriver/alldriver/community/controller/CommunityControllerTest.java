@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -161,7 +162,7 @@ class CommunityControllerTest {
         return CommunitySaveRequestDto.builder()
                 .title("test")
                 .content("test")
-
+                .subLocationIds(List.of(1L))
                 .build();
     }
 

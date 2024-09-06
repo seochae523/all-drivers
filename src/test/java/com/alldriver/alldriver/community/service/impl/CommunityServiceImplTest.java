@@ -55,7 +55,7 @@ class CommunityServiceImplTest {
         CommunitySaveRequestDto communitySaveRequestDto = setUpRequestDto();
         try (MockedStatic<JwtUtils> jwtUtils = mockStatic(JwtUtils.class)) {
             when(userRepository.findByUserId(any())).thenReturn(Optional.ofNullable(user));
-            when(subLocationRepository.findById(any())).thenReturn(Optional.ofNullable(subLocation));
+
             when(communityRepository.save(any())).thenReturn(community);
             // when
             CommunitySaveResponseDto save = communityService.save(communitySaveRequestDto);
@@ -167,7 +167,6 @@ class CommunityServiceImplTest {
     }
     private CommunitySaveRequestDto setUpRequestDto(){
         return CommunitySaveRequestDto.builder()
-
                 .content("title")
                 .title("title")
                 .build();

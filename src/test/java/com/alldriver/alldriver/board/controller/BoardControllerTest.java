@@ -63,7 +63,7 @@ class BoardControllerTest {
         when(boardService.save(any(), any())).thenReturn(boardSaveResponseDto);
         MockMultipartFile request = new MockMultipartFile("request", null, "application/json", objectMapper.writeValueAsString(boardSaveRequestDto).getBytes(StandardCharsets.UTF_8));
         // when, then
-        mockMvc.perform(multipart("/user/board/save")
+        mockMvc.perform(multipart("/recruit/board/save")
                 .file(request).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("test"))
@@ -80,7 +80,7 @@ class BoardControllerTest {
         MockMultipartFile request = new MockMultipartFile("request", null, "application/json", objectMapper.writeValueAsString(boardSaveRequestDto).getBytes(StandardCharsets.UTF_8));
 
         // when, then
-        mockMvc.perform(multipart("/user/board/save")
+        mockMvc.perform(multipart("/recruit/board/save")
                         .file(request).with(csrf()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(ErrorCode.ACCOUNT_NOT_FOUND.getMessage()))
@@ -96,7 +96,7 @@ class BoardControllerTest {
         MockMultipartFile request = new MockMultipartFile("request", null, "application/json", objectMapper.writeValueAsString(boardSaveRequestDto).getBytes(StandardCharsets.UTF_8));
 
         // when, then
-        mockMvc.perform(multipart("/user/board/save")
+        mockMvc.perform(multipart("/recruit/board/save")
                         .file(request).with(csrf()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(ErrorCode.MAIN_LOCATION_NOT_FOUND.getMessage()))
@@ -133,7 +133,7 @@ class BoardControllerTest {
         when(boardService.update(any(), any())).thenReturn(responseDto);
         MockMultipartFile request = new MockMultipartFile("request", null, "application/json", objectMapper.writeValueAsString(modified).getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(multipart(HttpMethod.PUT, "/user/board/update")
+        mockMvc.perform(multipart(HttpMethod.PUT, "/recruit/board/update")
                         .file(request).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
@@ -164,7 +164,7 @@ class BoardControllerTest {
         when(boardService.update(any(), any())).thenThrow(new CustomException(ErrorCode.BOARD_NOT_FOUND));
         MockMultipartFile request = new MockMultipartFile("request", null, "application/json", objectMapper.writeValueAsString(modified).getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(multipart(HttpMethod.PUT, "/user/board/update")
+        mockMvc.perform(multipart(HttpMethod.PUT, "/recruit/board/update")
                         .file(request).with(csrf()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(ErrorCode.BOARD_NOT_FOUND.getMessage()))
@@ -196,7 +196,7 @@ class BoardControllerTest {
         MockMultipartFile request = new MockMultipartFile("request", null, "application/json", objectMapper.writeValueAsString(modified).getBytes(StandardCharsets.UTF_8));
 
         // when, then
-        mockMvc.perform(multipart(HttpMethod.PUT, "/user/board/update")
+        mockMvc.perform(multipart(HttpMethod.PUT, "/recruit/board/update")
                         .file(request).with(csrf()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_USER.getMessage()))
@@ -212,7 +212,7 @@ class BoardControllerTest {
                 .build();
         when(boardService.delete(any())).thenReturn(responseDto);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/user/board/delete/" + id).with(csrf()))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/recruit/board/delete/" + id).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L));
     }

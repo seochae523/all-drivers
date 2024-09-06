@@ -52,8 +52,7 @@ public class SecurityConfig {
                         .requestMatchers("/apply/**").hasAnyRole("JOB_SEEKER", "ADMIN")
                         .requestMatchers("/recruit/**").hasAnyRole("RECRUITER", "ADMIN")
                         .requestMatchers( "/find-nickname", "/login", "/sign-up/**", "/swagger-ui/**", "/v3/api-docs/**", "/check/**",
-                                         "/change-forget-password", "/refresh","/ws/chat", "/sms/**" , "/verify/**", "/actuator/**").permitAll()
-                 )
+                                         "/change-forget-password", "/refresh","/ws/chat", "/sms/**" , "/verify/**", "/actuator/**").permitAll())
                 .oauth2Login(oauth ->
                         oauth.userInfoEndpoint(
                                 c -> c.userService(oAuthService))
