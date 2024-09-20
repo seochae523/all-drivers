@@ -1,7 +1,7 @@
 package com.alldriver.alldriver.board.service.impl;
 
 
-import com.alldriver.alldriver.board.domain.BoardImage;
+import com.alldriver.alldriver.board.domain.*;
 import com.alldriver.alldriver.board.dto.response.*;
 import com.alldriver.alldriver.board.repository.BoardImageRepository;
 import com.alldriver.alldriver.board.repository.BoardRepository;
@@ -11,6 +11,9 @@ import com.alldriver.alldriver.common.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,9 +30,9 @@ public class BoardRetrieveServiceImpl implements BoardRetrieveService {
     @Value("${spring.data.rest.default-page-size}")
     private Integer pageSize;
 
-    /**
-     * TODO : 메서드 중복 처리 방법 고안하기
-     */
+
+
+
     @Override
     public List<BoardFindResponseDto> findAll(Integer page) {
         String userId = JwtUtils.getUserId();

@@ -30,6 +30,7 @@ public class SecurityConfig {
 
     private final CustomUserDetailService customUserDetailService;
     private final CustomAccessDenyHandler customAccessDenyHandler;
+
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuthService oAuthService;
     @Bean
@@ -52,11 +53,12 @@ public class SecurityConfig {
                         .requestMatchers("/apply/**").hasAnyRole("JOB_SEEKER", "ADMIN")
                         .requestMatchers("/recruit/**").hasAnyRole("RECRUITER", "ADMIN")
                         .requestMatchers( "/find-nickname", "/login", "/sign-up/**", "/swagger-ui/**", "/v3/api-docs/**", "/check/**",
-                                         "/change-forget-password", "/refresh","/ws/chat", "/sms/**" , "/verify/**", "/actuator/**").permitAll())
+                                         "/change-forget-password", "/refresh","/ws/chat", "/sms/**" , "/verify/**", "/actuator/**", "/no-auth").permitAll())
                 .oauth2Login(oauth ->
                         oauth.userInfoEndpoint(
                                 c -> c.userService(oAuthService))
-                                .successHandler(oAuth2SuccessHandler))
+                                .successHandler(oAuth2SuccessHandler)
+                                .loginPage("/no-auth"))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .addFilterBefore(new JwtFilter(customUserDetailService), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtExceptionFilter(), JwtFilter.class);

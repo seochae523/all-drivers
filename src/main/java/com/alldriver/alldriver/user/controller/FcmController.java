@@ -21,8 +21,7 @@ public class FcmController {
 
     @PostMapping("/send")
     @Operation(summary = "알림 전송")
-    public ResponseEntity<String> sendMessage(@RequestBody
-                                              @Valid FcmSendRequestDto fcmSendRequestDto){
+    public ResponseEntity<String> sendMessage(@RequestBody @Valid FcmSendRequestDto fcmSendRequestDto){
         return ResponseEntity.ok(fcmService.sendMessage(fcmSendRequestDto));
     }
 }

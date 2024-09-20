@@ -40,14 +40,14 @@ public class CommunityCommentController {
     @DeleteMapping("/delete/{commentId}")
     @Operation(summary = "커뮤니티 댓글 삭제")
     public ResponseEntity<CommunityCommentDeleteResponseDto> delete(@PathVariable
-                                                                    @NotNull(message = ValidationError.Message.COMMENT_ID_NOT_FOUND) Long commentId){
+                                                                    @NotNull Long commentId){
         return ResponseEntity.ok(communityCommentService.delete(commentId));
     }
 
     @GetMapping("/comments/{communityId}")
     @Operation(summary = "[커뮤니티 id]에 따른 댓글들 조회", description = "children = 해당 댓글의 답글들")
     public ResponseEntity<List<CommunityCommentFindResponseDto>> findCommentsByCommunityId(@PathVariable
-                                                                                           @NotNull(message = ValidationError.Message.COMMUNITY_ID_NOT_FOUND) Long communityId){
+                                                                                           @NotNull Long communityId){
         return ResponseEntity.ok(communityCommentService.findCommentByCommunityId(communityId));
     }
 }

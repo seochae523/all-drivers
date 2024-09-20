@@ -1,6 +1,9 @@
 package com.alldriver.alldriver.board.repository;
 
+import com.alldriver.alldriver.board.dto.response.BoardFindJpqlResponseDto;
 import com.alldriver.alldriver.board.vo.BoardFindVo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -44,7 +47,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "limit :limit offset :offset", nativeQuery = true)
     List<BoardFindVo> findAll(@Param("limit") int limit, @Param("offset") int offset, @Param("userId") String userId);
 
-    // Car ID에 따른 검색
+
+      // Car ID에 따른 검색
     @Query(value = BASE_QUERY +
             "and c.id in (:carIds) " +
             SORT_QUERY +

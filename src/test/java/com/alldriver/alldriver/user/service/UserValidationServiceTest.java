@@ -2,6 +2,7 @@ package com.alldriver.alldriver.user.service;
 
 import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.exception.CustomException;
+import com.alldriver.alldriver.common.util.LicenseNumberValidator;
 import com.alldriver.alldriver.user.domain.User;
 import com.alldriver.alldriver.user.dto.request.PhoneNumberCheckRequestDto;
 import com.alldriver.alldriver.user.repository.LicenseRepository;
@@ -36,6 +37,8 @@ class UserValidationServiceTest {
     @Mock
     LicenseRepository licenseRepository;
 
+    @Mock
+    LicenseNumberValidator licenseNumberValidator;
     private final String userId = "testUser";
     private final String license = "testLicense";
     private final String phoneNumber = "01012345678";
@@ -82,6 +85,7 @@ class UserValidationServiceTest {
     void checkUnDuplicatedLicense() throws URISyntaxException {
         // given
         when(licenseRepository.findByLicenseNumber(any())).thenReturn(Optional.empty());
+        when(licenseNumberValidator.validateLicense(any())).thenReturn(true);
         // when
         Boolean b = userValidationService.checkLicense(license);
         // then
@@ -196,7 +200,7 @@ class UserValidationServiceTest {
         CustomException customException = assertThrows(CustomException.class, () -> userValidationService.checkPhoneNumber(phoneNumberCheckRequestDto));
         // then
         assertThat(customException.getErrorCode()).isEqualTo(ErrorCode.INVALID_PARAMETER);
-        assertThat(customException.getMessage()).isEqualTo(ErrorCode.INVALID_PARAMETER.getMessage()+" type 파라미터는 0 또는 1이어야 합니다.");
+        assertThat(customException.getMessage()).isEqualTo(ErrorCode.INVALID_PARAMETER.getMessage()+" type 파라미터는 0 ~ 2이어야 합니다.");
     }
 
     private PhoneNumberCheckRequestDto setUpPhoneNumberCheckRequest(String phoneNumber, Integer type){

@@ -24,14 +24,14 @@ public class BoardBookmarkController {
     @Operation(summary = "게시글 관심 목록 저장")
     @PutMapping("/save/{boardId}")
     public ResponseEntity<BoardBookmarkSaveResponseDto> save(@PathVariable
-                                                             @NotNull(message = ValidationError.Message.BOARD_ID_NOT_FOUND) Long boardId)  {
+                                                             @NotNull Long boardId)  {
         return ResponseEntity.ok(boardBookmarkService.saveLike(boardId));
     }
 
     @Operation(summary = "게시글 관심 목록 삭제")
     @DeleteMapping("/delete/{boardId}")
     public ResponseEntity<BoardBookmarkDeleteResponseDto> delete(@PathVariable
-                                                                 @NotNull(message = ValidationError.Message.BOARD_ID_NOT_FOUND) Long boardId) {
+                                                                 @NotNull Long boardId) {
         return ResponseEntity.ok(boardBookmarkService.deleteLike(boardId));
     }
 }

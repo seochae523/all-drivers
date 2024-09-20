@@ -42,7 +42,7 @@ public class CommunityController {
     @DeleteMapping("/delete/{communityId}")
     @Operation(summary = "커뮤니티 삭제")
     public ResponseEntity<CommunityDeleteResponseDto> delete(@PathVariable
-                                                             @NotNull(message = ValidationError.Message.COMMUNITY_ID_NOT_FOUND) Long communityId){
+                                                             @NotNull Long communityId){
         return ResponseEntity.ok(communityService.delete(communityId));
     }
 

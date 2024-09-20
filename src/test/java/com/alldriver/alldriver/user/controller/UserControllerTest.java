@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -330,6 +331,8 @@ public class UserControllerTest {
                 .password("1234")
                 .license("testLicense")
                 .fcmToken("testFcm")
+                .startedAt(new Date())
+                .companyLocation("company")
                 .build();
     }
     private CarOwnerSignUpRequestDto setUpCarOwner(){
@@ -340,6 +343,8 @@ public class UserControllerTest {
                 .nickname("test")
                 .password("1234")
                 .fcmToken("testFcm")
+                .type(0)
+                .carId(1L)
                 .build();
     }
     private SignUpResponseDto setUpSignUpResponse(){

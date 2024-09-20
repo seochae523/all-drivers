@@ -1,6 +1,7 @@
 package com.alldriver.alldriver.board.domain;
 
 
+import com.alldriver.alldriver.board.document.BoardDocument;
 import com.alldriver.alldriver.board.dto.request.BoardUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -80,7 +81,9 @@ public class Board {
     @Builder.Default
     private Set<LocationBoard> locationBoards = new HashSet<>();
 
-
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Builder.Default
+    private Set<BoardBookmark> boardBookmarks = new HashSet<>();
 
     public void setDeleted(Boolean deleted){
         this.deleted = deleted;
@@ -110,5 +113,13 @@ public class Board {
         this.startAt = boardUpdateRequestDto.getStartAt();
         this.endAt = boardUpdateRequestDto.getEndAt();
         this.category = boardUpdateRequestDto.getCategory();
+    }
+
+    public BoardDocument toDocument(){
+        return BoardDocument.builder()
+                .id(id)
+                .title(title)
+                .content(content)
+                .build();
     }
 }
