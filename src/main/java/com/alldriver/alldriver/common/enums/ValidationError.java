@@ -41,9 +41,11 @@ public enum ValidationError {
     CAR_INFORMATION_NOT_FOUND,
     TYPE_NOT_FOUND,
     KEYWORD_NOT_FOUND,
-    LICENSE_NUMBER_NOT_FOUND;
+    LICENSE_NUMBER_NOT_FOUND,
+    MINIMUM_PAGE_VALUE_ERROR;
 
     public static class Message{
+        public static final String MINIMUM_PAGE_VALUE_ERROR = "페이지는 0 이상의 정수여야 합니다.";
         public static final String KEYWORD_NOT_FOUND = "키워드가 존재하지 않습니다.";
         public static final String PAGE_NOT_FOUND = "페이지가 존재하지 않습니다.";
         public static final String TYPE_NOT_FOUND = "타입이 존재하지 않습니다.";

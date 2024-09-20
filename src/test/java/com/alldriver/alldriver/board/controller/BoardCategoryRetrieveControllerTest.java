@@ -3,6 +3,7 @@ package com.alldriver.alldriver.board.controller;
 
 import com.alldriver.alldriver.board.dto.response.*;
 import com.alldriver.alldriver.board.service.BoardCategoryRetrieveService;
+import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +34,8 @@ class BoardCategoryRetrieveControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     BoardCategoryRetrieveService boardCategoryRetrieveService;
+
+
 
     @Test
     @DisplayName("직업 조회")

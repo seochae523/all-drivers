@@ -4,6 +4,7 @@ import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.exception.ApiErrorResponse;
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.exception.JwtException;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
 import lombok.RequiredArgsConstructor;
@@ -54,25 +55,19 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     ResponseEntity<ApiErrorResponse> handleValidationException(ConstraintViolationException ex) {
-        log.error("Error = {}", ex.getMessage());
-        ex.getConstraintViolations().forEach(error -> {
-
-            Stream<Path.Node> stream = StreamSupport.stream(error.getPropertyPath().spliterator(), false);
-            List<Path.Node> list = stream.collect(Collectors.toList());
-
-            String field = list.get(list.size()-1).getName();
-            String message = error.getMessage();
-            String invalidValue = error.getMessage().toString();
-
-            Error errormessage = new Error();
-            errormessage.setField(field);
-            errormessage.setMessage(message);
-            errormessage.setInvalidValue(invalidValue);
-
-            errorList.add(errormessage);
-        });
+        String message = "";
+        Map<String, String> errors = ex.getConstraintViolations().stream()
+                .collect(Collectors.toMap(
+                        violation -> StreamSupport.stream(violation.getPropertyPath().spliterator(), false)
+                                .reduce((first, second) -> second)
+                                .get().toString(),
+                        ConstraintViolation::getMessage
+                ));
+        for (String value : errors.values()) {
+            message += value;
+        }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ApiErrorResponse(ErrorCode.PARAMETER_NOT_FOUND, ex.getMessage()));
+                .body(new ApiErrorResponse(ErrorCode.PARAMETER_NOT_FOUND, message));
     }
     @ExceptionHandler(MissingServletRequestParameterException.class)
     ResponseEntity<ApiErrorResponse> handleValidationException(MissingServletRequestParameterException ex) {

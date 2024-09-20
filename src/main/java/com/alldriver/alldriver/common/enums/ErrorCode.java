@@ -50,7 +50,7 @@ public enum ErrorCode {
     COMMUNITY_BOOKMARK_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEC-004", "커뮤니티 좋아요가 존재하지 않습니다."),
 
     INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "AEP-001", "유효하지 않은 매개변수입니다."),
-    PARAMETER_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEP-002", ""),
+    PARAMETER_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEP-002", "매개변수가 존재하지 않습니다."),
 
     BOOKMARK_NOT_FOUND(HttpStatus.BAD_REQUEST, "AEL-001", "즐겨찾기가 존재하지 않습니다."),
     DUPLICATED_BOOKMARK(HttpStatus.BAD_REQUEST, "AEL-002", "중복된 즐겨찾기 입니다."),

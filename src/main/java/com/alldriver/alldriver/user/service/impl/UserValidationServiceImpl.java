@@ -68,7 +68,7 @@ public class UserValidationServiceImpl implements UserValidationService {
         }
 
         else{
-            throw new CustomException(ErrorCode.INVALID_PARAMETER, " type 파라미터는 0 ~ 2어야 합니다.");
+            throw new CustomException(ErrorCode.INVALID_PARAMETER, " type 파라미터는 0 ~ 2이어야 합니다.");
         }
         return true;
     }

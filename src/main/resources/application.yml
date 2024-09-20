@@ -1,11 +1,16 @@
 spring:
   application:
     name: all-drivers
-
+  elasticsearch:
+    username: ${ELASTIC_SEARCH_USERNAME}
+    password: ${ELASTIC_SEARCH_PASSWORD}
+    uris: ${ELASTIC_SEARCH_URL}
   data:
     rest:
       default-page-size: 10
-
+    elasticsearch:
+      repositories:
+        enabled: true
   main:
     allow-bean-definition-overriding: true
   # 데이터 소스 설정
@@ -90,6 +95,7 @@ spring:
             tokenUri: https://kauth.kakao.com/oauth/token
             userInfoUri: https://kapi.kakao.com/v2/user/me
             userNameAttribute: id
+
 cloud:
   aws:
     cloud-front:

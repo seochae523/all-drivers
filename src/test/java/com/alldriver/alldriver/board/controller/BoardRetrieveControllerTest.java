@@ -5,6 +5,7 @@ import com.alldriver.alldriver.board.dto.response.BoardFindResponseDto;
 
 import com.alldriver.alldriver.board.service.BoardRetrieveService;
 
+import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.DisplayName;

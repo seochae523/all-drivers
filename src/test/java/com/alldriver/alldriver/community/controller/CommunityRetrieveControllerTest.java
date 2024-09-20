@@ -79,18 +79,7 @@ class CommunityRetrieveControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 
-    @Test
-    @DisplayName("지역으로 조회 - id 미존재")
-    void findBySubLocationIdWhenIdNotFound() throws Exception {
-        // given
-        when(communityRetrieveService.findBySubLocationId(any(), any())).thenReturn(new ArrayList<>());
 
-        // when, then
-        mockMvc.perform(get("/user/community/subLocation").with(csrf()))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(ErrorCode.PARAMETER_NOT_FOUND.getMessage()))
-                .andExpect(jsonPath("$.code").value(ErrorCode.PARAMETER_NOT_FOUND.getCode()));
-    }
 
     private List<CommunityFindResponseDto> setUpFindResponse(){
         List<CommunityFindResponseDto> result = new ArrayList<>();

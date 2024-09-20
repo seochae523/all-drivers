@@ -60,7 +60,7 @@ public class BoardController {
     @Operation(summary = "게시글 삭제")
     @DeleteMapping("/delete/{boardId}")
     public ResponseEntity<BoardDeleteResponseDto> delete(@PathVariable
-                                                         @NotNull(message = ValidationError.Message.BOARD_ID_NOT_FOUND) Long boardId){
+                                                         @NotNull Long boardId){
         return ResponseEntity.ok(boardService.delete(boardId));
     }
 }

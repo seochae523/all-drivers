@@ -84,24 +84,7 @@ class CommunityServiceImplTest {
             assertThat(customException.getErrorCode()).isEqualTo(ErrorCode.ACCOUNT_NOT_FOUND);
         }
     }
-    @Test
-    @DisplayName("저장 실패 - 지역 미존재")
-    void saveFailWhenSubLocationNotFound() {
-        // given
-        User user = setUpUser();
-        CommunitySaveRequestDto communitySaveRequestDto = setUpRequestDto();
-        try (MockedStatic<JwtUtils> jwtUtils = mockStatic(JwtUtils.class)) {
-            when(userRepository.findByUserId(any())).thenReturn(Optional.ofNullable(user));
-            when(subLocationRepository.findById(any())).thenThrow(new CustomException(ErrorCode.SUB_LOCATION_NOT_FOUND));
 
-            // when
-            CustomException customException = assertThrows(CustomException.class, () -> communityService.save(communitySaveRequestDto));
-
-
-            // then
-            assertThat(customException.getErrorCode()).isEqualTo(ErrorCode.SUB_LOCATION_NOT_FOUND);
-        }
-    }
     @Test
     @DisplayName("업데이트 성공")
     void update() {

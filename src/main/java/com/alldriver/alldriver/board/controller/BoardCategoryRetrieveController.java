@@ -54,8 +54,7 @@ public class BoardCategoryRetrieveController {
     @GetMapping("/subLocations/{mainLocationId}")
     @Parameter(name = "mainLocationId", description = "시 (main location) id")
     @Operation(summary = "[지역 - 시]로 [지역 - 구] 조회")
-    public ResponseEntity<List<SubLocationFindResponseDto>> findSubLocationsByMainLocationId(@PathVariable
-                                                                                                 @NotNull(message = ValidationError.Message.MAIN_LOCATION_ID_NOT_FOUND) Long mainLocationId){
+    public ResponseEntity<List<SubLocationFindResponseDto>> findSubLocationsByMainLocationId(@PathVariable @NotNull Long mainLocationId){
         return ResponseEntity.ok(boardCategoryRetrieveService.findSubLocationsByMainLocation(mainLocationId));
     }
 

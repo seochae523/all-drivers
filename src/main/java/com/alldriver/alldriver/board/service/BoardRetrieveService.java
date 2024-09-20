@@ -6,6 +6,7 @@ import com.alldriver.alldriver.board.dto.response.ImageFindResponseDto;
 import java.util.List;
 
 public interface BoardRetrieveService {
+
     List<BoardFindResponseDto> findAll(Integer page);
     List<BoardFindResponseDto> findByCars(Integer page, List<Long> carIds);
     List<BoardFindResponseDto> findByJobs(Integer page ,List<Long> jobIds);

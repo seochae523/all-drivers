@@ -3,8 +3,10 @@ package com.alldriver.alldriver.admin.controller;
 import com.alldriver.alldriver.admin.dto.response.AdminUserFindResponseDto;
 import com.alldriver.alldriver.admin.dto.response.AdminUserGrantResponseDto;
 import com.alldriver.alldriver.admin.service.AdminUserService;
+import com.alldriver.alldriver.common.enums.ValidationError;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +30,8 @@ public class AdminUserController {
     }
 
     @GetMapping("/user/all")
-    public ResponseEntity<List<AdminUserFindResponseDto>> findAll(@RequestParam(name = "page") Integer page){
+    public ResponseEntity<List<AdminUserFindResponseDto>> findAll(@RequestParam(name = "page")
+                                                                  @Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR) Integer page){
         return ResponseEntity.ok(adminUserService.findAll(page));
     }
 }

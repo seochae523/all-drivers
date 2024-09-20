@@ -30,12 +30,10 @@ dependencies {
 	implementation 'com.mysql:mysql-connector-j'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	// es
-//	implementation 'org.springframework.data:spring-data-elasticsearch'
+	implementation 'org.springframework.data:spring-data-elasticsearch'
 
 	//model mapper
 	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.9'
-
-
 
 	//dynamoDB
 	implementation 'com.github.derjust:spring-data-dynamodb:5.1.0'

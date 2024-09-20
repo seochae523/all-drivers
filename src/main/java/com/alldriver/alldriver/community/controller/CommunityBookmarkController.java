@@ -24,14 +24,14 @@ public class CommunityBookmarkController {
     @PutMapping("/save/{communityId}")
     @Operation(summary = "커뮤니티 즐겨찾기")
     public ResponseEntity<CommunityBookmarkSaveResponseDto> save(@PathVariable
-                                                                 @NotNull(message = ValidationError.Message.COMMUNITY_ID_NOT_FOUND) Long communityId){
+                                                                 @NotNull Long communityId){
         return ResponseEntity.ok(communityBookmarkService.save(communityId));
     }
 
     @DeleteMapping("/delete/{communityId}")
     @Operation(summary = "커뮤니티 즐겨찾기 삭제")
     public ResponseEntity<CommunityBookmarkDeleteResponseDto> delete(@PathVariable
-                                                                     @NotNull(message = ValidationError.Message.COMMUNITY_ID_NOT_FOUND) Long communityId){
+                                                                     @NotNull Long communityId){
         return ResponseEntity.ok(communityBookmarkService.delete(communityId));
     }
 }

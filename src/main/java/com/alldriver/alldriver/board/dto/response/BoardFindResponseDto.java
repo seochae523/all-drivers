@@ -51,6 +51,5 @@ public class BoardFindResponseDto {
     private Long bookmarkCount;
     @Schema(description = "좋아요 여부")
     private Integer bookmarked;
-    @Schema(description = "이미지 url")
-    private String image;
+
 }
