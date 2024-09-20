@@ -1,7 +1,6 @@
 package com.alldriver.alldriver.board.domain;
 
 
-import com.alldriver.alldriver.board.document.BoardDocument;
 import com.alldriver.alldriver.board.dto.request.BoardUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -115,11 +114,11 @@ public class Board {
         this.category = boardUpdateRequestDto.getCategory();
     }
 
-    public BoardDocument toDocument(){
-        return BoardDocument.builder()
-                .id(id)
-                .title(title)
-                .content(content)
-                .build();
-    }
+//    public BoardDocument toDocument(){
+//        return BoardDocument.builder()
+//                .id(id)
+//                .title(title)
+//                .content(content)
+//                .build();
+//    }
 }

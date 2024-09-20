@@ -1,10 +1,6 @@
 spring:
   application:
     name: all-drivers
-  elasticsearch:
-    username: ${ELASTIC_SEARCH_USERNAME}
-    password: ${ELASTIC_SEARCH_PASSWORD}
-    uris: ${ELASTIC_SEARCH_URL}
 
   data:
     rest:
