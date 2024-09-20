@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     ResponseEntity<ApiErrorResponse> handleValidationException(ConstraintViolationException ex) {
-        String message = "";
+        StringBuilder message = new StringBuilder();
         Map<String, String> errors = ex.getConstraintViolations().stream()
                 .collect(Collectors.toMap(
                         violation -> StreamSupport.stream(violation.getPropertyPath().spliterator(), false)
@@ -64,10 +64,10 @@ public class GlobalExceptionHandler {
                         ConstraintViolation::getMessage
                 ));
         for (String value : errors.values()) {
-            message += value;
+            message.append(value);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ApiErrorResponse(ErrorCode.PARAMETER_NOT_FOUND, message));
+                .body(new ApiErrorResponse(ErrorCode.PARAMETER_NOT_FOUND, message.toString()));
     }
     @ExceptionHandler(MissingServletRequestParameterException.class)
     ResponseEntity<ApiErrorResponse> handleValidationException(MissingServletRequestParameterException ex) {
