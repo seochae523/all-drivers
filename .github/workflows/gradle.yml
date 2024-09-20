@@ -103,7 +103,7 @@ jobs:
         --build-arg NAVER_REDIRECT_URL=${{env.NAVER_REDIRECT_URL}} \
         --build-arg GOOGLE_CLIENT_ID=${{env.GOOGLE_CLIENT_ID}} \
         --build-arg GOOGLE_CLIENT_SECRET=${{env.GOOGLE_CLIENT_SECRET}} \
-        --build-arg GOOGLE_REDIRECT_URL=${{env.GOOGLE_REDIRECT_URL}}
+        --build-arg GOOGLE_REDIRECT_URL=${{env.GOOGLE_REDIRECT_URL}} \
         -t ${{ secrets.DOCKERHUB_USERNAME }}/all-driver .
         
     # 4. DockerHub 로그인
