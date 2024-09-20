@@ -86,7 +86,6 @@ jobs:
         --build-arg S3_ACCESS_KEY="${{env.S3_ACCESS_KEY}}" \
         --build-arg S3_SECRET_KEY="${{env.S3_SECRET_KEY}}" \
         --build-arg S3_URL="${{env.S3_URL}}" \
-        --build-arg WEB_HOOK_URL="${{env.WEB_HOOK_URL}}" \
         --build-arg LICENSE_BASE_URL="${{env.LICENSE_BASE_URL}}" \
         --build-arg LICENSE_API_KEY="${{env.LICENSE_API_KEY}}" \
         --build-arg CLOUD_FRONT_URL="${{env.CLOUD_FRONT_URL}}" \
