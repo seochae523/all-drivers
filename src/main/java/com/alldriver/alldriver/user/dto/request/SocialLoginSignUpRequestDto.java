@@ -5,16 +5,15 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
 @Builder
+@NoArgsConstructor
 public class SocialLoginSignUpRequestDto {
     @NotBlank(message = ValidationError.Message.USER_ID_NOT_FOUND)
     private String userId;
-
-    @NotBlank(message = ValidationError.Message.PASSWORD_NOT_FOUND)
-    private String nickname;
 
     @NotBlank(message = ValidationError.Message.FCM_TOKEN_NOT_FOUND)
     private String fcmToken;

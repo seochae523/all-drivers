@@ -15,7 +15,6 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
     String BASE_QUERY = "select c.id as id, c.title as title, c.content as content, c.created_at as createdAt, " +
             "group_concat(distinct s.category) as locationCategory, " +
             "(select count(*) from community_bookmark cb1 where cb1.community_id=c.id) as bookmarkCount, " +
-            "u.nickname as nickname, " +
             "u.user_id as userId, " +
             "case when cb.user_id is not null then true else false end as bookmarked " +
             "from community as c " +
@@ -25,7 +24,7 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
             "left join sub_location s on s.id=cs.location_id " +
             "where c.deleted=false ";
 
-    String SORT_QUERY = "group by c.id, c.title, c.content, c.created_at, u.nickname, bookmarked " +
+    String SORT_QUERY = "group by c.id, c.title, c.content, c.created_at, bookmarked " +
             "order by bookmarked desc, createdAt desc ";
 
     @Query(value = BASE_QUERY +

@@ -89,7 +89,6 @@ class CommunityRetrieveControllerTest {
                     .id((long) i)
                     .title("test")
                     .content("test")
-                    .nickname("test")
                     .createdAt(LocalDateTime.now())
                     .userId("test")
                     .bookmarked(0)

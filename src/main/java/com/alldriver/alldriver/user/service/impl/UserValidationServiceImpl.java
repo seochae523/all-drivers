@@ -31,15 +31,7 @@ public class UserValidationServiceImpl implements UserValidationService {
     private final LicenseRepository licenseRepository;
     private final LicenseNumberValidator licenseNumberValidator;
 
-    @Override
-    public Boolean checkNickname(String nickname) {
-        userRepository.findByNickname(nickname)
-                .ifPresent(x ->{
-                        throw new CustomException(ErrorCode.DUPLICATED_NICKNAME, " 닉네임 = "+ nickname);
-                });
 
-        return true;
-    }
 
     @Override
     public Boolean checkPhoneNumber(PhoneNumberCheckRequestDto phoneNumberCheckRequestDto) {

@@ -47,20 +47,18 @@ public class SmsServiceImpl implements SmsService {
     public String sendAuthCode(SmsSendRequestDto smsSendRequestDto) {
         String phoneNumber = smsSendRequestDto.getPhoneNumber();
 
-
+        if(phoneNumber.length() != 11) {throw new CustomException(ErrorCode.INVALID_PARAMETER, " 전화번호 형식이 일치하지 않습니다.");}
         String code = createCode();
+
         DefaultMessageService messageService =  NurigoApp.INSTANCE.initialize(apiKey, secretKey, domain);
-        // Message 패키지가 중복될 경우 net.nurigo.sdk.message.model.Message로 치환하여 주세요
         Message message = new Message();
         message.setFrom(senderPhoneNumber);
         message.setTo(phoneNumber);
-        message.setText("All Driver 인증번호 ["+code+"]를 화면에 입력해주세요.");
+        message.setText("All Drivers 인증번호 ["+code+"]를 화면에 입력해주세요.");
 
         try {
-            // send 메소드로 ArrayList<Message> 객체를 넣어도 동작합니다!
             messageService.send(message);
             LocalDateTime createdAt = LocalDateTime.now();
-
 
             smsRepository.findByPhoneNumber(phoneNumber).ifPresentOrElse(x ->
                     {
@@ -78,11 +76,12 @@ public class SmsServiceImpl implements SmsService {
                     });
 
         } catch (NurigoMessageNotReceivedException exception) {
-            // 발송에 실패한 메시지 목록을 확인할 수 있습니다!
             log.error("{}", exception.getFailedMessageList());
             log.error("{}", exception.getMessage());
+            throw new CustomException(ErrorCode.SMS_MESSAGE_NOT_SENT, exception.getMessage());
         } catch (Exception exception) {
             log.error("{}",exception.getMessage());
+            throw new CustomException(ErrorCode.INVALID_PARAMETER, exception.getMessage());
         }
 
         return "문자 발송 완료";
@@ -113,7 +112,6 @@ public class SmsServiceImpl implements SmsService {
         return SmsVerifyResponseDto.builder()
                 .authResult(true)
                 .phoneNumber(phoneNumber)
-                .createdTime(authInfo.getCreatedAt())
                 .authCode(authCode)
                 .build();
     }

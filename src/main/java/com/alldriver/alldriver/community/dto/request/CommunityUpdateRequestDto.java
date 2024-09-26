@@ -19,4 +19,7 @@ public class CommunityUpdateRequestDto {
 
     @NotBlank(message = ValidationError.Message.CONTENT_NOT_FOUND)
     private String content;
+
+    @NotBlank(message = ValidationError.Message.CATEGORY_NOT_FOUND)
+    private String category;
 }

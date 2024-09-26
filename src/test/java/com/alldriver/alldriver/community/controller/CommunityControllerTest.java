@@ -162,6 +162,7 @@ class CommunityControllerTest {
         return CommunitySaveRequestDto.builder()
                 .title("test")
                 .content("test")
+                .category("test")
                 .subLocationIds(List.of(1L))
                 .build();
     }
@@ -180,6 +181,7 @@ class CommunityControllerTest {
                 .id(1L)
                 .content("modified")
                 .title("modified")
+                .category("modified")
                 .build();
     }
 

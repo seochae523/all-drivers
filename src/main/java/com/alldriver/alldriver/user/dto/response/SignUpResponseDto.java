@@ -13,7 +13,7 @@ public class SignUpResponseDto {
     private String name;
     @Schema(description = "아이디", example = "example")
     private String userId;
-    @Schema(description = "닉네임", example = "example")
-    private String nickname;
+    @Schema(description = "권한", example = "ROLE_USER")
+    private String role;
 
 }

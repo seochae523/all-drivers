@@ -33,11 +33,7 @@ public class UserValidationController {
     public ResponseEntity<Boolean> checkLicense(@RequestParam(name = "license") @NotBlank String license) throws URISyntaxException {
         return ResponseEntity.ok(userValidationService.checkLicense(license));
     }
-    @GetMapping("/nickname")
-    @Operation(summary = "닉네임 중복 검사")
-    public ResponseEntity<Boolean> checkNickname(@RequestParam(value = "nickname") @NotBlank String nickname){
-        return ResponseEntity.ok(userValidationService.checkNickname(nickname));
-    }
+
     @PostMapping("/phoneNumber")
     @Operation(summary = "전화번호에 따른 회원 유무 판별.", description = "type = 검증 종류별 타입. " +
             "[ 0 = 회원 가입 시 인증 번호 발급 / 1 = 비밀번호 변경 시 계정 확인 / 2 = 잊어버린 비밀번호 변경 시 계정 확인. 이때는 user id 필요 ]")

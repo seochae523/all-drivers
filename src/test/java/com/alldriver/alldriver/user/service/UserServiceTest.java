@@ -4,12 +4,9 @@ import com.alldriver.alldriver.common.enums.Role;
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.util.JwtUtils;
+import com.alldriver.alldriver.user.dto.request.*;
 import com.alldriver.alldriver.user.dto.response.AuthToken;
 import com.alldriver.alldriver.user.domain.User;
-import com.alldriver.alldriver.user.dto.request.ChangePasswordRequestDto;
-import com.alldriver.alldriver.user.dto.request.LoginRequestDto;
-import com.alldriver.alldriver.user.dto.request.UserSignUpRequestDto;
-import com.alldriver.alldriver.user.dto.request.UserUpdateRequestDto;
 import com.alldriver.alldriver.user.dto.response.LoginResponseDto;
 import com.alldriver.alldriver.user.dto.response.SignUpResponseDto;
 import com.alldriver.alldriver.user.repository.UserRepository;
@@ -30,11 +27,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 import static org.assertj.core.api.Assertions.*;
@@ -42,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@ActiveProfiles("test")
 public class UserServiceTest {
 
     @InjectMocks
@@ -92,33 +86,145 @@ public class UserServiceTest {
 
             // then
             assertThat(response.getUserId()).isEqualTo("testUser");
-            assertThat(response.getNickname()).isEqualTo("testNickname");
             assertThat(response.getAuthToken()).isInstanceOf(AuthToken.class);
         }
     }
     @Test
-    @DisplayName("회원가입 성공")
+    @DisplayName("회원가입 성공 - 유저")
     void 회원가입_성공(){
         //given
         UserSignUpRequestDto request = setUpSignUpRequestDto();
-
-        when(userRepository.save(any())).thenReturn(request.toEntity());
+        User user = User.builder()
+                .name("test")
+                .userId("test")
+                .password("test")
+                .phoneNumber("test")
+                .role(Role.USER.getValue())
+                .build();
+        when(userRepository.save(any())).thenReturn(user);
         //when
         SignUpResponseDto response = userService.signUpUser(request);
 
         //then
         assertThat(request.getName()).isEqualTo(response.getName());
-        assertThat(request.getNickname()).isEqualTo(response.getNickname());
         assertThat(request.getUserId()).isEqualTo(response.getUserId());
+        assertThat(response.getRole()).isEqualTo(Role.USER.getValue());
     }
 
+    @Test
+    @DisplayName("회원가입 성공 - 차주 - 구직자")
+    void signUpSuccessCarOwnerJobSeeker() throws IOException {
+        // given
+        CarOwnerSignUpRequestDto carOwnerSignUpRequestDto = CarOwnerSignUpRequestDto.builder()
+                .name("test")
+                .carId(1L)
+                .type(0)
+                .userId("test")
+                .fcmToken("test")
+                .password("test")
+                .phoneNumber("test")
+                .build();
+        User user = User.builder()
+                .name("test")
+                .userId("test")
+                .password("test")
+                .phoneNumber("test")
+                .role(Role.USER.getValue() + "," + Role.TEMP_JOB_SEEKER.getValue())
+                .build();
+        when(userRepository.save(any())).thenReturn(user);
 
+        //when
+        SignUpResponseDto response = userService.signUpCarOwner(carOwnerSignUpRequestDto, new ArrayList<>());
 
+        //then
+        assertThat(carOwnerSignUpRequestDto.getUserId()).isEqualTo(response.getUserId());
+        assertThat(carOwnerSignUpRequestDto.getName()).isEqualTo(response.getName());
+        assertThat(response.getRole()).isEqualTo(Role.USER.getValue() + "," + Role.TEMP_JOB_SEEKER.getValue());
+    }
+    @Test
+    @DisplayName("회원가입 성공 - 차주 - 구인자")
+    void signUpSuccessCarOwnerRecruiter() throws IOException {
+        // given
+        CarOwnerSignUpRequestDto carOwnerSignUpRequestDto = CarOwnerSignUpRequestDto.builder()
+                .name("test")
+                .carId(1L)
+                .type(1)
+                .userId("test")
+                .fcmToken("test")
+                .password("test")
+                .phoneNumber("test")
+                .build();
+        User user = User.builder()
+                .name("test")
+                .userId("test")
+                .password("test")
+                .phoneNumber("test")
+                .role(Role.USER.getValue() + "," + Role.TEMP_RECRUITER.getValue())
+                .build();
+        when(userRepository.save(any())).thenReturn(user);
 
+        //when
+        SignUpResponseDto response = userService.signUpCarOwner(carOwnerSignUpRequestDto, new ArrayList<>());
 
+        //then
+        assertThat(carOwnerSignUpRequestDto.getUserId()).isEqualTo(response.getUserId());
+        assertThat(carOwnerSignUpRequestDto.getName()).isEqualTo(response.getName());
+        assertThat(response.getRole()).isEqualTo(Role.USER.getValue() + "," + Role.TEMP_RECRUITER.getValue());
+    }
+    @Test
+    @DisplayName("회원가입 성공 - 화주")
+    void signUpSuccessOwner() throws IOException {
+        // given
+        OwnerSignUpRequestDto ownerSignUpRequestDto = OwnerSignUpRequestDto.builder()
+                .userId("test")
+                .companyLocation("test")
+                .startedAt(new Date())
+                .name("test")
+                .phoneNumber("test")
+                .fcmToken("test")
+                .license("test")
+                .fcmToken("test")
+                .password("test")
+                .build();
+        User user = User.builder()
+                .name("test")
+                .userId("test")
+                .password("test")
+                .phoneNumber("test")
+                .role(Role.USER.getValue() + "," + Role.TEMP_JOB_SEEKER.getValue())
+                .build();
+        when(userRepository.save(any())).thenReturn(user);
 
+        //when
+        SignUpResponseDto response = userService.signUpOwner(ownerSignUpRequestDto, new ArrayList<>());
 
+        //then
+        assertThat(ownerSignUpRequestDto.getUserId()).isEqualTo(response.getUserId());
+        assertThat(ownerSignUpRequestDto.getName()).isEqualTo(response.getName());
+        assertThat(response.getRole()).isEqualTo(Role.USER.getValue() + "," + Role.TEMP_JOB_SEEKER.getValue());
+    }
+    @Test
+    @DisplayName("차주 회원가입 실패 - type overflow")
+    void signUpCarOwnerFailWhenTypeOverflow(){
+        // given
+        CarOwnerSignUpRequestDto carOwnerSignUpRequestDto = CarOwnerSignUpRequestDto.builder()
+                .name("test")
+                .carId(1L)
+                .type(2)
+                .userId("test")
+                .fcmToken("test")
+                .password("test")
+                .phoneNumber("test")
+                .userId("test")
+                .build();
 
+        // when
+        CustomException customException = assertThrows(CustomException.class, () -> userService.signUpCarOwner(carOwnerSignUpRequestDto, new ArrayList<>()));
+
+        // then
+        assertThat(customException.getMessage()).isEqualTo(ErrorCode.INVALID_PARAMETER.getMessage()+" 타입은 0 또는 1이어야 합니다.");
+        assertThat(customException.getErrorCode()).isEqualTo(ErrorCode.INVALID_PARAMETER);
+    }
     @Test
     @DisplayName("유저 삭제 성공")
     @WithMockUser(username = "testUser", password = "12345678")
@@ -138,23 +244,6 @@ public class UserServiceTest {
 
 
     }
-
-
-    @Test
-    @DisplayName("업데이트 성공")
-    void 업데이트_성공(){
-        // given
-        Optional<User> user = Optional.ofNullable(setUpUser());
-        UserUpdateRequestDto userUpdateRequestDto = setUpUserUpdateResponseDto();
-        when(userRepository.findByUserId("testUser")).thenReturn(user);
-
-        // when
-        userService.update(userUpdateRequestDto);
-
-        // then
-        assertThat(user.get().getNickname()).isEqualTo(userUpdateRequestDto.getNickname());
-    }
-
 
 
     @Test
@@ -183,6 +272,7 @@ public class UserServiceTest {
         when(userRepository.findByUserId("testUser")).thenReturn(user);
         try (MockedStatic<JwtUtils> jwtUtils = mockStatic(JwtUtils.class)) {
             when(JwtUtils.getUserId()).thenReturn("testUser");
+
             // when
             userService.logout();
 
@@ -205,14 +295,6 @@ public class UserServiceTest {
         assertThat(customException.getMessage()).isEqualTo(ErrorCode.ACCOUNT_NOT_FOUND.getMessage());
     }
 
-
-    private UserUpdateRequestDto setUpUserUpdateResponseDto(){
-        return UserUpdateRequestDto.builder()
-                .userId("testUser")
-                .nickname("changedUserNickname")
-                .build();
-    }
-
     private ChangePasswordRequestDto setUpChangePasswordRequestDto(){
         return ChangePasswordRequestDto.builder()
                 .userId("testUser")
@@ -222,11 +304,10 @@ public class UserServiceTest {
 
     private UserSignUpRequestDto setUpSignUpRequestDto(){
         return UserSignUpRequestDto.builder()
-                .name("testName")
-                .userId("testUser")
-                .phoneNumber("01012345678")
-                .password("testPassword")
-                .nickname("testNickname")
+                .name("test")
+                .userId("test")
+                .phoneNumber("test")
+                .password("test")
                 .build();
     }
 
@@ -235,7 +316,6 @@ public class UserServiceTest {
                 .userId("testUser")
                 .name("testName")
                 .deleted(false)
-                .nickname("testNickname")
                 .password("testPassword")
                 .role(Role.USER.getValue())
                 .phoneNumber("01012345678")
@@ -248,7 +328,6 @@ public class UserServiceTest {
                 .userId("testUser")
                 .name("testName")
                 .deleted(false)
-                .nickname("testNickname")
                 .password("testPassword")
                 .role(Role.USER.getValue())
                 .phoneNumber("01012345678")

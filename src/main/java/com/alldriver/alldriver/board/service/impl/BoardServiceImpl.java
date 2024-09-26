@@ -1,5 +1,6 @@
 package com.alldriver.alldriver.board.service.impl;
 
+import com.alldriver.alldriver.board.document.BoardDocument;
 import com.alldriver.alldriver.board.domain.*;
 import com.alldriver.alldriver.board.dto.request.*;
 import com.alldriver.alldriver.board.dto.response.*;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,8 +41,7 @@ public class BoardServiceImpl implements BoardService {
     private final LocationBoardRepository locationBoardRepository;
 
     private final S3Utils s3Utils;
-
-
+    private final BoardSearchRepository boardSearchRepository;
     @Override
     public BoardSaveResponseDto save(List<MultipartFile> images, BoardSaveRequestDto boardSaveRequestDto) throws IOException {
         String userId = JwtUtils.getUserId();
@@ -48,7 +49,7 @@ public class BoardServiceImpl implements BoardService {
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
         Long mainLocationId = boardSaveRequestDto.getMainLocationId();
-        mainLocationRepository.findById(mainLocationId)
+        MainLocation mainLocation = mainLocationRepository.findById(mainLocationId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MAIN_LOCATION_NOT_FOUND));
 
         List<Long> jobNames = boardSaveRequestDto.getJob();
@@ -80,6 +81,12 @@ public class BoardServiceImpl implements BoardService {
             board.addLocationBoard(locationBoard);
         }
         Board save = boardRepository.save(board);
+        List<String> carDocs = cars.stream().map(Car::getCategory).toList();
+        List<String> jobDocs = jobs.stream().map(Job::getCategory).toList();
+        List<String> locationDocs = subLocations.stream().map(SubLocation::getCategory).toList();
+
+        BoardDocument document = save.toDocument(carDocs, jobDocs, locationDocs, mainLocation.getCategory(), user.getUserId());
+        BoardDocument saveDocument = boardSearchRepository.save(document);
 
         if(images != null) {
             for (MultipartFile image : images) {

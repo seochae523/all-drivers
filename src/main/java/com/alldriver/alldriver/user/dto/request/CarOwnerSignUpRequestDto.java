@@ -28,9 +28,6 @@ public class CarOwnerSignUpRequestDto {
     @NotBlank(message = ValidationError.Message.PASSWORD_NOT_FOUND)
     private String password;
 
-    @NotBlank(message = ValidationError.Message.NICKNAME_NOT_FOUND)
-    private String nickname;
-
     @NotBlank(message = ValidationError.Message.PHONE_NUMBER_NOT_FOUND)
     private String phoneNumber;
 
@@ -48,7 +45,6 @@ public class CarOwnerSignUpRequestDto {
                 .userId(userId)
                 .name(name)
                 .password(password)
-                .nickname(nickname)
                 .phoneNumber(phoneNumber)
                 .deleted(false)
                 .createdAt(LocalDateTime.now())

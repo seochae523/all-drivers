@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 public class LoginResponseDto {
     private String userId;
-    private String nickname;
+    private String name;
     private List<String> roles;
     private AuthToken authToken;
 }

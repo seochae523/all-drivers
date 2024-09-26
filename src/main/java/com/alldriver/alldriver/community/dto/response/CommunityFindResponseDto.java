@@ -23,5 +23,5 @@ public class CommunityFindResponseDto {
     private String userId;
     @Builder.Default
     private List<String> locationCategories = new ArrayList<>();
-    private String nickname;
+
 }

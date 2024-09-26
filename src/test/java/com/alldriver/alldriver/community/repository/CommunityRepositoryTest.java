@@ -44,7 +44,6 @@ class CommunityRepositoryTest {
                 .name("testName")
                 .createdAt(LocalDateTime.now())
                 .phoneNumber("01012345678")
-                .nickname("test")
                 .role(Role.USER.getValue())
                 .deleted(false)
                 .password("testPassword")
@@ -55,6 +54,7 @@ class CommunityRepositoryTest {
             Community community = Community.builder()
                     .title("test" + i)
                     .content("test content" + i)
+                    .category("test")
                     .deleted(false)
                     .createdAt(LocalDateTime.now())
                     .user(save)
@@ -84,6 +84,7 @@ class CommunityRepositoryTest {
         Community community = Community.builder()
                 .title("tesTitle")
                 .content("testContent")
+                .category("category")
                 .deleted(false)
                 .build();
         // when

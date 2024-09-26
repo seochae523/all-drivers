@@ -116,8 +116,7 @@ public class CommunityCommentServiceImpl implements CommunityCommentService {
         List<CommunityCommentFindResponseDto> result = new ArrayList<>();
         List<CommunityComment> communityComments = communityCommentRepository.findByCommunityId(communityId);
         for (CommunityComment communityComment : communityComments) {
-            String nickname = communityComment.getUser().getNickname();
-            CommunityCommentFindResponseDto dto = communityComment.convert(nickname);
+            CommunityCommentFindResponseDto dto = communityComment.convert();
             commentHashMap.put(communityComment.getId(), dto);
             if(communityComment.getParentComment()==null){
                 result.add(dto);

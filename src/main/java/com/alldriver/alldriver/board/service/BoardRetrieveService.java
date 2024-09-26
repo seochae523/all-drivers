@@ -1,6 +1,7 @@
 package com.alldriver.alldriver.board.service;
 
 import com.alldriver.alldriver.board.dto.response.BoardFindResponseDto;
+import com.alldriver.alldriver.board.dto.response.BoardSearchResponseDto;
 import com.alldriver.alldriver.board.dto.response.ImageFindResponseDto;
 
 import java.util.List;
@@ -21,4 +22,6 @@ public interface BoardRetrieveService {
     List<ImageFindResponseDto> findImageByBoardId(Long boardId);
 
     List<BoardFindResponseDto> findMyBookmarkedBoard(Integer page);
+
+    List<BoardSearchResponseDto> searchByEs(Integer page, String keyword);
 }

@@ -24,7 +24,7 @@ public interface BoardFindVo {
     String getCarCategory();
     Date getStartAt();
     Date getEndAt();
-    String getUserNickname();
+
     Long getBookmarkCount();
     Integer getBookmarked();
 }

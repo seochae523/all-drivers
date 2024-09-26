@@ -1,10 +1,12 @@
 package com.alldriver.alldriver.board.service.impl;
 
 
+import com.alldriver.alldriver.board.document.BoardDocument;
 import com.alldriver.alldriver.board.domain.*;
 import com.alldriver.alldriver.board.dto.response.*;
 import com.alldriver.alldriver.board.repository.BoardImageRepository;
 import com.alldriver.alldriver.board.repository.BoardRepository;
+import com.alldriver.alldriver.board.repository.BoardSearchRepository;
 import com.alldriver.alldriver.board.service.BoardRetrieveService;
 import com.alldriver.alldriver.board.vo.BoardFindVo;
 import com.alldriver.alldriver.common.util.JwtUtils;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -27,6 +30,7 @@ import java.util.*;
 public class BoardRetrieveServiceImpl implements BoardRetrieveService {
     private final BoardRepository boardRepository;
     private final BoardImageRepository boardImageRepository;
+    private final BoardSearchRepository boardSearchRepository;
     @Value("${spring.data.rest.default-page-size}")
     private Integer pageSize;
 
@@ -35,6 +39,7 @@ public class BoardRetrieveServiceImpl implements BoardRetrieveService {
 
     @Override
     public List<BoardFindResponseDto> findAll(Integer page) {
+
         String userId = JwtUtils.getUserId();
         Integer offset = page * pageSize;
         List<BoardFindVo> findVoList = boardRepository.findAll(pageSize, offset, userId);
@@ -92,6 +97,7 @@ public class BoardRetrieveServiceImpl implements BoardRetrieveService {
     public List<BoardFindResponseDto> search(Integer page, String keyword) {
         String userId = JwtUtils.getUserId();
         Integer offset = page * pageSize;
+
         List<BoardFindVo> findVoList = boardRepository.search(pageSize, offset, keyword, userId);
 
         return getBoardFindResponseDto(findVoList);
@@ -125,6 +131,16 @@ public class BoardRetrieveServiceImpl implements BoardRetrieveService {
         return getBoardFindResponseDto(findVoList);
     }
 
+    @Override
+    public List<BoardSearchResponseDto> searchByEs(Integer page, String keyword) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<BoardDocument> search = boardSearchRepository.search(keyword, pageable);
+
+        return search.stream()
+                .map(BoardSearchResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
     private List<BoardFindResponseDto> getBoardFindResponseDto(List<BoardFindVo> findVoList){
         Map<Long, BoardFindResponseDto> boardMap = new LinkedHashMap<>();
 
@@ -146,7 +162,6 @@ public class BoardRetrieveServiceImpl implements BoardRetrieveService {
                 dto.setStartAt(boardFindVo.getStartAt());
                 dto.setEndAt(boardFindVo.getEndAt());
                 dto.setMainLocation(boardFindVo.getMainLocation());
-                dto.setUserNickname(boardFindVo.getUserNickname());
                 dto.setBookmarkCount(boardFindVo.getBookmarkCount());
                 dto.setBookmarked(boardFindVo.getBookmarked());
                 return dto;

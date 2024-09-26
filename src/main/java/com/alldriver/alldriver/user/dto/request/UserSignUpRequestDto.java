@@ -22,8 +22,6 @@ public class UserSignUpRequestDto {
     @NotBlank(message = ValidationError.Message.PASSWORD_NOT_FOUND)
     private String password;
 
-    @NotBlank(message = ValidationError.Message.PASSWORD_NOT_FOUND)
-    private String nickname;
 
     @NotBlank(message = ValidationError.Message.PHONE_NUMBER_NOT_FOUND)
     private String phoneNumber;
@@ -35,7 +33,6 @@ public class UserSignUpRequestDto {
         return User.builder()
                 .userId(userId)
                 .password(password)
-                .nickname(nickname)
                 .name(name)
                 .createdAt(LocalDateTime.now())
                 .phoneNumber(phoneNumber)

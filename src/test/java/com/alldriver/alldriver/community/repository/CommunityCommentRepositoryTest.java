@@ -34,6 +34,7 @@ class CommunityCommentRepositoryTest {
             Community community = Community.builder()
                     .title("test" + i)
                     .content("test content" + i)
+                    .category("test")
                     .deleted(false)
                     .createdAt(LocalDateTime.now())
                     .build();
@@ -50,10 +51,11 @@ class CommunityCommentRepositoryTest {
         Community community = Community.builder()
                 .title("test")
                 .content("test content")
+                .category("test")
                 .deleted(false)
                 .createdAt(LocalDateTime.now())
                 .build();
-
+        System.out.println("community123 = " + community.getCategory());
         Community save = communityRepository.save(community);
 
         // when

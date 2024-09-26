@@ -33,9 +33,6 @@ public class OwnerSignUpRequestDto {
     private String password;
 
 
-    @NotBlank(message = ValidationError.Message.NICKNAME_NOT_FOUND)
-    private String nickname;
-
     @NotBlank(message = ValidationError.Message.PHONE_NUMBER_NOT_FOUND)
     private String phoneNumber;
 
@@ -56,7 +53,6 @@ public class OwnerSignUpRequestDto {
                 .userId(userId)
                 .name(name)
                 .password(password)
-                .nickname(nickname)
                 .phoneNumber(phoneNumber)
                 .createdAt(LocalDateTime.now())
                 .deleted(false)

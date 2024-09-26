@@ -13,7 +13,5 @@ import lombok.Setter;
 public class UserUpdateResponseDto {
     @Schema(description = "아이디", example = "123123")
     private String userId;
-    @Schema(description = "변경된 닉네임", example = "nickname")
-    private String nickname;
 
 }

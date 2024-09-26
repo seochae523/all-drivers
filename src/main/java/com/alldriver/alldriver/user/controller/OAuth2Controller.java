@@ -2,6 +2,7 @@ package com.alldriver.alldriver.user.controller;
 
 import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.exception.ApiErrorResponse;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping
-@Tag(name = "알림 관련 api")
+@Hidden
 public class OAuth2Controller {
 
     @GetMapping("/no-auth")

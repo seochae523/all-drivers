@@ -15,7 +15,4 @@ public class UserUpdateRequestDto {
     @NotBlank(message = ValidationError.Message.USER_ID_NOT_FOUND)
     private String userId;
 
-
-    @NotBlank(message = ValidationError.Message.NICKNAME_NOT_FOUND)
-    private String nickname;
 }

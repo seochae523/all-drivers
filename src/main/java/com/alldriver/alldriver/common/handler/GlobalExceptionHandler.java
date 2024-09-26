@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(ex.getErrorCode().getStatus())
-                .body(new ApiErrorResponse(ex.getErrorCode(), ex.getMessage()));
+                .body(new ApiErrorResponse(ex.getErrorCode(), null));
 
     }
 

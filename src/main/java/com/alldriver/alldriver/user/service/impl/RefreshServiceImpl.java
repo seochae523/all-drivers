@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -26,7 +27,7 @@ import java.util.List;
 @Transactional
 public class RefreshServiceImpl implements RefreshService {
     private final UserRepository userRepository;
-    public AuthToken refresh(RefreshRequestDto refreshRequestDto) throws ParseException {
+    public AuthToken refresh(RefreshRequestDto refreshRequestDto){
         String refreshToken = refreshRequestDto.getRefreshToken();
 
         // early return 됩니다.
@@ -38,11 +39,8 @@ public class RefreshServiceImpl implements RefreshService {
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND, " 사용자 아이디 = " + userId));
 
         String role = findUser.getRole();
-        List<String> roles = new ArrayList<>();
 
-        for (String s : role.split(",")) {
-            roles.add(s);
-        }
+        List<String> roles = new ArrayList<>(Arrays.asList(role.split(",")));
 
         AuthToken newAuthToken = JwtUtils.generateToken(findUser.getUserId(), roles);
         findUser.setRefreshToken(newAuthToken.getRefreshToken());
