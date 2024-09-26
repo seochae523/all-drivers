@@ -159,7 +159,6 @@ class CommunityServiceImplTest {
                 .userId("testUser")
                 .name("testName")
                 .deleted(false)
-                .nickname("testNickname")
                 .password("testPassword")
                 .role(Role.USER.getValue())
                 .phoneNumber("01012345678")

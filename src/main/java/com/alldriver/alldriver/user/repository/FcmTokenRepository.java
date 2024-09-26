@@ -11,6 +11,6 @@ import java.util.Optional;
 @Repository
 public interface FcmTokenRepository extends JpaRepository<FcmToken, Long> {
 
-    @Query("select t from FcmToken t where t.user.userId=:userId")
+    @Query("select t from FcmToken t left join fetch t.user u where u.userId=:userId")
     Optional<FcmToken> findByUserId(@Param("userId") String userId);
 }

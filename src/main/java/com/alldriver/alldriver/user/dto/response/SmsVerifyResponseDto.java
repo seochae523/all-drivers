@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 @Builder
 public class SmsVerifyResponseDto {
     private String authCode;
-    @Hidden
-    private LocalDateTime createdTime;      // 11/25 추가 : 생성시간
     private String phoneNumber;
     private Boolean authResult;
 }

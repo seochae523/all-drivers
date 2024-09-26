@@ -24,6 +24,5 @@ public class LogoutResponseDto {
     public LogoutResponseDto(User user){
         this.userId = user.getUserId();
         this.name = user.getName();
-        this.nickname = user.getNickname();
     }
 }

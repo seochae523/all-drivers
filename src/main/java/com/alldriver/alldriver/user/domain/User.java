@@ -33,7 +33,7 @@ public class User implements UserDetails {
     @Column(name = "user_id", columnDefinition = "varchar", length = 30, nullable = false)
     private String userId;
 
-    @Column(name="password", columnDefinition = "varchar", nullable = false)
+    @Column(name="password", columnDefinition = "varchar")
     private String password;
 
     @Column(name="name", columnDefinition = "varchar", length = 20, nullable = false)
@@ -45,9 +45,6 @@ public class User implements UserDetails {
     @Column(name="deleted", nullable = false)
     @ColumnDefault(value = "false")
     private Boolean deleted;
-
-    @Column(name="nickname", columnDefinition = "varchar", length = 20, nullable = false)
-    private String nickname;
 
     @Column(name = "refresh_token", columnDefinition = "text")
     private String refreshToken;
@@ -103,17 +100,14 @@ public class User implements UserDetails {
         this.companyInformation.add(companyInformation);
         companyInformation.setUser(this);
     }
-    public void addAdditionalSocialLoginInfo(SocialLoginSignUpRequestDto socialLoginSignUpRequestDto){
-        this.nickname = socialLoginSignUpRequestDto.getNickname();
 
-    }
     public void addFcmToken(FcmToken fcmToken){
         this.fcmToken = fcmToken;
         fcmToken.setUser(this);
     }
     public void updateUserInfo(UserUpdateRequestDto updateRequestDto){
         this.userId = updateRequestDto.getUserId();
-        this.nickname = updateRequestDto.getNickname();
+
     }
 
     public void setDeleted(Boolean deleted){

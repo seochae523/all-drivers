@@ -28,7 +28,7 @@ public class SmsController {
     }
     @PostMapping("/sms/verify")
     @Operation(summary = "sms 문자 인증 검증")
-    public ResponseEntity<SmsVerifyResponseDto> sendSmsAuthCode(@RequestBody @Valid SmsVerifyRequestDto smsVerifyRequestDto){
+    public ResponseEntity<SmsVerifyResponseDto> verifyAuthCode(@RequestBody @Valid SmsVerifyRequestDto smsVerifyRequestDto){
         return ResponseEntity.ok(smsService.verifiedCode(smsVerifyRequestDto));
     }
 

@@ -1,6 +1,7 @@
 package com.alldriver.alldriver.board.controller;
 
 import com.alldriver.alldriver.board.dto.response.BoardFindResponseDto;
+import com.alldriver.alldriver.board.dto.response.BoardSearchResponseDto;
 import com.alldriver.alldriver.board.dto.response.ImageFindResponseDto;
 import com.alldriver.alldriver.board.service.BoardRetrieveService;
 import com.alldriver.alldriver.common.enums.ValidationError;
@@ -114,5 +115,9 @@ public class BoardRetrieveController {
         return ResponseEntity.ok(boardRetrieveService.findImageByBoardId(boardId));
     }
 
+    @GetMapping("/search/es/{page}")
+    public ResponseEntity<List<BoardSearchResponseDto>> searchByEs(@PathVariable Integer page, @RequestParam("keyword") String keyword){
+        return ResponseEntity.ok(boardRetrieveService.searchByEs(page, keyword));
+    }
 
 }

@@ -316,7 +316,7 @@ class CommunityCommentServiceImplTest {
                 .userId("testUser")
                 .name("testName")
                 .deleted(false)
-                .nickname("testNickname")
+
                 .password("testPassword")
                 .role(Role.USER.getValue())
                 .phoneNumber("01012345678")
@@ -329,7 +329,7 @@ class CommunityCommentServiceImplTest {
                 .userId("testUser")
                 .name("testName")
                 .deleted(false)
-                .nickname("testNickname")
+
                 .password("testPassword")
                 .role(Role.USER.getValue())
                 .phoneNumber("01012345678")

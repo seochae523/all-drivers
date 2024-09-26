@@ -61,7 +61,6 @@ public class CommunityRetrieveServiceImpl implements CommunityRetrieveService {
                     .bookmarked(communityFindVo.getBookmarked())
                     .createdAt(communityFindVo.getCreatedAt())
                     .userId(communityFindVo.getUserId())
-                    .nickname(communityFindVo.getNickname())
                     .build();
 
             if(communityFindVo.getLocationCategory() !=null) {

@@ -22,7 +22,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "        group_concat(distinct c.category) as carCategory, " +
             "        group_concat(distinct j.category) as jobCategory, " +
             "        group_concat(distinct sl.category) as locationCategory, " +
-            "        u.user_id as userId, u.nickname as userNickname, " +
+            "        u.user_id as userId, " +
             "        (select count(*) from board_bookmark b1 where b1.board_id=b.id and b.deleted=false) as bookmarkCount, " +
             "        case when bm.user_id is not null then true else false end as bookmarked "+
             "    from board b " +
@@ -39,7 +39,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "    where b.deleted=false ";
 
     // 정렬 쿼리
-    String SORT_QUERY = "group by b.id, b.title, b.category, b.content, b.company_location, b.created_at, b.start_at, b.end_at, b.pay_type, b.payment, b.recruit_type, u.user_id, u.nickname, ml.category, bookmarked " +
+    String SORT_QUERY = "group by b.id, b.title, b.category, b.content, b.company_location, b.created_at, b.start_at, b.end_at, b.pay_type, b.payment, b.recruit_type, u.user_id, ml.category, bookmarked " +
                         "order by bookmarked desc, b.created_at desc ";
     // 전체 검색
     @Query(value = BASE_QUERY +

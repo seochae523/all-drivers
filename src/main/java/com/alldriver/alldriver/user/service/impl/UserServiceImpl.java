@@ -70,8 +70,8 @@ public class UserServiceImpl implements UserService {
 
         return LoginResponseDto.builder()
                 .authToken(authToken)
-                .nickname(user.getNickname())
                 .userId(user.getUserId())
+                .name(user.getName())
                 .roles(roles)
                 .build();
 
@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
         return SignUpResponseDto.builder()
                 .name(save.getName())
                 .userId(save.getUserId())
-                .nickname(save.getNickname())
+                .role(save.getRole())
                 .build();
 
     }
@@ -114,7 +114,6 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
-        user.addAdditionalSocialLoginInfo(socialLoginSignUpRequestDto);
         user.addFcmToken(fcmToken);
 
         User save = userRepository.save(user);
@@ -124,8 +123,8 @@ public class UserServiceImpl implements UserService {
 
         return LoginResponseDto.builder()
                 .authToken(authToken)
-                .nickname(save.getNickname())
                 .userId(save.getUserId())
+                .name(save.getName())
                 .roles(roles)
                 .build();
     }
@@ -164,8 +163,8 @@ public class UserServiceImpl implements UserService {
 
         return SignUpResponseDto.builder()
                 .userId(save.getUserId())
-                .nickname(save.getNickname())
                 .name(save.getName())
+                .role(save.getRole())
                 .build();
     }
 
@@ -180,7 +179,7 @@ public class UserServiceImpl implements UserService {
 
         if (type == 0) user.setRole(Role.TEMP_JOB_SEEKER);
         else if (type == 1) user.setRole(Role.TEMP_RECRUITER);
-        else throw new CustomException(ErrorCode.INVALID_PARAMETER, "타입은 0 또는 1이어야 합니다.");
+        else throw new CustomException(ErrorCode.INVALID_PARAMETER, " 타입은 0 또는 1이어야 합니다.");
 
         FcmToken fcmToken = FcmToken.builder()
                 .token(carOwnerSignUpRequestDto.getFcmToken())
@@ -202,8 +201,8 @@ public class UserServiceImpl implements UserService {
 
         return SignUpResponseDto.builder()
                 .userId(save.getUserId())
-                .nickname(save.getNickname())
                 .name(save.getName())
+                .role(save.getRole())
                 .build();
     }
 
@@ -222,7 +221,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserUpdateResponseDto update(UserUpdateRequestDto userUpdateRequestDto) {
         String userId = userUpdateRequestDto.getUserId();
-        String nickname = userUpdateRequestDto.getNickname();
 
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
@@ -232,7 +230,6 @@ public class UserServiceImpl implements UserService {
 
         return UserUpdateResponseDto.builder()
                 .userId(userId)
-                .nickname(nickname)
                 .build();
     }
 
@@ -250,7 +247,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         return ChangePasswordResponseDto.builder()
-                .nickname(user.getNickname())
                 .userId(userId)
                 .build();
     }

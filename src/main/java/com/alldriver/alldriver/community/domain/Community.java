@@ -32,6 +32,9 @@ public class Community {
     @Column(name="content", columnDefinition = "text", nullable = false)
     private String content;
 
+    @Column(name="category", columnDefinition = "varchar", length = 30, nullable = false)
+    private String category;
+
     @Column(name="created_at")
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -58,6 +61,7 @@ public class Community {
     public void update(CommunityUpdateRequestDto communityUpdateRequestDto){
         this.title = communityUpdateRequestDto.getTitle();
         this.content = communityUpdateRequestDto.getContent();
+        this.category = communityUpdateRequestDto.getCategory();
         this.createdAt = LocalDateTime.now();
     }
 

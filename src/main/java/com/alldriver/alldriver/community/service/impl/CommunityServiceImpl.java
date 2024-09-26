@@ -58,6 +58,7 @@ public class CommunityServiceImpl implements CommunityService {
                 .id(save.getId())
                 .title(save.getTitle())
                 .content(save.getContent())
+                .category(save.getCategory())
                 .createdAt(save.getCreatedAt())
                 .build();
     }
@@ -76,6 +77,7 @@ public class CommunityServiceImpl implements CommunityService {
                 .id(save.getId())
                 .title(save.getTitle())
                 .content(save.getContent())
+                .category(save.getCategory())
                 .build();
     }
 

@@ -48,7 +48,6 @@ class CommunityBookmarkRepositoryTest {
                 .name("testName")
                 .createdAt(LocalDateTime.now())
                 .phoneNumber("01012345678")
-                .nickname("test")
                 .role(Role.USER.getValue())
                 .deleted(false)
                 .password("testPassword")
@@ -57,6 +56,7 @@ class CommunityBookmarkRepositoryTest {
         Community community = Community.builder()
                 .title("test")
                 .content("test content")
+                .category("category")
                 .deleted(false)
                 .createdAt(LocalDateTime.now())
                 .build();

@@ -11,5 +11,5 @@ public interface CommunityFindVo {
     LocalDateTime getCreatedAt();
     String getLocationCategory();
     Integer getBookmarked();
-    String getNickname();
+
 }

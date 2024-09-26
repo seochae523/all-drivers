@@ -33,7 +33,6 @@ public class UserRepositoryTest {
                     .name("testName")
                     .createdAt(LocalDateTime.now())
                     .phoneNumber("01012345678")
-                    .nickname("test")
                     .role(Role.USER.getValue())
                     .deleted(false)
                     .password("testPassword")
@@ -147,35 +146,6 @@ public class UserRepositoryTest {
         assertThat(wrong).isEmpty();
     }
 
-    @Test
-    @DisplayName("올바른 닉네임 조회")
-    void 올바른_닉네임_조회(){
-        // given
-        String correctNickname = "test";
-
-
-        // when
-        Optional<User> correct = userRepository.findByNickname(correctNickname);
-
-
-        // then
-        assertThat(correct).isNotEmpty();
-
-    }
-    @Test
-    @DisplayName("틀린 닉네임 조회")
-    void 틀린_닉네임_조회(){
-        // given
-        String wrongNickname = "wrong";
-
-        // when
-
-        Optional<User> wrong = userRepository.findByNickname(wrongNickname);
-
-        // then
-
-        assertThat(wrong).isEmpty();
-    }
 
     @Test
     @DisplayName("저장")
@@ -186,7 +156,6 @@ public class UserRepositoryTest {
                 .name("save")
                 .createdAt(LocalDateTime.now())
                 .phoneNumber("01012345678")
-                .nickname("save")
                 .role(Role.USER.getValue())
                 .deleted(false)
                 .password("save")

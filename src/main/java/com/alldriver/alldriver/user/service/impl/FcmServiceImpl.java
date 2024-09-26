@@ -28,7 +28,7 @@ public class FcmServiceImpl implements FcmService {
     public String sendMessage(FcmSendRequestDto fcmSendRequestDto) {
         String userId = JwtUtils.getUserId();
         FcmToken fcmToken = fcmTokenRepository
-                .findByUserId(userId).orElseThrow(() -> new CustomException(ErrorCode.FCM_TOKEN_NOT_FOUNT));
+                .findByUserId(userId).orElseThrow(() -> new CustomException(ErrorCode.FCM_TOKEN_NOT_FOUND));
 
         String token = fcmToken.getToken();
 

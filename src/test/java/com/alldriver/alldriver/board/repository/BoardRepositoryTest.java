@@ -389,7 +389,6 @@ class BoardRepositoryTest {
                 .userId("testUser")
                 .name("testName")
                 .deleted(false)
-                .nickname("testNick")
                 .password("testPassword")
                 .role(Role.USER.getValue())
                 .phoneNumber("01012345678")

@@ -1,7 +1,6 @@
 spring:
   application:
     name: all-drivers
-
   data:
     rest:
       default-page-size: 10
@@ -141,3 +140,8 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+
+elasticsearch:
+  host: ${ELASTIC_SEARCH_URL}
+  username: ${ELASTIC_SEARCH_USERNAME}
+  password: ${ELASTIC_SEARCH_PASSWORD}

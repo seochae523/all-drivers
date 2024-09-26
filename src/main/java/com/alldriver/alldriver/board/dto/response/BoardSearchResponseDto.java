@@ -1,20 +1,19 @@
 package com.alldriver.alldriver.board.dto.response;
 
-
 import com.alldriver.alldriver.board.document.BoardDocument;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-
 import java.time.LocalDateTime;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BoardFindResponseDto {
+public class BoardSearchResponseDto {
     @Schema(description = "조회 결과 id 나중에 update, delete 할때 필요함", example = "3")
     private Long id;
     @Schema(description = "내용", example = "example")
@@ -25,6 +24,8 @@ public class BoardFindResponseDto {
     private String category;
     @Schema(description = "아이디", example = "example")
     private String userId;
+    @Schema(description = "닉네임", example = "example")
+    private String userNickname;
     @Schema(description = "작성일", example = "2024-04-14T17:21:33.975Z")
     private LocalDateTime createdAt;
     @Schema(description = "급여", example = "1500000")
@@ -47,11 +48,22 @@ public class BoardFindResponseDto {
     private Date startAt;
     @Schema(description = "종료일")
     private Date endAt;
-    @Schema(description = "좋아요 수")
-    private Long bookmarkCount;
-    @Schema(description = "좋아요 여부")
-    private Integer bookmarked;
 
-
-
+    public BoardSearchResponseDto (BoardDocument boardDocument){
+        this.id =boardDocument.getId();
+        this.title =boardDocument.getTitle();
+        this.content = boardDocument.getContent();
+        this.cars = boardDocument.getCars();
+        this.jobs = boardDocument.getJobs();
+        this.locations = boardDocument.getLocations();
+        this.companyLocation = boardDocument.getCompanyLocation();
+        this.category = boardDocument.getCategory();
+        this.recruitType = boardDocument.getRecruitType();
+        this.mainLocation = boardDocument.getMainLocation();
+        this.payment = boardDocument.getPayment();
+        this.payType = boardDocument.getPayType();
+        this.userId = boardDocument.getUserId();
+        this.startAt = boardDocument.getStartAt();
+        this.endAt = boardDocument.getEndAt();
+    }
 }

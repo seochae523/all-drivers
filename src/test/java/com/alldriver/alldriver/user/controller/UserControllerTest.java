@@ -1,5 +1,7 @@
 package com.alldriver.alldriver.user.controller;
 
+
+import com.alldriver.alldriver.common.enums.ValidationError;
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.user.dto.response.AuthToken;
@@ -7,9 +9,12 @@ import com.alldriver.alldriver.user.dto.request.*;
 import com.alldriver.alldriver.user.dto.response.ChangePasswordResponseDto;
 import com.alldriver.alldriver.user.dto.response.LoginResponseDto;
 import com.alldriver.alldriver.user.dto.response.SignUpResponseDto;
-import com.alldriver.alldriver.user.dto.response.UserUpdateResponseDto;
+
 import com.alldriver.alldriver.user.service.impl.UserServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +26,14 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
@@ -43,7 +47,8 @@ public class UserControllerTest {
 
     @MockBean
     private UserServiceImpl userService;
-
+    @Autowired
+    private Validator validator;
 
     @Test
     @DisplayName("로그인 성공")
@@ -78,13 +83,18 @@ public class UserControllerTest {
 //    @Test
 //    @DisplayName("로그인 실패")
 //    void loginFail() throws Exception {
+//        // given
 //        Map<String, String> content = new HashMap<>();
 //        content.put("userId", "testUser");
 //        content.put("password", "1234");
 //        when(userService.login(any())).thenThrow(new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+//
+//        // when, then
+//
 //        mockMvc.perform(post("/login").with(csrf())
 //                        .contentType(MediaType.APPLICATION_JSON)
 //                        .content(objectMapper.writeValueAsBytes(content)))
+//                .andDo(print())
 //                .andExpect(status().isBadRequest())
 //                .andExpect(jsonPath("$.code").value(ErrorCode.ACCOUNT_NOT_FOUND.getCode()))
 //                .andExpect(jsonPath("$.message").value(ErrorCode.ACCOUNT_NOT_FOUND.getMessage()));
@@ -104,7 +114,6 @@ public class UserControllerTest {
                 .content(objectMapper.writeValueAsString(userSignUpRequestDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userId").value("testUser"))
-                .andExpect(jsonPath("$.nickname").value("testNick"))
                 .andExpect(jsonPath("$.name").value("testName"));
     }
 
@@ -124,7 +133,6 @@ public class UserControllerTest {
                         .file(request).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userId").value("testUser"))
-                .andExpect(jsonPath("$.nickname").value("testNick"))
                 .andExpect(jsonPath("$.name").value("testName"));
     }
 
@@ -147,7 +155,6 @@ public class UserControllerTest {
                         .file(request).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userId").value("testUser"))
-                .andExpect(jsonPath("$.nickname").value("testNick"))
                 .andExpect(jsonPath("$.name").value("testName"));
     }
 
@@ -162,7 +169,8 @@ public class UserControllerTest {
         // when, then
         mockMvc.perform(get("/user/logout").with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(content().string(response));
+                .andExpect(content().string(response))
+                .andDo(print());
     }
     @Test
     @DisplayName("로그아웃 - 실패")
@@ -177,27 +185,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.message").value(ErrorCode.ACCOUNT_NOT_FOUND.getMessage()));
     }
 
-    @Test
-    @DisplayName("회원 업데이트 - 성공")
-    void updateSuccess() throws Exception {
-        // given
-        Map<String, String> content = new HashMap<>();
-        content.put("userId", "testUser");
-        content.put("nickname", "testNick");
-        UserUpdateResponseDto userUpdateResponseDto = UserUpdateResponseDto.builder()
-                .userId("testUser")
-                .nickname("testNick")
-                .build();
-        when(userService.update(any())).thenReturn(userUpdateResponseDto);
 
-        // when, then
-        mockMvc.perform(put("/user/update").with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(content)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userId").value("testUser"))
-                .andExpect(jsonPath("$.nickname").value("testNick"));
-    }
 
     @Test
     @DisplayName("회원 업데이트 - 실패")
@@ -295,6 +283,169 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.message").value(ErrorCode.ACCOUNT_NOT_FOUND.getMessage()));
     }
 
+    @Test
+    @DisplayName("유저 회원가입 파라미터 검증")
+    void validateUserSignUpRequest(){
+        // given
+        UserSignUpRequestDto request = new UserSignUpRequestDto();
+
+        // when
+        Set<ConstraintViolation<UserSignUpRequestDto>> validate = validator.validate(request);
+        Iterator<ConstraintViolation<UserSignUpRequestDto>> iterator = validate.iterator();
+        List<String> messages = new ArrayList<>();
+        while (iterator.hasNext()) {
+            ConstraintViolation<UserSignUpRequestDto> next = iterator.next();
+            messages.add(next.getMessage());
+            System.out.println("message = " + next.getMessage());
+        }
+
+        // then
+        Assertions.assertThat(messages).contains(ValidationError.Message.NAME_NOT_FOUND,
+                ValidationError.Message.USER_ID_NOT_FOUND,
+                ValidationError.Message.PASSWORD_NOT_FOUND,
+                ValidationError.Message.PHONE_NUMBER_NOT_FOUND,
+                ValidationError.Message.FCM_TOKEN_NOT_FOUND);
+
+    }
+    @Test
+    @DisplayName("차주 회원가입 파라미터 검증")
+    void validateCarOwnerSignUpRequest(){
+        // given
+        CarOwnerSignUpRequestDto request = new CarOwnerSignUpRequestDto();
+
+        // when
+        Set<ConstraintViolation<CarOwnerSignUpRequestDto>> validate = validator.validate(request);
+        Iterator<ConstraintViolation<CarOwnerSignUpRequestDto>> iterator = validate.iterator();
+        List<String> messages = new ArrayList<>();
+        while (iterator.hasNext()) {
+            ConstraintViolation<CarOwnerSignUpRequestDto> next = iterator.next();
+            messages.add(next.getMessage());
+            System.out.println("message = " + next.getMessage());
+        }
+
+        // then
+        Assertions.assertThat(messages).contains(ValidationError.Message.NAME_NOT_FOUND,
+                ValidationError.Message.USER_ID_NOT_FOUND,
+                ValidationError.Message.PASSWORD_NOT_FOUND,
+                ValidationError.Message.PHONE_NUMBER_NOT_FOUND,
+                ValidationError.Message.FCM_TOKEN_NOT_FOUND,
+                ValidationError.Message.TYPE_NOT_FOUND,
+                ValidationError.Message.CAR_ID_NOT_FOUND);
+
+    }
+    @Test
+    @DisplayName("화주 회원가입 파라미터 검증")
+    void validateOwnerSignUpRequest(){
+        // given
+        OwnerSignUpRequestDto request = new OwnerSignUpRequestDto();
+
+        // when
+        Set<ConstraintViolation<OwnerSignUpRequestDto>> validate = validator.validate(request);
+        Iterator<ConstraintViolation<OwnerSignUpRequestDto>> iterator = validate.iterator();
+        List<String> messages = new ArrayList<>();
+        while (iterator.hasNext()) {
+            ConstraintViolation<OwnerSignUpRequestDto> next = iterator.next();
+            messages.add(next.getMessage());
+            System.out.println("message = " + next.getMessage());
+        }
+
+        // then
+        Assertions.assertThat(messages).contains(ValidationError.Message.NAME_NOT_FOUND,
+                ValidationError.Message.USER_ID_NOT_FOUND,
+                ValidationError.Message.PASSWORD_NOT_FOUND,
+                ValidationError.Message.PHONE_NUMBER_NOT_FOUND,
+                ValidationError.Message.FCM_TOKEN_NOT_FOUND,
+                ValidationError.Message.COMPANY_LOCATION_NOT_FOUND,
+                ValidationError.Message.BUSINESS_NUMBER_NOT_FOUND,
+                ValidationError.Message.START_AT_NOT_FOUND);
+
+    }
+    @Test
+    @DisplayName("소셜로그인 파라미터 검증")
+    void validateSocialSignUpRequest(){
+        // given
+        SocialLoginSignUpRequestDto request = new SocialLoginSignUpRequestDto();
+
+        // when
+        Set<ConstraintViolation<SocialLoginSignUpRequestDto>> validate = validator.validate(request);
+        Iterator<ConstraintViolation<SocialLoginSignUpRequestDto>> iterator = validate.iterator();
+        List<String> messages = new ArrayList<>();
+        while (iterator.hasNext()) {
+            ConstraintViolation<SocialLoginSignUpRequestDto> next = iterator.next();
+            messages.add(next.getMessage());
+            System.out.println("message = " + next.getMessage());
+        }
+
+        // then
+        Assertions.assertThat(messages).contains(ValidationError.Message.FCM_TOKEN_NOT_FOUND,
+                ValidationError.Message.USER_ID_NOT_FOUND);
+
+    }
+
+    @Test
+    @DisplayName("로그인 파라미터 검증")
+    void validateLoginRequest(){
+        // given
+        LoginRequestDto request = new LoginRequestDto();
+
+        // when
+        Set<ConstraintViolation<LoginRequestDto>> validate = validator.validate(request);
+        Iterator<ConstraintViolation<LoginRequestDto>> iterator = validate.iterator();
+        List<String> messages = new ArrayList<>();
+        while (iterator.hasNext()) {
+            ConstraintViolation<LoginRequestDto> next = iterator.next();
+            messages.add(next.getMessage());
+            System.out.println("message = " + next.getMessage());
+        }
+
+        // then
+        Assertions.assertThat(messages).contains(ValidationError.Message.USER_ID_NOT_FOUND,
+                ValidationError.Message.PASSWORD_NOT_FOUND,
+                ValidationError.Message.FCM_TOKEN_NOT_FOUND);
+
+    }
+    @Test
+    @DisplayName("비밀번호 변경 파라미터 검증")
+    void validateChangePasswordRequest(){
+        // given
+        ChangePasswordRequestDto request = new ChangePasswordRequestDto();
+
+        // when
+        Set<ConstraintViolation<ChangePasswordRequestDto>> validate = validator.validate(request);
+        Iterator<ConstraintViolation<ChangePasswordRequestDto>> iterator = validate.iterator();
+        List<String> messages = new ArrayList<>();
+        while (iterator.hasNext()) {
+            ConstraintViolation<ChangePasswordRequestDto> next = iterator.next();
+            messages.add(next.getMessage());
+            System.out.println("message = " + next.getMessage());
+        }
+
+        // then
+        Assertions.assertThat(messages).contains(ValidationError.Message.USER_ID_NOT_FOUND,
+                ValidationError.Message.PASSWORD_NOT_FOUND);
+
+    }
+    // validate user update request dto
+    @Test
+    @DisplayName("유저 업데이트 파라미터 검증")
+    void validateUserUpdateRequest(){
+        // given
+        UserUpdateRequestDto request = new UserUpdateRequestDto();
+
+        // when
+        Set<ConstraintViolation<UserUpdateRequestDto>> validate = validator.validate(request);
+        Iterator<ConstraintViolation<UserUpdateRequestDto>> iterator = validate.iterator();
+        List<String> messages = new ArrayList<>();
+        while (iterator.hasNext()) {
+            ConstraintViolation<UserUpdateRequestDto> next = iterator.next();
+            messages.add(next.getMessage());
+            System.out.println("message = " + next.getMessage());
+        }
+
+        // then
+        Assertions.assertThat(messages).contains(ValidationError.Message.USER_ID_NOT_FOUND);
+
+    }
 
     @Test
     @DisplayName("유저 삭제 성공")
@@ -318,7 +469,7 @@ public class UserControllerTest {
                 .name("testName")
                 .password("1234")
                 .phoneNumber("01012345678")
-                .nickname("testNick")
+
                 .fcmToken("testFcm")
                 .build();
     }
@@ -327,7 +478,7 @@ public class UserControllerTest {
                 .userId("testUser")
                 .name("testName")
                 .phoneNumber("01012345678")
-                .nickname("test")
+
                 .password("1234")
                 .license("testLicense")
                 .fcmToken("testFcm")
@@ -340,7 +491,7 @@ public class UserControllerTest {
                 .userId("testUser")
                 .name("testName")
                 .phoneNumber("01012345678")
-                .nickname("test")
+
                 .password("1234")
                 .fcmToken("testFcm")
                 .type(0)
@@ -351,7 +502,6 @@ public class UserControllerTest {
         return SignUpResponseDto.builder()
                 .userId("testUser")
                 .name("testName")
-                .nickname("testNick")
                 .build();
     }
 

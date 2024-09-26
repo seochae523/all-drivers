@@ -91,33 +91,7 @@ class UserValidationControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(Boolean.valueOf(true).toString()));
     }
-    @Test
-    @DisplayName("닉네임 중복 확인 - 중복 있을 때")
-    void checkDuplicatedNickname() throws Exception {
-        // given
-        String nickname="testNick";
-        when(userValidationService.checkNickname(nickname)).thenThrow(new CustomException(ErrorCode.DUPLICATED_NICKNAME));
 
-        // when, then
-        mockMvc.perform(get("/check/nickname")
-                        .param("nickname", nickname))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.code").value(ErrorCode.DUPLICATED_NICKNAME.getCode()))
-                .andExpect(jsonPath("$.message").value(ErrorCode.DUPLICATED_NICKNAME.getMessage()));
-    }
-    @Test
-    @DisplayName("닉네임 중복 확인 - 중복 없을 때")
-    void checkUnDuplicatedNickname() throws Exception {
-        // given
-        String nickname="testNick";
-        when(userValidationService.checkNickname(nickname)).thenReturn(true);
-        // when, then
-        mockMvc.perform(get("/check/nickname").with(csrf())
-                        .param("nickname", nickname))
-                .andExpect(status().isOk())
-                .andExpect(content().string(Boolean.valueOf(true).toString()));
-
-    }
 
     @Test
     @DisplayName("회원 가입 전화 번호 검증 - 중복 없을 때")

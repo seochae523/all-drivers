@@ -91,29 +91,7 @@ class UserValidationServiceTest {
         // then
         assertThat(b).isTrue();
     }
-    @Test
-    @DisplayName("닉네임 중복 확인 - 중복 있을 때")
-    void checkDuplicatedNickname() {
-        // given
-        when(userRepository.findByNickname(any())).thenThrow(new CustomException(ErrorCode.DUPLICATED_NICKNAME, " Nickname = " + nickname));
-        // when
-        CustomException customException = assertThrows(CustomException.class, () -> userValidationService.checkNickname(nickname));
 
-        // then
-        assertThat(customException.getErrorCode()).isEqualTo(ErrorCode.DUPLICATED_NICKNAME);
-        assertThat(customException.getMessage()).isEqualTo(ErrorCode.DUPLICATED_NICKNAME.getMessage() + " Nickname = " + nickname);
-    }
-
-    @Test
-    @DisplayName("닉네임 중복 확인 - 중복 없을 때")
-    void checkUnDuplicatedNickname() {
-        // given
-        when(userRepository.findByNickname(any())).thenReturn(Optional.empty());
-        // when
-        Boolean b = userValidationService.checkNickname(nickname);
-        // then
-        assertThat(b).isTrue();
-    }
 
     @Test
     @DisplayName("회원 가입 전화 번호 검증 - 중복 없을 때")

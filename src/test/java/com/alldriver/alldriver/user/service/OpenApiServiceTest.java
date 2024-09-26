@@ -29,7 +29,6 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 
 @RestClientTest(value = {UserValidationServiceImpl.class})
-@ActiveProfiles("test")
 public class OpenApiServiceTest {
     @Autowired
     private UserValidationServiceImpl userValidateService;
