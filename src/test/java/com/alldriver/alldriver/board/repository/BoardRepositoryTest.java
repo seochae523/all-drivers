@@ -70,7 +70,7 @@ class BoardRepositoryTest {
         carIds.add(1L);
 
         // when
-        List<BoardFindVo> byCars = boardRepository.findByCars(limit, offset, carIds, userId);
+        List<BoardFindVo> byCars = boardRepository.findByCars(carIds, userId);
         // then
         assertThat(byCars).hasSize(10);
     }
@@ -82,7 +82,7 @@ class BoardRepositoryTest {
         carIds.add(3L);
 
         // when
-        List<BoardFindVo> byCars = boardRepository.findByCars(limit, offset, carIds, userId);
+        List<BoardFindVo> byCars = boardRepository.findByCars(carIds, userId);
         // then
         assertThat(byCars).hasSize(0);
     }
@@ -95,7 +95,7 @@ class BoardRepositoryTest {
         jobIds.add(1L);
 
         // when
-        List<BoardFindVo> byCars = boardRepository.findByJobs(limit, offset, jobIds, userId);
+        List<BoardFindVo> byCars = boardRepository.findByJobs(jobIds, userId);
         // then
         assertThat(byCars).hasSize(10);
     }

@@ -68,7 +68,7 @@ class BoardRetrieveServiceTest {
         try (MockedStatic<JwtUtils> jwtUtils =mockStatic(JwtUtils.class)){
             String userId = JwtUtils.getUserId();
             List<Long> carIds = setUpIds();
-            when(boardRepository.findByCars(pageSize, offset,carIds, userId)).thenReturn(Collections.singletonList(boardFindVo));
+            when(boardRepository.findByCars(carIds, userId)).thenReturn(Collections.singletonList(boardFindVo));
 
             // when
             List<BoardFindResponseDto> result = boardRetrieveService.findByCars(0, carIds);
@@ -164,7 +164,7 @@ class BoardRetrieveServiceTest {
         try (MockedStatic<JwtUtils> jwtUtils =mockStatic(JwtUtils.class)) {
             String userId = JwtUtils.getUserId();
             String keyword = "hello";
-            when(boardRepository.search(pageSize, offset,keyword,userId)).thenReturn(Collections.singletonList(boardFindVo));
+            when(boardRepository.search(keyword,userId)).thenReturn(Collections.singletonList(boardFindVo));
 
             // when
             List<BoardFindResponseDto> result = boardRetrieveService.search(0, keyword);

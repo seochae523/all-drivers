@@ -15,4 +15,6 @@ public interface SubLocationRepository extends JpaRepository<SubLocation, Long> 
 
     @Query("select s from sub_location s where s.mainLocation.id = :mainLocationId")
     List<SubLocation> findByMainLocation(@Param("mainLocationId") Long mainLocationId);
+
+
 }
