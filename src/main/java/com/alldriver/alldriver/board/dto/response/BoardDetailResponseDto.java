@@ -1,21 +1,20 @@
 package com.alldriver.alldriver.board.dto.response;
 
 
-import com.alldriver.alldriver.board.document.BoardDocument;
-import com.alldriver.alldriver.board.vo.BoardJpaResponseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-public class BoardFindResponseDto {
+@AllArgsConstructor
+@Getter
+@NoArgsConstructor
+@Setter
+public class BoardDetailResponseDto {
     @Schema(description = "조회 결과 id 나중에 update, delete 할때 필요함", example = "3")
     private Long id;
     @Schema(description = "내용", example = "example")
@@ -38,6 +37,8 @@ public class BoardFindResponseDto {
     private String recruitType;
     @Schema(description = "메인 지역")
     private String mainLocation;
+    @Schema(description = "이미지들")
+    private List<ImageFindResponseDto> boardImages = new ArrayList<>();
     @Schema(description = "지역")
     private List<String> locations = new ArrayList<>();
     @Schema(description = "직종")
@@ -48,17 +49,5 @@ public class BoardFindResponseDto {
     private Date startAt;
     @Schema(description = "종료일")
     private Date endAt;
-    @Schema(description = "좋아요 수")
-    private Long bookmarkCount;
-    @Schema(description = "좋아요 여부")
-    private Integer bookmarked;
 
-
-    public BoardFindResponseDto(BoardJpaResponseDto boardJpaResponseDto) {
-        id = boardJpaResponseDto.getBoardId();
-        userId = boardJpaResponseDto.getUserId();
-        title = boardJpaResponseDto.getTitle();
-        bookmarked = boardJpaResponseDto.getBookmarked();
-        createdAt = boardJpaResponseDto.getCreatedAt();
-    }
 }

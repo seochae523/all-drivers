@@ -1,11 +1,9 @@
 package com.alldriver.alldriver.board.controller;
 
-import com.alldriver.alldriver.board.dto.response.BoardFindResponseDto;
-import com.alldriver.alldriver.board.dto.response.BoardSearchResponseDto;
-import com.alldriver.alldriver.board.dto.response.ImageFindResponseDto;
+import com.alldriver.alldriver.board.dto.query.BoardFindJpqlResponseDto;
+import com.alldriver.alldriver.board.dto.response.*;
 import com.alldriver.alldriver.board.service.BoardRetrieveService;
 import com.alldriver.alldriver.common.enums.ValidationError;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,8 +24,19 @@ import java.util.List;
 @Validated
 public class BoardRetrieveController {
     private final BoardRetrieveService boardRetrieveService;
+    @Operation(summary = "게시글을 10개씩 조회 (페이지 시작 0부터)")
+    @GetMapping("/all/jpql/detail/{id}")
 
-
+    public ResponseEntity<BoardDetailResponseDto> findDetailById(@PathVariable Long id){
+        return ResponseEntity.ok(boardRetrieveService.findDetailById(id));
+    }
+    @Operation(summary = "게시글을 10개씩 조회 (페이지 시작 0부터)")
+    @GetMapping("/all/jpql")
+    @Parameter(name = "page")
+    public ResponseEntity<List<BoardFindJpqlResponseDto>> findAllBoardsByJpql(@RequestParam(value = "page", defaultValue = "0")
+                                                                    @Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR) Integer page){
+        return ResponseEntity.ok(boardRetrieveService.findAllByJpql(page));
+    }
 
     @Operation(summary = "게시글을 10개씩 조회 (페이지 시작 0부터)")
     @GetMapping("/all")

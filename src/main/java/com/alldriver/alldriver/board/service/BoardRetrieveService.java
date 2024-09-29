@@ -1,13 +1,13 @@
 package com.alldriver.alldriver.board.service;
 
-import com.alldriver.alldriver.board.dto.response.BoardFindResponseDto;
-import com.alldriver.alldriver.board.dto.response.BoardSearchResponseDto;
-import com.alldriver.alldriver.board.dto.response.ImageFindResponseDto;
+import com.alldriver.alldriver.board.dto.query.BoardFindJpqlResponseDto;
+import com.alldriver.alldriver.board.dto.response.*;
 
 import java.util.List;
 
 public interface BoardRetrieveService {
-
+    List<BoardFindJpqlResponseDto> findAllByJpql(Integer page);
+    BoardDetailResponseDto findDetailById(Long id);
     List<BoardFindResponseDto> findAll(Integer page);
     List<BoardFindResponseDto> findByCars(Integer page, List<Long> carIds);
     List<BoardFindResponseDto> findByJobs(Integer page ,List<Long> jobIds);

@@ -11,6 +11,7 @@ import javax.net.ssl.*;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
+import java.time.Duration;
 
 @EnableElasticsearchRepositories
 @Configuration
@@ -32,6 +33,8 @@ public class ElasticSearchConfig extends ElasticsearchConfiguration {
                 .connectedTo(host)
                 .usingSsl(disableSslVerification(), allHostsValid()) // ssl 사용
                 .withBasicAuth(username, password)
+                .withConnectTimeout(10000)
+                .withSocketTimeout(50000)
                 .build();
     }
 
