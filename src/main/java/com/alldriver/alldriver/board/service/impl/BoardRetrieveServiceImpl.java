@@ -237,7 +237,7 @@ public class BoardRetrieveServiceImpl implements BoardRetrieveService {
         Map<Long, List<subLocationQueryDto>> locations = byBoardIds.stream().collect(Collectors.groupingBy(subLocationQueryDto::boardId));
         result.forEach(boardFindJpqlResponseDto -> {
             boardFindJpqlResponseDto.setSubLocations(locations.get(boardFindJpqlResponseDto.getId()));
-            boardFindJpqlResponseDto.setMainLocation(new MainLocationFindResponseDto(locations.get(boardFindJpqlResponseDto.getId()).getFirst().mainLocationId(), locations.get(boardFindJpqlResponseDto.getId()).getFirst().mainLocation()));
+            boardFindJpqlResponseDto.setMainLocation(new MainLocationFindResponseDto(locations.get(boardFindJpqlResponseDto.getId()).get(0).mainLocationId(), locations.get(boardFindJpqlResponseDto.getId()).get(0).mainLocation()));
         });
         return result;
     }
