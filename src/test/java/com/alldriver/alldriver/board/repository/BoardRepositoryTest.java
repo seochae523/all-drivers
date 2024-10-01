@@ -1,389 +1,242 @@
 package com.alldriver.alldriver.board.repository;
 
 import com.alldriver.alldriver.board.domain.*;
-import com.alldriver.alldriver.board.vo.BoardFindVo;
+import com.alldriver.alldriver.board.dto.query.BoardSearchCondition;
+import com.alldriver.alldriver.board.dto.response.BoardFindResponseDto;
+import com.alldriver.alldriver.common.configuration.QueryDslConfig;
 import com.alldriver.alldriver.common.enums.Role;
 import com.alldriver.alldriver.user.domain.User;
+import com.alldriver.alldriver.user.repository.UserRepository;
+import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.ActiveProfiles;
-
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
-
-import static org.assertj.core.api.Assertions.assertThat;
-
+import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-
+@Import({QueryDslConfig.class})
 class BoardRepositoryTest {
 
     @Autowired
     private BoardRepository boardRepository;
 
     @Autowired
-    private CarRepository carRepository;
+    private BoardBookmarkRepository boardBookmarkRepository;
 
     @Autowired
-    private JobRepository jobRepository;
-
-    @Autowired
-    private SubLocationRepository subLocationRepository;
-
-
-    String userId = "testUser";
-    Integer offset = 0;
-    Integer limit = 10;
+    private UserRepository userRepository;
     @BeforeEach
     void init(){
         User user = setUpUser();
-        Board board = setUpBoard(user);
+        User save = userRepository.save(user);
+        this.setUpJoinTables(save);
+    }
 
-        boardRepository.save(board);
-        this.setUpJoinTables(user);
+
+    @Test
+    @DisplayName("전체조회")
+    void findAll() {
+        // given
+        String userId = "testUser";
+        // when
+        Page<BoardFindResponseDto> result = boardRepository.findAll(userId, PageRequest.of(0, 10));
+        // then
+        assertThat(result.getSize()).isEqualTo(10);
+        assertThat(result.getTotalElements()).isEqualTo(100);
     }
 
     @Test
-    @DisplayName("전체 조회")
-    void 전체_조회() {
+    @DisplayName("즐겨찾기 게시글 조회")
+    void findMyBookmarkedBoard() {
         // given
+        String userId = "testUser";
         // when
-        List<BoardFindVo> boardPage = boardRepository.findAll(limit, offset, userId);
-
+        Page<BoardFindResponseDto> result = boardRepository.findMyBookmarkedBoard(userId, PageRequest.of(0, 10));
         // then
-        assertThat(boardPage).hasSize(10);
-    }
-    @Test
-    @DisplayName("차량으로 조회 성공")
-    void 차량으로_조회_성공(){
-        // given
-        List<Long> carIds = new ArrayList<>();
-        carIds.add(1L);
-
-        // when
-        List<BoardFindVo> byCars = boardRepository.findByCars(carIds, userId);
-        // then
-        assertThat(byCars).hasSize(10);
-    }
-    @Test
-    @DisplayName("차량으로 조회 실패")
-    void 차량으로_조회_실패(){
-        // given
-        List<Long> carIds = new ArrayList<>();
-        carIds.add(3L);
-
-        // when
-        List<BoardFindVo> byCars = boardRepository.findByCars(carIds, userId);
-        // then
-        assertThat(byCars).hasSize(0);
+        assertThat(result.getSize()).isEqualTo(10);
+        assertThat(result.getTotalElements()).isEqualTo(100);
     }
 
     @Test
-    @DisplayName("직업으로 조회 성공")
-    void 직업으로_조회_성공(){
+    @DisplayName("상세조회")
+    void findDetailById() {
         // given
-        List<Long> jobIds = new ArrayList<>();
-        jobIds.add(1L);
-
+        Long boardId = 1L;
         // when
-        List<BoardFindVo> byCars = boardRepository.findByJobs(jobIds, userId);
+        Optional<Board> result = boardRepository.findDetailById(boardId);
         // then
-        assertThat(byCars).hasSize(10);
+        assertThat(result).isNotEmpty();
+        assertThat(result.get().getId()).isEqualTo(boardId);
     }
 
     @Test
-    @DisplayName("직업으로 조회 실패")
-    void 직업으로_조회_실패(){
+    @DisplayName("사용자 아이디로 조회")
+    void findByUserId() {
         // given
-        List<Long> jobIds = new ArrayList<>();
-        jobIds.add(0L);
-        Pageable pageable = PageRequest.of(0, 10);
+        String userId = "testUser";
         // when
-        List<BoardFindVo> byCars = boardRepository.findByJobs(limit, offset, jobIds, userId);
-        // then
-        assertThat(byCars).hasSize(0);
-    }
-    @Test
-    @DisplayName("지역으로 조회 성공")
-    void 지역으로_조회_성공(){
-        // given
-        List<Long> subLocationIds = new ArrayList<>();
-        subLocationIds.add(100L);
+        Page<BoardFindResponseDto> result = boardRepository.findByUserId(userId, PageRequest.of(0, 10));
 
-        // when
-        List<BoardFindVo> bySubLocations= boardRepository.findBySubLocations(limit, offset, subLocationIds, userId);
         // then
-        assertThat(bySubLocations).hasSize(10);
+        assertThat(result.getSize()).isEqualTo(10);
+        assertThat(result.getTotalElements()).isEqualTo(100);
     }
 
     @Test
-    @DisplayName("지역으로 조회 실패")
-    void 지역으로_조회_실패(){
+    @DisplayName("복합 파라미터 조회 - 모든 조건 존재")
+    void findByComplexParameterWithAll(){
         // given
-        List<Long> subLocationIds = new ArrayList<>();
-        subLocationIds.add(0L);
+        BoardSearchCondition boardSearchCondition = BoardSearchCondition.builder()
+                .mainLocationId(1L)
+                .subLocationIds(List.of(1L))
+                .carIds(List.of(1L))
+                .jobIds(List.of(1L))
+                .build();
 
+        String userId = "testUser";
         // when
-        List<BoardFindVo> bySubLocations= boardRepository.findBySubLocations(limit, offset, subLocationIds, userId);
+        Page<BoardFindResponseDto> search = boardRepository.search(boardSearchCondition, PageRequest.of(0, 10), userId);
+
         // then
-        assertThat(bySubLocations).hasSize(0);
+        assertThat(search.getSize()).isEqualTo(10);
+        assertThat(search.getTotalElements()).isEqualTo(100);
     }
 
     @Test
-    @DisplayName("시로 조회 성공")
-    void 시로_조회_성공(){
+    @DisplayName("복합 파라미터 조회 - sub + main + car")
+    void findByComplexParameterWithSubMainCar(){
         // given
-        Long mainLocationId = 6L;
+        BoardSearchCondition boardSearchCondition = BoardSearchCondition.builder()
+                .mainLocationId(1L)
+                .subLocationIds(List.of(1L))
+                .carIds(List.of(1L))
+                .build();
 
+        String userId = "testUser";
         // when
-        List<BoardFindVo> byMainLocation = boardRepository.findByMainLocation(limit, offset, mainLocationId, userId);
+        Page<BoardFindResponseDto> search = boardRepository.search(boardSearchCondition, PageRequest.of(1, 10), userId);
         // then
-        assertThat(byMainLocation).hasSize(10);
+        assertThat(search.getSize()).isEqualTo(10);
+        assertThat(search.getTotalElements()).isEqualTo(100);
     }
 
     @Test
-    @DisplayName("시로 조회 실패")
-    void 시로_조회_실패(){
+    @DisplayName("복합 파라미터 조회 - sub + main + job")
+    void findByComplexParameterWithSubMainJob(){
         // given
-        Long mainLocationId = 10L;
+        BoardSearchCondition boardSearchCondition = BoardSearchCondition.builder()
+                .mainLocationId(1L)
+                .subLocationIds(List.of(1L))
+                .jobIds(List.of(1L))
+                .build();
 
+        String userId = "testUser";
         // when
-        List<BoardFindVo> byMainLocation = boardRepository.findByMainLocation(limit, offset, mainLocationId, userId);
+        // PageableExecutionUtils로 인한 다음 페이지 조회
+        Page<BoardFindResponseDto> search = boardRepository.search(boardSearchCondition, PageRequest.of(1, 10), userId);
         // then
-        assertThat(byMainLocation).hasSize(0);
+        assertThat(search.getSize()).isEqualTo(10);
+        assertThat(search.getTotalElements()).isEqualTo(100);
     }
 
-    /**
-     * TODO : native query h2에서 작동 x
-     * @return
-     */
+    @Test
+    @DisplayName("복합 파라미터 조회 - sub + main")
+    void findByComplexParameterWithSubMain(){
+        // given
+        BoardSearchCondition boardSearchCondition = BoardSearchCondition.builder()
+                .mainLocationId(1L)
+                .subLocationIds(List.of(1L))
+                .build();
 
-//    @Test
-//    @DisplayName("복합 파라미터 조회 - car id만 삽입")
-//    void findByComplexParametersWithCars(){
-//        // given
-//        List<Long> carIds = new ArrayList<>();
-//        carIds.add(1L);
-//
-//        // when
-//        List<BoardFindVo> result = boardRepository.findByComplexParameters(limit, offset, carIds, null, null, null, userId);
-//
-//        // then
-//        assertThat(result).hasSize(10);
-//    }
-//    @Test
-//    @DisplayName("복합 파라미터 조회 - job id만 삽입")
-//    void findByComplexParametersWithJobIds(){
-//        // given
-//        List<Long> jobIds = new ArrayList<>();
-//        jobIds.add(1L);
-//
-//        // when
-//        List<BoardFindVo> result = boardRepository.findByComplexParameters(limit, offset, null, jobIds, null, null, userId);
-//
-//        // then
-//        assertThat(result).hasSize(10);
-//    }
-//    @Test
-//    @DisplayName("복합 파라미터 조회 - location id만 삽입")
-//    void findByComplexParametersWithLocationIds(){
-//        // given
-//        List<Long> locationIds = new ArrayList<>();
-//        locationIds.add(100L);
-//
-//        // when
-//        List<BoardFindVo> result = boardRepository.findByComplexParameters(limit, offset, null, null, locationIds, null, userId);
-//
-//        // then
-//        assertThat(result).hasSize(10);
-//    }
-//    @Test
-//    @DisplayName("복합 파라미터 조회 - main location id만 삽입")
-//    void findByComplexParametersWithMainLocationId(){
-//        // given
-//        Long mainLocationId = 6L;
-//
-//        // when
-//        List<BoardFindVo> result = boardRepository.findByComplexParameters(limit, offset, null, null, null, mainLocationId, userId);
-//
-//        // then
-//        assertThat(result).hasSize(10);
-//    }
-//    @Test
-//    @DisplayName("복합 파라미터 조회 - car id + job id 삽입")
-//    void findByComplexParametersWithCarsAndJobs(){
-//        // given
-//        List<Long> carIds = new ArrayList<>();
-//        carIds.add(1L);
-//        List<Long> jobIds = new ArrayList<>();
-//        jobIds.add(1L);
-//
-//        // when
-//        List<BoardFindVo> result = boardRepository.findByComplexParameters(limit, offset, carIds, jobIds, null, null, userId);
-//
-//        // then
-//        assertThat(result).hasSize(10);
-//    }
-//    @Test
-//    @DisplayName("복합 파라미터 조회 - car id + location id만 삽입")
-//    void findByComplexParametersWithCarsAndLocationIds(){
-//        // given
-//        List<Long> carIds = new ArrayList<>();
-//        carIds.add(1L);
-//        List<Long> locationIds = new ArrayList<>();
-//        locationIds.add(100L);
-//        // when
-//        List<BoardFindVo> result = boardRepository.findByComplexParameters(limit, offset, carIds, null, locationIds, null, userId);
-//
-//        // then
-//        assertThat(result).hasSize(10);
-//    }
-//
-//    @Test
-//    @DisplayName("복합 파라미터 조회 - car id + main location id 삽입")
-//    void findByComplexParametersWithCarsAndMainLocationId(){
-//        // given
-//        List<Long> carIds = new ArrayList<>();
-//        carIds.add(1L);
-//        Long mainLocationId = 6L;
-//        // when
-//        List<BoardFindVo> result = boardRepository.findByComplexParameters(limit, offset, carIds, null, null, mainLocationId, userId);
-//
-//        // then
-//        assertThat(result).hasSize(10);
-//    }
-//    @Test
-//    @DisplayName("복합 파라미터 조회 - job id + location id 삽입")
-//    void findByComplexParametersWithJobIdsAndLocationId(){
-//        // given
-//        List<Long> jobIds = new ArrayList<>();
-//        jobIds.add(1L);
-//        List<Long> locationIds = new ArrayList<>();
-//        locationIds.add(100L);
-//        // when
-//        List<BoardFindVo> result = boardRepository.findByComplexParameters(limit, offset, null, jobIds, locationIds, null, userId);
-//
-//        // then
-//        assertThat(result).hasSize(10);
-//    }
-//    @Test
-//    @DisplayName("복합 파라미터 조회 - job id + main location id 삽입")
-//    void findByComplexParametersWithJobIdAndMainLocationId(){
-//        // given
-//        List<Long> jobIds = new ArrayList<>();
-//        jobIds.add(1L);
-//        Long mainLocationId = 6L;
-//        // when
-//        List<BoardFindVo> result = boardRepository.findByComplexParameters(limit, offset, null, jobIds, null, mainLocationId, userId);
-//
-//        // then
-//        assertThat(result).hasSize(10);
-//    }
-//    @Test
-//    @DisplayName("복합 파라미터 조회 - location id + main location id만 삽입")
-//    void findByComplexParametersWithLocationIdsAndMainLocationId(){
-//        // given
-//        List<Long> locationIds = new ArrayList<>();
-//        locationIds.add(100L);
-//        Long mainLocationId = 6L;
-//
-//        // when
-//        List<BoardFindVo> result = boardRepository.findByComplexParameters(limit, offset, null, null, locationIds, mainLocationId, userId);
-//
-//        // then
-//        assertThat(result).hasSize(10);
-//    }
-//    @Test
-//    @DisplayName("복합 파라미터 조회 - car id + job id + location Id 삽입")
-//    void findByComplexParametersWithCarsAndJobsAndLocations(){
-//        // given
-//        List<Long> carIds = new ArrayList<>();
-//        carIds.add(1L);
-//        List<Long> jobIds = new ArrayList<>();
-//        jobIds.add(1L);
-//        List<Long> locationIds = new ArrayList<>();
-//        locationIds.add(100L);
-//        // when
-//        List<BoardFindVo> result = boardRepository.findByComplexParameters(limit, offset, carIds, jobIds, locationIds, null, userId);
-//
-//        // then
-//        assertThat(result).hasSize(10);
-//    }
-//    @Test
-//    @DisplayName("복합 파라미터 조회 - car id + job id + main location Id 삽입")
-//    void findByComplexParametersWithCarsAndJobsAndMainLocation(){
-//        // given
-//        List<Long> carIds = new ArrayList<>();
-//        carIds.add(1L);
-//        List<Long> jobIds = new ArrayList<>();
-//        jobIds.add(1L);
-//        Long mainLocationId = 6L;
-//        // when
-//        List<BoardFindVo> result = boardRepository.findByComplexParameters(limit, offset, carIds, jobIds, null, mainLocationId, userId);
-//
-//        // then
-//        assertThat(result).hasSize(10);
-//    }
-//
-//    @Test
-//    @DisplayName("복합 파라미터 조회 - job id + location id + main location Id 삽입")
-//    void findByComplexParametersWithJobsAndLocationsAndMainLocation(){
-//        // given
-//        List<Long> carIds = new ArrayList<>();
-//        carIds.add(1L);
-//        List<Long> locationIds = new ArrayList<>();
-//        locationIds.add(100L);
-//        Long mainLocationId = 6L;
-//        // when
-//        List<BoardFindVo> result = boardRepository.findByComplexParameters(limit, offset, carIds, null, locationIds, mainLocationId, userId);
-//
-//        // then
-//        assertThat(result).hasSize(10);
-//    }
-//    @Test
-//    @DisplayName("복합 파라미터 조회 - car id + location id + main location Id 삽입")
-//    void findByComplexParametersWithCarsAndLocationsAndMainLocation(){
-//        // given
-//        List<Long> jobIds = new ArrayList<>();
-//        jobIds.add(1L);
-//        List<Long> locationIds = new ArrayList<>();
-//        locationIds.add(100L);
-//        Long mainLocationId = 6L;
-//        // when
-//        List<BoardFindVo> result = boardRepository.findByComplexParameters(limit, offset, null, jobIds, locationIds, mainLocationId, userId);
-//
-//        // then
-//        assertThat(result).hasSize(10);
-//    }
-//    @Test
-//    @DisplayName("복합 파라미터 조회 - 모든 파라미터 삽입")
-//    void findByComplexParametersWithAll(){
-//        // given
-//        List<Long> carIds = new ArrayList<>();
-//        carIds.add(1L);
-//        List<Long> jobIds = new ArrayList<>();
-//        jobIds.add(1L);
-//        List<Long> locationIds = new ArrayList<>();
-//        locationIds.add(100L);
-//        Long mainLocationId = 6L;
-//        // when
-//        List<BoardFindVo> result = boardRepository.findByComplexParameters(limit, offset, carIds, jobIds, locationIds, mainLocationId, userId);
-//
-//        // then
-//        assertThat(result).hasSize(10);
-//    }
+        String userId = "testUser";
+        // when
+        // PageableExecutionUtils로 인한 다음 페이지 조회
+        Page<BoardFindResponseDto> search = boardRepository.search(boardSearchCondition, PageRequest.of(1, 10), userId);
+        // then
+        assertThat(search.getSize()).isEqualTo(10);
+        assertThat(search.getTotalElements()).isEqualTo(100);
+    }
+    @Test
+    @DisplayName("복합 파라미터 조회 - job + car")
+    void findByComplexParameterWithJobCar(){
+        // given
+        BoardSearchCondition boardSearchCondition = BoardSearchCondition.builder()
+                .jobIds(List.of(1L))
+                .carIds(List.of(1L))
+                .build();
 
+        String userId = "testUser";
+        // when
+        // PageableExecutionUtils로 인한 다음 페이지 조회
+        Page<BoardFindResponseDto> search = boardRepository.search(boardSearchCondition, PageRequest.of(1, 10), userId);
+        // then
+        assertThat(search.getSize()).isEqualTo(10);
+        assertThat(search.getTotalElements()).isEqualTo(100);
+    }
+    @Test
+    @DisplayName("복합 파라미터 조회 - job")
+    void findByComplexParameterWithJob(){
+        // given
+        BoardSearchCondition boardSearchCondition = BoardSearchCondition.builder()
+                .jobIds(List.of(1L))
+                .build();
 
+        String userId = "testUser";
+        // when
+        // PageableExecutionUtils로 인한 다음 페이지 조회
+        Page<BoardFindResponseDto> search = boardRepository.search(boardSearchCondition, PageRequest.of(1, 10), userId);
 
+        // then
+        assertThat(search.getSize()).isEqualTo(10);
+        assertThat(search.getTotalElements()).isEqualTo(100);
+    }
+    @Test
+    @DisplayName("복합 파라미터 조회 - car")
+    void findByComplexParameterWithCar(){
+        // given
+        BoardSearchCondition boardSearchCondition = BoardSearchCondition.builder()
+                .carIds(List.of(1L))
+                .build();
+
+        String userId = "testUser";
+        // when
+        // PageableExecutionUtils로 인한 다음 페이지 조회
+        Page<BoardFindResponseDto> search = boardRepository.search(boardSearchCondition, PageRequest.of(1, 10), userId);
+        // then
+        assertThat(search.getSize()).isEqualTo(10);
+
+        assertThat(search.getTotalElements()).isEqualTo(100);
+    }
+    @Test
+    @DisplayName("복합 파라미터 조회 - sub")
+    void findByComplexParameterWithSub(){
+        // given
+        BoardSearchCondition boardSearchCondition = BoardSearchCondition.builder()
+                .subLocationIds(List.of(1L))
+                .build();
+
+        String userId = "testUser";
+        // when
+        // PageableExecutionUtils로 인한 다음 페이지 조회
+        Page<BoardFindResponseDto> search = boardRepository.search(boardSearchCondition, PageRequest.of(1, 10), userId);
+        // then
+        assertThat(search.getSize()).isEqualTo(10);
+        assertThat(search.getTotalElements()).isEqualTo(100);
+    }
     private User setUpUser(){
         return User.builder()
                 .userId("testUser")
@@ -415,25 +268,12 @@ class BoardRepositoryTest {
 
     private void setUpJoinTables(User user){
         for (int i =0; i<100 ; i++) {
+            Board build = setUpBoard(user);
 
-            Car car = carRepository.findById(1L).get();
-            Job job = jobRepository.findById(1L).get();
-            // sub location 100의 main location id = 6
-            SubLocation subLocation = subLocationRepository.findById(100L).get();
-            Board build = Board.builder()
-                    .content("testContent" + i)
-                    .title("testT" + i)
-                    .payType("" + i)
-                    .payment(100)
-                    .recruitType("testR")
-                    .companyLocation("test comp loc")
-                    .category("cate")
-                    .createdAt(LocalDateTime.now())
-                    .startAt(new Date())
-                    .endAt(new Date())
-                    .deleted(false)
-                    .user(user)
-                    .build();
+            Car car = Car.builder().id(1L).build();
+            Job job = Job.builder().id(1L).build();
+            SubLocation subLocation = SubLocation.builder().id(1L).mainLocation(MainLocation.builder().id(1L).build()).build();
+
             CarBoard carBoard = CarBoard.builder().board(build).car(car).build();
             JobBoard jobBoard = JobBoard.builder().board(build).job(job).build();
             LocationBoard locationBoard = LocationBoard.builder().board(build).subLocation(subLocation).build();
@@ -441,7 +281,9 @@ class BoardRepositoryTest {
             build.addJobBoard(jobBoard);
             build.addLocationBoard(locationBoard);
 
-            boardRepository.save(build);
+            Board save = boardRepository.save(build);
+            BoardBookmark bookmark = BoardBookmark.builder().board(save).user(user).build();
+            boardBookmarkRepository.save(bookmark);
         }
     }
 }

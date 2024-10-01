@@ -1,7 +1,6 @@
 package com.alldriver.alldriver.community.service.impl;
 
-import com.alldriver.alldriver.board.dto.response.BoardFindResponseDto;
-import com.alldriver.alldriver.board.vo.BoardFindVo;
+
 import com.alldriver.alldriver.common.util.JwtUtils;
 import com.alldriver.alldriver.community.dto.response.CommunityFindResponseDto;
 import com.alldriver.alldriver.community.repository.CommunityRepository;
@@ -13,9 +12,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
+
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
