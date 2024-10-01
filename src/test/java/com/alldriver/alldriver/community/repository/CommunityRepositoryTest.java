@@ -2,6 +2,7 @@ package com.alldriver.alldriver.community.repository;
 
 import com.alldriver.alldriver.board.domain.SubLocation;
 import com.alldriver.alldriver.board.repository.SubLocationRepository;
+import com.alldriver.alldriver.common.configuration.QueryDslConfig;
 import com.alldriver.alldriver.common.enums.Role;
 import com.alldriver.alldriver.community.domain.Community;
 import com.alldriver.alldriver.community.domain.CommunityLocation;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
@@ -25,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-
+@Import({QueryDslConfig.class})
 class CommunityRepositoryTest {
 
     @Autowired

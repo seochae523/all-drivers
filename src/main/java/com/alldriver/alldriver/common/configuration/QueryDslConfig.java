@@ -10,11 +10,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class QueryDslConfig {
-
     @PersistenceContext
     private final EntityManager em;
+
     @Bean
-    JPAQueryFactory jpaQueryFactory(){
+    public JPAQueryFactory jpaQueryFactory(){
         return new JPAQueryFactory(em);
     }
 }

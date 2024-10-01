@@ -35,16 +35,12 @@ public class BoardDetailResponseDto {
     private String companyLocation;
     @Schema(description = "고용 형태")
     private String recruitType;
-    @Schema(description = "메인 지역")
-    private String mainLocation;
     @Schema(description = "이미지들")
     private List<ImageFindResponseDto> boardImages = new ArrayList<>();
-    @Schema(description = "지역")
-    private List<String> locations = new ArrayList<>();
     @Schema(description = "직종")
-    private List<String> jobs = new ArrayList<>();
+    private List<JobFindResponseDto> jobs = new ArrayList<>();
     @Schema(description = "차종")
-    private List<String> cars = new ArrayList<>();
+    private List<CarFindResponseDto> cars = new ArrayList<>();
     @Schema(description = "시작일")
     private Date startAt;
     @Schema(description = "종료일")

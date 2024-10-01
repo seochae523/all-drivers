@@ -1,6 +1,6 @@
 package com.alldriver.alldriver.board.controller;
 
-import com.alldriver.alldriver.board.dto.query.BoardFindJpqlResponseDto;
+import com.alldriver.alldriver.board.dto.response.BoardFindResponseDto;
 import com.alldriver.alldriver.board.dto.response.*;
 import com.alldriver.alldriver.board.service.BoardRetrieveService;
 import com.alldriver.alldriver.common.enums.ValidationError;
@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -25,108 +24,44 @@ import java.util.List;
 public class BoardRetrieveController {
     private final BoardRetrieveService boardRetrieveService;
     @Operation(summary = "게시글을 10개씩 조회 (페이지 시작 0부터)")
-    @GetMapping("/all/jpql/detail/{id}")
-
+    @GetMapping("/all/detail/{id}")
     public ResponseEntity<BoardDetailResponseDto> findDetailById(@PathVariable Long id){
         return ResponseEntity.ok(boardRetrieveService.findDetailById(id));
     }
     @Operation(summary = "게시글을 10개씩 조회 (페이지 시작 0부터)")
-    @GetMapping("/all/jpql")
+    @GetMapping("/all/{page}")
     @Parameter(name = "page")
-    public ResponseEntity<List<BoardFindJpqlResponseDto>> findAllBoardsByJpql(@RequestParam(value = "page", defaultValue = "0")
-                                                                    @Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR) Integer page){
-        return ResponseEntity.ok(boardRetrieveService.findAllByJpql(page));
-    }
-
-    @Operation(summary = "게시글을 10개씩 조회 (페이지 시작 0부터)")
-    @GetMapping("/all")
-    @Parameter(name = "page")
-    public ResponseEntity<List<BoardFindResponseDto>> findAllBoards(@RequestParam(value = "page", defaultValue = "0")
-                                                                    @Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR) Integer page){
+    public ResponseEntity<PagingResponseDto<List<BoardFindResponseDto>>> findAll(@Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR)
+                                                                                         @PathVariable Integer page){
         return ResponseEntity.ok(boardRetrieveService.findAll(page));
     }
-    @Operation(summary = "게시글을 [차량 id]로 10개씩 조회 (페이지 시작 0부터)")
-    @GetMapping("/cars")
-    @Parameter(name = "page", description = "페이지 번호 기본 값 0")
-    public ResponseEntity<List<BoardFindResponseDto>> findByCars(@RequestParam(value = "page", defaultValue = "0")
-                                                                 @Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR) Integer page,
-                                                                 @RequestParam(value = "carIds")
-                                                                 @NotNull List<Long> carIds){
-        return ResponseEntity.ok(boardRetrieveService.findByCars(page, carIds));
-    }
-    @Operation(summary = "게시글을 [직업 id]로 10개씩 조회 (페이지 시작 0부터)")
-    @GetMapping("/jobs")
-    @Parameter(name = "page", description = "페이지 번호 기본 값 0")
-    public ResponseEntity<List<BoardFindResponseDto>> findByJobs(@RequestParam(value = "page", defaultValue = "0")
-                                                                 @Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR) Integer page,
-                                                                 @RequestParam(value = "jobIds")
-                                                                 @NotNull List<Long> jobIds){
-        return ResponseEntity.ok(boardRetrieveService.findByJobs(page, jobIds));
-    }
-    @Operation(summary = "게시글을 [지역 - 구 id]로 10개씩 조회 (페이지 시작 0부터)")
-    @GetMapping("/subLocations")
-    @Parameter(name = "page", description = "페이지 번호 기본 값 0")
-    public ResponseEntity<List<BoardFindResponseDto>> findBySubLocations(@RequestParam(value = "page", defaultValue = "0")
-                                                                         @Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR) Integer page,
-                                                                         @RequestParam(value = "subLocationIds")
-                                                                         @NotNull List<Long> subLocationIds){
-        return ResponseEntity.ok(boardRetrieveService.findBySubLocations(page, subLocationIds));
-    }
-    @Operation(summary = "게시글을 [지역 - 시 id]로 10개씩 조회 (페이지 시작 0부터)")
-    @GetMapping("/mainLocation")
-    @Parameter(name = "page", description = "페이지 번호 기본 값 0")
-    public ResponseEntity<List<BoardFindResponseDto>> findByMainLocation(@RequestParam(value = "page", defaultValue = "0")
-                                                                         @Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR) Integer page,
-                                                                         @RequestParam(value = "mainLocationId")
-                                                                         @NotNull Long mainLocationId){
-        return ResponseEntity.ok(boardRetrieveService.findByMainLocation(page, mainLocationId));
-    }
-    @Operation(summary = "게시글을 [키워드]로 10개씩 조회 (페이지 시작 0부터)")
-    @GetMapping("/search")
-    @Parameter(name = "page", description = "페이지 번호 기본 값 0")
-    public ResponseEntity<List<BoardFindResponseDto>> search(@RequestParam(value = "page", defaultValue = "0")
-                                                             @Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR) Integer page,
-                                                             @RequestParam(value = "keyword")
-                                                             @NotBlank(message = ValidationError.Message.KEYWORD_NOT_FOUND) String keyword){
-        return ResponseEntity.ok(boardRetrieveService.search(page, keyword));
-    }
-    @Operation(summary = "게시글을 [유저 id]로 10개씩 조회 (페이지 시작 0부터) - 유저 id는 token 삽입시 자동 추출")
-    @GetMapping("/userId")
-    @Parameter(name = "page", description = "페이지 번호 기본 값 0")
-    public ResponseEntity<List<BoardFindResponseDto>> findByUserId(@RequestParam(value = "page", defaultValue = "0")
-                                                                   @Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR) Integer page){
-        return ResponseEntity.ok(boardRetrieveService.findByUserId(page));
-    }
-    @Operation(summary = "게시글을 [파라미터]로 10개씩 조회 (페이지 시작 0부터) " +
-            "</br> [page 제외 파라미터들 기입 안하면 해당 카테고리 전체 조회입니다.]")
-    @GetMapping("/parameters")
-    @Parameter(name = "page", description = "페이지 번호 기본 값 0")
-    public ResponseEntity<List<BoardFindResponseDto>> findByComplexParameters(@RequestParam(value = "page", defaultValue = "0")
-                                                                              @Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR) Integer page,
-                                                                              @RequestParam(value = "carIds", required = false) List<Long> carIds,
-                                                                              @RequestParam(value = "jobIds", required = false) List<Long> jobIds,
-                                                                              @RequestParam(value = "subLocationIds", required = false) List<Long> subLocationIds,
-                                                                              @RequestParam(value = "mainLocationId", required = false) Long mainLocationId){
-        return ResponseEntity.ok(boardRetrieveService.findByComplexParameters(page, carIds, jobIds, subLocationIds, mainLocationId));
-    }
+
     @Operation(summary = "유저가 즐겨찾기 한 게시글을 조회 - 유저 id는 token 삽입시 자동 추출")
-    @GetMapping("/bookmark")
+    @GetMapping("/bookmark/{page}")
     @Parameter(name = "page", description = "페이지 번호 기본 값 0")
-    public ResponseEntity<List<BoardFindResponseDto>> findByUserBookmark(@RequestParam(value = "page", defaultValue = "0")
-                                                                         @Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR) Integer page){
+    public ResponseEntity<PagingResponseDto<List<BoardFindResponseDto>>> findByUserBookmark(@Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR)
+                                                                            @PathVariable Integer page){
         return ResponseEntity.ok(boardRetrieveService.findMyBookmarkedBoard(page));
     }
-    @Operation(summary = "게시글 이미지를 [board id]로 조회 ",
-            description = "각 조회 이후 추가적인 이미지 조회를 위해 사용")
-    @GetMapping("/images/{boardId}")
-    public ResponseEntity<List<ImageFindResponseDto>> findImageByBoardId(@PathVariable
-                                                                         @NotNull Long boardId){
-        return ResponseEntity.ok(boardRetrieveService.findImageByBoardId(boardId));
-    }
 
-    @GetMapping("/search/es/{page}")
-    public ResponseEntity<List<BoardSearchResponseDto>> searchByEs(@PathVariable Integer page, @RequestParam("keyword") String keyword){
-        return ResponseEntity.ok(boardRetrieveService.searchByEs(page, keyword));
+    @Operation(summary = "게시글을 [키워드]로 10개씩 조회 (페이지 시작 0부터)")
+    @GetMapping("/search/{page}")
+    public ResponseEntity<List<BoardSearchResponseDto>> search(@Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR)
+                                                               @PathVariable Integer page,
+                                                               @NotBlank(message = ValidationError.Message.KEYWORD_NOT_FOUND)
+                                                               @RequestParam("keyword") String keyword){
+        return ResponseEntity.ok(boardRetrieveService.search(page, keyword));
+    }
+    @Operation(summary = "게시글을 [파라미터]로 10개씩 조회 (페이지 시작 0부터) " +
+            "</br> 없으면 안넣으면 됩니다.")
+    @GetMapping("/by/{page}")
+    public ResponseEntity<PagingResponseDto<List<BoardFindResponseDto>>> findBy(@Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR)
+                                                                                           @PathVariable Integer page,
+                                                                                   @RequestParam(value = "carIds", required = false) List<Long> carIds,
+                                                                                   @RequestParam(value = "jobIds", required = false) List<Long> jobIds,
+                                                                                   @RequestParam(value = "subLocationIds", required = false) List<Long> subLocationIds,
+                                                                                   @RequestParam(value = "mainLocationId", required = false) Long mainLocationId){
+        return ResponseEntity.ok(boardRetrieveService.findBy(page, jobIds, carIds, subLocationIds, mainLocationId));
     }
 
 }

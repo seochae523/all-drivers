@@ -9,9 +9,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PagingResponseDto {
+public class PagingResponseDto<T> {
     private Integer currentPage;
     private Long totalElements;
     private Integer totalPage;
-    private List<Object> response;
+    private T data;
 }

@@ -2,10 +2,13 @@ package com.alldriver.alldriver.board.service.impl;
 
 import com.alldriver.alldriver.board.document.BoardDocument;
 import com.alldriver.alldriver.board.domain.*;
+import com.alldriver.alldriver.board.dto.response.BoardFindResponseDto;
+import com.alldriver.alldriver.board.dto.query.SubLocationQueryDto;
 import com.alldriver.alldriver.board.dto.request.*;
 import com.alldriver.alldriver.board.dto.response.*;
 import com.alldriver.alldriver.board.repository.*;
 import com.alldriver.alldriver.board.service.BoardService;
+
 import com.alldriver.alldriver.common.enums.ErrorCode;
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.util.JwtUtils;
@@ -14,6 +17,9 @@ import com.alldriver.alldriver.user.domain.User;
 import com.alldriver.alldriver.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -254,5 +261,44 @@ public class BoardServiceImpl implements BoardService {
                 .build();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public PagingResponseDto<List<BoardFindResponseDto>> findByUserId(Integer page) {
+        String userId = JwtUtils.getUserId();
+        Pageable pageable = PageRequest.of(page, 10);
+
+        Page<BoardFindResponseDto> result = boardRepository.findByUserId(userId, pageable);
+        List<BoardFindResponseDto> response = getBoards(result.stream().toList());
+
+        return PagingResponseDto.<List<BoardFindResponseDto>>builder()
+                .totalElements(result.getTotalElements())
+                .currentPage(page)
+                .totalPage(result.getTotalPages()-1)
+                .data(response).build();
+    }
+    private List<BoardFindResponseDto> getBoards(List<BoardFindResponseDto> result){
+        return setLocations(result);
+    }
+
+    private List<BoardFindResponseDto> setLocations(List<BoardFindResponseDto> result) {
+        Map<Long, List<SubLocationQueryDto>> locations = findLocations(toSubLocationIds(result));
+        result.forEach(boardFindJpqlResponseDto -> {
+            boardFindJpqlResponseDto.setSubLocations(locations.get(boardFindJpqlResponseDto.getId()));
+            boardFindJpqlResponseDto.setMainLocation(new MainLocationFindResponseDto(locations.get(boardFindJpqlResponseDto.getId()).get(0).mainLocationId(), locations.get(boardFindJpqlResponseDto.getId()).get(0).mainLocation()));
+        });
+        return result;
+    }
+    @Transactional(readOnly = true)
+    public Map<Long, List<SubLocationQueryDto>> findLocations(List<Long> subLocationIds){
+        List<SubLocationQueryDto> subLocations = locationBoardRepository.findByBoardIds(subLocationIds);
+        return subLocations.stream().
+                collect(Collectors.groupingBy(SubLocationQueryDto::boardId));
+    }
+
+    private List<Long> toSubLocationIds(List<BoardFindResponseDto> result){
+        return result.stream().
+                map(BoardFindResponseDto::getId).
+                toList();
+    }
 
 }

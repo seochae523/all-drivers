@@ -49,8 +49,6 @@ class BoardServiceTest {
     @Mock
     private CarRepository carRepository;
     @Mock
-    private BoardImageRepository boardImageRepository;
-    @Mock
     private MainLocationRepository mainLocationRepository;
     @Mock
     private SubLocationRepository subLocationRepository;

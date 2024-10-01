@@ -1,5 +1,6 @@
 package com.alldriver.alldriver.community.repository;
 
+import com.alldriver.alldriver.common.configuration.QueryDslConfig;
 import com.alldriver.alldriver.common.enums.Role;
 import com.alldriver.alldriver.community.domain.Community;
 import com.alldriver.alldriver.community.domain.CommunityBookmark;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
@@ -22,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-
+@Import({QueryDslConfig.class})
 class CommunityBookmarkRepositoryTest {
 
     @Autowired
