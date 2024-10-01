@@ -46,7 +46,7 @@ class CommunityRetrieveControllerTest {
         when(communityRetrieveService.findAll(any())).thenReturn(response);
 
         // when, then
-        mockMvc.perform(get("/user/community/all").with(csrf()))
+        mockMvc.perform(get("/user/community/all/0").with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
@@ -60,7 +60,7 @@ class CommunityRetrieveControllerTest {
         when(communityRetrieveService.findByUserId(any())).thenReturn(response);
 
         // when, then
-        mockMvc.perform(get("/user/community/userId").with(csrf()))
+        mockMvc.perform(get("/user/community/userId/0").with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
@@ -73,7 +73,7 @@ class CommunityRetrieveControllerTest {
         when(communityRetrieveService.findBySubLocationId(any(), any())).thenReturn(response);
 
         // when, then
-        mockMvc.perform(get("/user/community/subLocation").with(csrf())
+        mockMvc.perform(get("/user/community/subLocation/0").with(csrf())
                         .param("subLocationId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
