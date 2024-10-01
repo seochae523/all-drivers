@@ -23,24 +23,24 @@ import java.util.List;
 public class CommunityRetrieveController {
     private final CommunityRetrieveService communityRetrieveService;
 
-    @GetMapping("/all")
+    @GetMapping("/all/{page}")
     @Operation(summary = "커뮤니티를 10개씩 조회 (페이지 시작 0부터)")
-    public ResponseEntity<List<CommunityFindResponseDto>> findAll(@RequestParam(value = "page", defaultValue = "0")
-                                                                  @Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR) Integer page){
+    public ResponseEntity<List<CommunityFindResponseDto>> findAll(@Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR)
+                                                                  @PathVariable Integer page){
         return ResponseEntity.ok(communityRetrieveService.findAll(page));
     }
 
-    @GetMapping("/userId")
+    @GetMapping("/userId/{page}")
     @Operation(summary = "커뮤니티를 유저 id로 10개씩 조회 (페이지 시작 0부터) - 유저 id는 token 삽입시 자동 추출")
-    public ResponseEntity<List<CommunityFindResponseDto>> findByUserId(@RequestParam(value = "page", defaultValue = "0")
-                                                                       @Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR) Integer page){
+    public ResponseEntity<List<CommunityFindResponseDto>> findByUserId(@Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR)
+                                                                           @PathVariable Integer page){
         return ResponseEntity.ok(communityRetrieveService.findByUserId(page));
     }
 
-    @GetMapping("/subLocation")
+    @GetMapping("/subLocation/{page}")
     @Operation(summary = "커뮤니티를 [지역 - 구 id]로 조회")
-    public ResponseEntity<List<CommunityFindResponseDto>> findBySubLocationId(@RequestParam(value = "page", defaultValue = "0")
-                                                                              @Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR) Integer page,
+    public ResponseEntity<List<CommunityFindResponseDto>> findBySubLocationId(@Min(value = 0, message = ValidationError.Message.MINIMUM_PAGE_VALUE_ERROR)
+                                                                              @PathVariable Integer page,
                                                                               @RequestParam(value = "subLocationId", required = false)
                                                                               @NotNull List<Long> subLocationIds){
         return ResponseEntity.ok(communityRetrieveService.findBySubLocationId(page, subLocationIds));
