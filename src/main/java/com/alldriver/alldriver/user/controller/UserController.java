@@ -1,5 +1,6 @@
 package com.alldriver.alldriver.user.controller;
 
+import com.alldriver.alldriver.board.dto.response.CarFindResponseDto;
 import com.alldriver.alldriver.user.dto.request.*;
 import com.alldriver.alldriver.user.dto.response.*;
 
@@ -94,6 +95,11 @@ public class UserController {
     @Operation(summary = "회원 탈퇴")
     public ResponseEntity<String> signOut(){
         return ResponseEntity.ok(userService.signOut());
+    }
+
+    @GetMapping("/cars")
+    public ResponseEntity<List<CarFindResponseDto>> findAllCars(){
+        return ResponseEntity.ok(userService.findAllCars());
     }
 
 }

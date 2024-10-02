@@ -1,6 +1,8 @@
 package com.alldriver.alldriver.user.controller;
 
 
+import com.alldriver.alldriver.board.domain.Car;
+import com.alldriver.alldriver.board.dto.response.CarFindResponseDto;
 import com.alldriver.alldriver.common.enums.ValidationError;
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.enums.ErrorCode;
@@ -15,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.assertj.core.api.Assertions;
+import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -284,6 +287,19 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("차주 회원가입을 위한 차량 카테고리 조회")
+    void findAllCars() throws Exception {
+        // given
+        List<CarFindResponseDto> response = setUpCarFindResponse();
+        when(userService.findAllCars()).thenReturn(response);
+
+        // when, then
+        mockMvc.perform(get("/cars").with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(response)));
+    }
+
+    @Test
     @DisplayName("유저 회원가입 파라미터 검증")
     void validateUserSignUpRequest(){
         // given
@@ -504,6 +520,13 @@ public class UserControllerTest {
                 .name("testName")
                 .build();
     }
+    private List<CarFindResponseDto> setUpCarFindResponse(){
+        List<CarFindResponseDto> response = new ArrayList<>();
 
+        for(int i =0; i<10; i++){
+            response.add(new CarFindResponseDto(1L + i, "test"));
+        }
+        return response;
+    }
 
 }

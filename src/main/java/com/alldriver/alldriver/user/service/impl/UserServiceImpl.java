@@ -1,5 +1,8 @@
 package com.alldriver.alldriver.user.service.impl;
 
+import com.alldriver.alldriver.board.domain.Car;
+import com.alldriver.alldriver.board.dto.response.CarFindResponseDto;
+import com.alldriver.alldriver.board.repository.CarRepository;
 import com.alldriver.alldriver.common.enums.Role;
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.enums.ErrorCode;
@@ -37,7 +40,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final S3Utils s3Utils;
-
+    private final CarRepository carRepository;
 
     @Override
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
@@ -299,6 +302,14 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         return "유저 업그레이드 완료.";
+    }
+
+    @Override
+    public List<CarFindResponseDto> findAllCars() {
+        List<Car> result = carRepository.findAll();
+        return result.stream()
+                .map(car -> new CarFindResponseDto(car.getId(), car.getCategory()))
+                .toList();
     }
 
 }
