@@ -98,6 +98,7 @@ public class UserController {
     }
 
     @GetMapping("/cars")
+    @Operation(summary = "차주 회원가입을 위한 차랑 카테고리 조회")
     public ResponseEntity<List<CarFindResponseDto>> findAllCars(){
         return ResponseEntity.ok(userService.findAllCars());
     }
