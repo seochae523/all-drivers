@@ -1,5 +1,6 @@
 package com.alldriver.alldriver.user.service;
 
+import com.alldriver.alldriver.board.dto.response.CarFindResponseDto;
 import com.alldriver.alldriver.user.dto.request.*;
 import com.alldriver.alldriver.user.dto.response.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,4 +20,6 @@ public interface UserService {
     ChangePasswordResponseDto changePassword(ChangePasswordRequestDto changePasswordRequestDto);
     String signOut();
     String upgradeUser(MultipartFile carImage, MultipartFile license, UserUpgradeRequestDto userUpgradeRequestDto) throws IOException;
+
+    List<CarFindResponseDto> findAllCars();
 }

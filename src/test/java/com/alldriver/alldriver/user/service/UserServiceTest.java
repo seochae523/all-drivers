@@ -1,5 +1,8 @@
 package com.alldriver.alldriver.user.service;
 
+import com.alldriver.alldriver.board.domain.Car;
+import com.alldriver.alldriver.board.dto.response.CarFindResponseDto;
+import com.alldriver.alldriver.board.repository.CarRepository;
 import com.alldriver.alldriver.common.enums.Role;
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.enums.ErrorCode;
@@ -45,6 +48,8 @@ public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private CarRepository carRepository;
     @Mock
     private PasswordEncoder passwordEncoder;
 
@@ -294,6 +299,31 @@ public class UserServiceTest {
         // then
         assertThat(customException.getMessage()).isEqualTo(ErrorCode.ACCOUNT_NOT_FOUND.getMessage());
     }
+    @Test
+    @DisplayName("차량 조회")
+    void findAllCars(){
+        // given
+        List<Car> cars = setUpCars();
+        when(carRepository.findAll()).thenReturn(cars);
+
+        // when
+        List<CarFindResponseDto> response = userService.findAllCars();
+
+        // then
+        assertThat(response).hasSize(10);
+    }
+
+    private List<Car> setUpCars(){
+        List<Car> cars = new ArrayList<>();
+        for(int i =0; i<10; i++){
+            cars.add(Car.builder()
+                            .id(1L+i)
+                            .category("test")
+                    .build());
+        }
+        return cars;
+    }
+
 
     private ChangePasswordRequestDto setUpChangePasswordRequestDto(){
         return ChangePasswordRequestDto.builder()
