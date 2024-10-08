@@ -23,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -59,21 +60,21 @@ public class SmsServiceImpl implements SmsService {
         try {
             messageService.send(message);
             LocalDateTime createdAt = LocalDateTime.now();
+            Optional<SmsSession> smsSessionOptional = smsRepository.findByPhoneNumber(phoneNumber);
+            if (smsSessionOptional.isPresent()){
+                SmsSession smsSession = smsSessionOptional.get();
+                smsSession.resetAuthCode(code, createdAt);
+                smsRepository.save(smsSession);
+            }
+            else{
+                SmsSession smsSession = SmsSession.builder()
+                        .authCode(code)
+                        .phoneNumber(phoneNumber)
+                        .createdAt(createdAt)
+                        .build();
+                smsRepository.save(smsSession);
+            }
 
-            smsRepository.findByPhoneNumber(phoneNumber).ifPresentOrElse(x ->
-                    {
-                        x.resetAuthCode(code, createdAt);
-                        smsRepository.save(x);
-                    },
-                    () ->
-                    {
-                        SmsSession smsSession = SmsSession.builder()
-                                .authCode(code)
-                                .phoneNumber(phoneNumber)
-                                .createdAt(createdAt)
-                                .build();
-                        smsRepository.save(smsSession);
-                    });
 
         } catch (NurigoMessageNotReceivedException exception) {
             log.error("{}", exception.getFailedMessageList());

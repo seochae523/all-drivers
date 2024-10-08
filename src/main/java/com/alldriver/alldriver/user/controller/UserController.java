@@ -31,17 +31,20 @@ public class UserController {
     public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto loginRequestDto){
         return ResponseEntity.ok(userService.login(loginRequestDto));
     }
+
     @PostMapping("/sign-up/user/social")
     @Operation(summary = "소셜 로그인 추가 정보 입력",
             description = "소셜 로그인 수행 이후 추가적인 정보 입력을 위한 api입니다.")
     public ResponseEntity<LoginResponseDto> signUpAdditionalSocialLoginInfo(@RequestBody @Valid SocialLoginSignUpRequestDto socialLoginSignUpRequestDto){
         return ResponseEntity.ok(userService.signUpAdditionalSocialLoginInfo(socialLoginSignUpRequestDto));
     }
+
     @PostMapping("/sign-up/user")
     @Operation(summary = "일반 유저 회원가입")
     public ResponseEntity<SignUpResponseDto> signUpUser(@RequestBody @Valid UserSignUpRequestDto userSignUpRequestDto){
         return ResponseEntity.ok(userService.signUpUser(userSignUpRequestDto));
     }
+
     @PostMapping("/sign-up/owner")
     @Operation(summary = "화주 회원가입", description =  "images :: multipart/form-data로 전송" +
             "</br> request :: application/json으로 전송")
@@ -49,6 +52,7 @@ public class UserController {
                                                          @RequestPart(value = "images") List<MultipartFile> images) throws IOException {
         return ResponseEntity.ok(userService.signUpOwner(ownerSignUpRequestDto, images));
     }
+
     @PostMapping("/sign-up/car-owner")
     @Operation(summary = "차주 회원가입", description =  "images :: multipart/form-data로 전송" +
             "</br> request :: application/json으로 전송" +
@@ -58,7 +62,6 @@ public class UserController {
 
         return ResponseEntity.ok(userService.signUpCarOwner(carOwnerSignUpRequestDto, images));
     }
-
 
     @PutMapping("/change-forget-password")
     @Operation(summary = "잊어버린 비밀번호 변경")
@@ -102,5 +105,4 @@ public class UserController {
     public ResponseEntity<List<CarFindResponseDto>> findAllCars(){
         return ResponseEntity.ok(userService.findAllCars());
     }
-
 }
