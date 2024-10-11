@@ -6,11 +6,8 @@ import com.alldriver.alldriver.board.dto.response.CarFindResponseDto;
 import com.alldriver.alldriver.common.enums.ValidationError;
 import com.alldriver.alldriver.common.exception.CustomException;
 import com.alldriver.alldriver.common.enums.ErrorCode;
-import com.alldriver.alldriver.user.dto.response.AuthToken;
+import com.alldriver.alldriver.user.dto.response.*;
 import com.alldriver.alldriver.user.dto.request.*;
-import com.alldriver.alldriver.user.dto.response.ChangePasswordResponseDto;
-import com.alldriver.alldriver.user.dto.response.LoginResponseDto;
-import com.alldriver.alldriver.user.dto.response.SignUpResponseDto;
 
 import com.alldriver.alldriver.user.service.impl.UserServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +26,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.mockito.Mockito.*;
@@ -298,7 +296,44 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
+    @Test
+    @DisplayName("휴대전화 번호로 유저 아이디 찾기")
+    void findUserIdByPhoneNumber() throws Exception {
+        // given
+        String phoneNumber = "01012345678";
+        String userId = "testU***";
+        UserIdFindRequestDto request = UserIdFindRequestDto.builder().phoneNumber(phoneNumber).build();
+        UserIdFindResponseDto response = UserIdFindResponseDto.builder().userId(userId).createdAt(LocalDateTime.now()).build();
+        when(userService.findUserIdByPhoneNumber(any())).thenReturn(response);
 
+        // when, then
+        mockMvc.perform(post("/find-user-id").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(response)));
+    }
+
+    @Test
+    @DisplayName("휴대전화 번호로 유저 아이디 찾기 파라미터 검증")
+    void validateUserIdFindRequest(){
+        // given
+        UserIdFindRequestDto request = new UserIdFindRequestDto();
+
+        // when
+        Set<ConstraintViolation<UserIdFindRequestDto>> validate = validator.validate(request);
+        Iterator<ConstraintViolation<UserIdFindRequestDto>> iterator = validate.iterator();
+        List<String> messages = new ArrayList<>();
+        while (iterator.hasNext()) {
+            ConstraintViolation<UserIdFindRequestDto> next = iterator.next();
+            messages.add(next.getMessage());
+            System.out.println("message = " + next.getMessage());
+        }
+
+        // then
+        Assertions.assertThat(messages).contains(ValidationError.Message.PHONE_NUMBER_NOT_FOUND);
+
+    }
     @Test
     @DisplayName("유저 회원가입 파라미터 검증")
     void validateUserSignUpRequest(){

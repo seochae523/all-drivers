@@ -16,6 +16,7 @@ import com.alldriver.alldriver.user.repository.*;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -138,6 +139,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public SignUpResponseDto signUpOwner(OwnerSignUpRequestDto ownerSignUpRequestDto, List<MultipartFile> images) throws IOException {
+        if(userRepository.findByUserId(ownerSignUpRequestDto.getUserId()).isPresent()
+                || userRepository.findByPhoneNumber(ownerSignUpRequestDto.getPhoneNumber()).isPresent()){
+            throw new CustomException(ErrorCode.DUPLICATED_ACCOUNT);
+        }
         User user = ownerSignUpRequestDto.toEntity();
         user.hashPassword(passwordEncoder);
 
@@ -310,6 +315,34 @@ public class UserServiceImpl implements UserService {
         return result.stream()
                 .map(car -> new CarFindResponseDto(car.getId(), car.getCategory()))
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserIdFindResponseDto findUserIdByPhoneNumber(UserIdFindRequestDto userIdFindRequestDto) {
+        String phoneNumber = userIdFindRequestDto.getPhoneNumber();
+
+        Optional<User> userOptional = userRepository.findByPhoneNumber(phoneNumber);
+
+        if(userOptional.isPresent()){
+            User user = userOptional.get();
+            String userId = getBlindUserId(user);
+            return UserIdFindResponseDto.builder()
+                    .createdAt(user.getCreatedAt())
+                    .userId(userId)
+                    .build();
+        }
+        else{
+            throw new CustomException(ErrorCode.ACCOUNT_NOT_FOUND);
+        }
+    }
+
+
+    private String getBlindUserId(User user) {
+        String userId = user.getUserId();
+        int idx = userId.length() - 3;
+        userId = userId.substring(0, idx) + "***";
+        return userId;
     }
 
 }

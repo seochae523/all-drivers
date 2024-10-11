@@ -105,4 +105,10 @@ public class UserController {
     public ResponseEntity<List<CarFindResponseDto>> findAllCars(){
         return ResponseEntity.ok(userService.findAllCars());
     }
+
+    @PostMapping("/find-user-id")
+    @Operation(summary = "휴대전화 번호로 아이디 찾기")
+    public ResponseEntity<UserIdFindResponseDto> findUserIdByPhoneNumber(@RequestBody @Valid UserIdFindRequestDto userIdFindRequestDto){
+        return ResponseEntity.ok(userService.findUserIdByPhoneNumber(userIdFindRequestDto));
+    }
 }

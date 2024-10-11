@@ -12,6 +12,7 @@ import com.alldriver.alldriver.user.dto.response.AuthToken;
 import com.alldriver.alldriver.user.domain.User;
 import com.alldriver.alldriver.user.dto.response.LoginResponseDto;
 import com.alldriver.alldriver.user.dto.response.SignUpResponseDto;
+import com.alldriver.alldriver.user.dto.response.UserIdFindResponseDto;
 import com.alldriver.alldriver.user.repository.UserRepository;
 import com.alldriver.alldriver.user.service.impl.UserServiceImpl;
 
@@ -312,7 +313,21 @@ public class UserServiceTest {
         // then
         assertThat(response).hasSize(10);
     }
+    @Test
+    @DisplayName("전화 번호로 유저 찾기")
+    void findByPhoneNumber(){
+        // given
+        String correctPhoneNumber = "01012345678";
+        UserIdFindRequestDto request = UserIdFindRequestDto.builder().phoneNumber(correctPhoneNumber).build();
+        User user = setUpUser();
+        when(userRepository.findByPhoneNumber(any())).thenReturn(Optional.ofNullable(user));
+        // when
+        UserIdFindResponseDto response = userService.findUserIdByPhoneNumber(request);
 
+        // then
+        assertThat(response.getCreatedAt()).isEqualTo(user.getCreatedAt());
+        assertThat(response.getUserId()).isEqualTo("testU***");
+    }
     private List<Car> setUpCars(){
         List<Car> cars = new ArrayList<>();
         for(int i =0; i<10; i++){
