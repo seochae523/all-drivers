@@ -22,4 +22,6 @@ public interface UserService {
     String upgradeUser(MultipartFile carImage, MultipartFile license, UserUpgradeRequestDto userUpgradeRequestDto) throws IOException;
 
     List<CarFindResponseDto> findAllCars();
+
+    UserIdFindResponseDto findUserIdByPhoneNumber(UserIdFindRequestDto userIdFindRequestDto);
 }
