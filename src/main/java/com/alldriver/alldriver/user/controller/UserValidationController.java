@@ -41,4 +41,9 @@ public class UserValidationController {
         return ResponseEntity.ok(userValidationService.checkPhoneNumber(phoneNumberCheckRequestDto));
     }
 
+    @GetMapping("/email")
+    @Operation(summary = "이메일 중복 검사")
+    public ResponseEntity<Boolean> checkEmail(@RequestParam(name = "email") @NotBlank String email){
+        return ResponseEntity.ok(userValidationService.checkDuplicatedEmail(email));
+    }
 }

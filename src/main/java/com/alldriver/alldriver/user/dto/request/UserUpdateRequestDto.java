@@ -15,4 +15,5 @@ public class UserUpdateRequestDto {
     @NotBlank(message = ValidationError.Message.USER_ID_NOT_FOUND)
     private String userId;
 
+
 }

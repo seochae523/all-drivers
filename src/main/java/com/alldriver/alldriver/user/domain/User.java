@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.checkerframework.checker.units.qual.C;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,6 +33,9 @@ public class User implements UserDetails {
 
     @Column(name = "user_id", columnDefinition = "varchar", length = 30, nullable = false)
     private String userId;
+
+    @Column(name = "email", columnDefinition = "varchar", length = 80, nullable = false)
+    private String email;
 
     @Column(name="password", columnDefinition = "varchar")
     private String password;

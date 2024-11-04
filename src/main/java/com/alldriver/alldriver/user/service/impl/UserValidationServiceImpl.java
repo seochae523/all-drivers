@@ -86,5 +86,12 @@ public class UserValidationServiceImpl implements UserValidationService {
         return true;
     }
 
-
+    @Override
+    public Boolean checkDuplicatedEmail(String email) {
+        userRepository.findByEmail(email)
+                .ifPresent(x ->{
+                    throw new CustomException(ErrorCode.DUPLICATED_ACCOUNT, " 사용자 이메일 = " + email);
+                });
+        return true;
+    }
 }
