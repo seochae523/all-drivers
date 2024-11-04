@@ -24,4 +24,5 @@ public interface UserService {
     List<CarFindResponseDto> findAllCars();
 
     UserIdFindResponseDto findUserIdByPhoneNumber(UserIdFindRequestDto userIdFindRequestDto);
+
 }

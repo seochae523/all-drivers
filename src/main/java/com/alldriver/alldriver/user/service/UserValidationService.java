@@ -11,4 +11,5 @@ public interface UserValidationService {
 
     Boolean checkDuplicatedAccount(String userId);
 
+    Boolean checkDuplicatedEmail(String email);
 }

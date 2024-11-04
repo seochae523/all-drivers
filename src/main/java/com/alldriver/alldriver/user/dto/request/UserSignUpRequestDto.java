@@ -15,13 +15,13 @@ import java.time.LocalDateTime;
 public class UserSignUpRequestDto {
     @NotBlank(message = ValidationError.Message.NAME_NOT_FOUND)
     private String name;
-
+    @NotBlank(message = ValidationError.Message.EMAIL_NOT_FOUND)
+    private String email;
     @NotBlank(message = ValidationError.Message.USER_ID_NOT_FOUND)
     private String userId;
 
     @NotBlank(message = ValidationError.Message.PASSWORD_NOT_FOUND)
     private String password;
-
 
     @NotBlank(message = ValidationError.Message.PHONE_NUMBER_NOT_FOUND)
     private String phoneNumber;
@@ -36,6 +36,7 @@ public class UserSignUpRequestDto {
                 .name(name)
                 .createdAt(LocalDateTime.now())
                 .phoneNumber(phoneNumber)
+                .email(email)
                 .deleted(false)
                 .build();
     }
