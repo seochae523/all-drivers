@@ -42,9 +42,11 @@ public enum ValidationError {
     TYPE_NOT_FOUND,
     KEYWORD_NOT_FOUND,
     LICENSE_NUMBER_NOT_FOUND,
-    MINIMUM_PAGE_VALUE_ERROR;
+    MINIMUM_PAGE_VALUE_ERROR,
+    EMAIL_NOT_FOUND;
 
     public static class Message{
+        public static final String EMAIL_NOT_FOUND = "이메일이 존재하지 않습니다.";
         public static final String MINIMUM_PAGE_VALUE_ERROR = "페이지는 0 이상의 정수여야 합니다.";
         public static final String KEYWORD_NOT_FOUND = "키워드가 존재하지 않습니다.";
         public static final String PAGE_NOT_FOUND = "페이지가 존재하지 않습니다.";

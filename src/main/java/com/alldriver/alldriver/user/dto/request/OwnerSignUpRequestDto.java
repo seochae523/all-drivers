@@ -23,7 +23,8 @@ public class OwnerSignUpRequestDto {
 
     @NotBlank(message = ValidationError.Message.USER_ID_NOT_FOUND)
     private String userId;
-
+    @NotBlank(message = ValidationError.Message.EMAIL_NOT_FOUND)
+    private String email;
 
     @NotBlank(message = ValidationError.Message.NAME_NOT_FOUND)
     private String name;
@@ -54,6 +55,7 @@ public class OwnerSignUpRequestDto {
                 .name(name)
                 .password(password)
                 .phoneNumber(phoneNumber)
+                .email(email)
                 .createdAt(LocalDateTime.now())
                 .deleted(false)
                 .build();
