@@ -59,6 +59,7 @@ public class BoardRepositoryImpl implements BoardQueryDslRepository{
                 leftJoin(board.user, user1).
                 leftJoin(board.boardBookmarks, boardBookmark).
                 leftJoin(boardBookmark.user, user2);
+
         JPAQuery<Long> countQuery = jpaQueryFactory.select(board.count()).from(board);
 
         List<Long> carIds = condition.getCarIds();
